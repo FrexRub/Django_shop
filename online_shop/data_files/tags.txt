@@ -1,0 +1,15 @@
+ноутбук
+ультрабук
+ноутбук-трансформер
+Windows 10
+Windows 11
+без ОС
+Mac OS
+AMOLED
+IPS
+OLED
+Apple
+Huawei
+Samsung
+Android
+iOS
