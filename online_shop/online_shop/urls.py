@@ -19,7 +19,8 @@ from django.contrib import admin
 from django.urls import path, include
 from rest_framework.routers import DefaultRouter
 
-from myauth.views import UserViewSet
+from myauth.views import UserViewSet, UserRegistrationView
+
 
 router = DefaultRouter()
 router.register("users", UserViewSet)
@@ -27,5 +28,6 @@ router.register("users", UserViewSet)
 urlpatterns = [
     path("admin/", admin.site.urls),
     path("", include("frontend.urls")),
+    path("api/sign-up/", UserRegistrationView.as_view(), name='sign_up'),
     path("api/", include(router.urls)),
 ]
