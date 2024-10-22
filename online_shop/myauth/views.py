@@ -11,7 +11,6 @@ from rest_framework.viewsets import ModelViewSet
 from rest_framework.views import APIView
 from .serializers import UserRegistrationSerializer
 
-
 log = logging.getLogger(__name__)
 
 
@@ -21,6 +20,13 @@ class UserRegistrationView(APIView):
         data_req = json.loads(list(request.POST.dict().items())[0][0])
 
         log.info("Запрос на регистрацию пользователя %s", data_req.get("username"))
+
+        if User.objects.filter(username=data_req.get("username")).exists():
+            return Response(
+                {"message": "Username is already in use"},
+                status=status.HTTP_400_BAD_REQUEST,
+            )
+
         serializer = UserRegistrationSerializer(
             data={
                 "username": data_req.get("username"),
@@ -30,7 +36,6 @@ class UserRegistrationView(APIView):
         if serializer.is_valid():
             serializer.save()
             log.info("Пользователь %s зарегистрирован", data_req.get("username"))
-
             user = authenticate(
                 self.request,
                 username=data_req.get("username"),
@@ -48,7 +53,7 @@ class UserRegistrationView(APIView):
             return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
 
-class LogoutView(LogoutView):
+class MyLogoutView(LogoutView):
     next_page = reverse_lazy("home")
 
     def get_context_data(self, **kwargs):

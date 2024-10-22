@@ -1,7 +1,7 @@
 from django.urls import path
 from django.views.generic import TemplateView
 
-from myauth.views import LogoutView
+from myauth.views import MyLogoutView
 
 urlpatterns = [
     path("", TemplateView.as_view(template_name="frontend/index.html"), name="home"),
@@ -39,5 +39,5 @@ urlpatterns = [
     path("sale/", TemplateView.as_view(template_name="frontend/sale.html")),
     path("sign-in/", TemplateView.as_view(template_name="frontend/signIn.html")),
     path("sign-up/", TemplateView.as_view(template_name="frontend/signUp.html")),
-    path("log-out/", LogoutView.as_view(), name="logout"),
+    path("log-out/", MyLogoutView.as_view(), name="logout"),
 ]
