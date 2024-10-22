@@ -2,6 +2,7 @@ import logging
 import json
 
 from django.contrib.auth.models import User
+from django.contrib.auth import logout
 from django.contrib.auth import authenticate, login
 from django.contrib.auth.views import LogoutView
 from django.urls import reverse_lazy
@@ -53,13 +54,15 @@ class UserRegistrationView(APIView):
             return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
 
-class MyLogoutView(LogoutView):
+class LogoutAPIView(APIView):
     next_page = reverse_lazy("home")
 
-    def get_context_data(self, **kwargs):
-        log.info("Logout user %s", self.request.user)
-        context = super().get_context_data(**kwargs)
-        return context
+    def post(self, request):
+        # Directly logs out the user who made the request and deletes their session.
+        logout(request)
+        # Return success response
+        return Response({"detail": "Logout Successful"}, status=status.HTTP_200_OK)
+
 
 
 class UserViewSet(ModelViewSet):
