@@ -3,6 +3,8 @@ import json
 
 from django.contrib.auth.models import User
 from django.contrib.auth import authenticate, login
+from django.contrib.auth.views import LogoutView
+from django.urls import reverse_lazy
 from rest_framework import status
 from rest_framework.response import Response
 from rest_framework.viewsets import ModelViewSet
@@ -45,6 +47,15 @@ class UserRegistrationView(APIView):
         else:
             log.error("Данные в форме регистрации некорректны %s", serializer.errors)
             return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
+
+class LogoutView(LogoutView):
+    next_page = reverse_lazy("home")
+
+    def get_context_data(self, **kwargs):
+        log.info("Logout user %s", self.request.user)
+        context = super().get_context_data(**kwargs)
+        return context
 
 
 class UserViewSet(ModelViewSet):

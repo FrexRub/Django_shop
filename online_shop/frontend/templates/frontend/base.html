@@ -56,7 +56,7 @@
                     <a class="ControlPanel-title" href="/profile">{{ user.username }}</a>
                   </div>
                   <div class="row-block">
-                    <a class="ControlPanel-title" href="#" @click.prevent="signOut()">Log out</a>
+                    <a class="ControlPanel-title" href="/log-out" @click.prevent="signOut()">Log out</a>
                   </div>
                 {% else %}
                   <div class="row-block"><a class="ControlPanel-title" href="/sign-in">Login / Register</a></div>
