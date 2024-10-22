@@ -17,11 +17,10 @@ log = logging.getLogger(__name__)
 
 class UserRegistrationView(APIView):
     def post(self, request):
-        # POST data в формате QueryDict, все данны передаются в качестве ключа словаря
+        # POST data в формате QueryDict, все данные передаются в качестве ключа словаря
         data_req = json.loads(list(request.POST.dict().items())[0][0])
 
         log.info("Запрос на регистрацию пользователя %s", data_req.get("username"))
-        print("data_req", data_req)
         serializer = UserRegistrationSerializer(
             data={
                 "username": data_req.get("username"),

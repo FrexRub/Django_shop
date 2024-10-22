@@ -1,7 +1,9 @@
 from django.contrib.auth.models import User
 from django.db import models
 from django.core.validators import FileExtensionValidator
+from django.urls import reverse
 
+from services.utils import unique_slugify
 
 def user_directory_path(instance, filename):
     return "user_{pk}/{filename}".format(pk=instance.user.id, filename=filename)
@@ -10,8 +12,6 @@ def user_directory_path(instance, filename):
 class Profile(models.Model):
     user = models.OneToOneField(User, on_delete=models.CASCADE, related_name="profile")
     phone_number = models.CharField(max_length=15, verbose_name="Телефон")
-    bio = models.TextField(max_length=500, blank=True, verbose_name="Информация о себе")
-    agreement_accepted = models.BooleanField(default=False)
     avatar = models.ImageField(
         verbose_name="Аватар",
         null=True,
@@ -19,10 +19,32 @@ class Profile(models.Model):
         upload_to=user_directory_path,
         validators=[FileExtensionValidator(allowed_extensions=("png", "jpg", "jpeg"))],
     )
-
-    # slug = models.SlugField(verbose_name='URL', max_length=255, blank=True, unique=True)
+    slug = models.SlugField(verbose_name='URL', max_length=255, blank=True, unique=True)
 
     class Meta:
-        ordering = ("user",)
-        verbose_name = "Профиль"
-        verbose_name_plural = "Профили"
+        """
+        Сортировка, название таблицы в базе данных
+        """
+        ordering = ('user',)
+        verbose_name = 'Профиль'
+        verbose_name_plural = 'Профили'
+
+    def save(self, *args, **kwargs):
+        """
+        Сохранение полей модели при их отсутствии заполнения
+        """
+        if not self.slug:
+            self.slug = unique_slugify(self, self.user.username)
+        super().save(*args, **kwargs)
+
+    def __str__(self):
+        """
+        Возвращение строки
+        """
+        return self.user.username
+
+    def get_absolute_url(self):
+        """
+        Ссылка на профиль
+        """
+        return reverse('profile_detail', kwargs={'slug': self.slug})

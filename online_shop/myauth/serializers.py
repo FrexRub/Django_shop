@@ -15,6 +15,6 @@ class UserRegistrationSerializer(serializers.ModelSerializer):
         user = User(**validated_data)
         user.set_password(password)
         user.save()
-        # Profile.objects.create(user=self.object)
+        Profile.objects.create(user=user)
 
         return user
