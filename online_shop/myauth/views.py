@@ -1,42 +1,49 @@
 import logging
+import json
 
 from django.contrib.auth.models import User
+from django.contrib.auth import authenticate, login
 from rest_framework import status
 from rest_framework.response import Response
 from rest_framework.viewsets import ModelViewSet
 from rest_framework.views import APIView
 from .serializers import UserRegistrationSerializer
 
-from .models import Profile
 
 log = logging.getLogger(__name__)
 
+
 class UserRegistrationView(APIView):
     def post(self, request):
-        log.info("Запрос на регистрацию пользователя %s", request.data)
-        name = request.data.get("name")
-        # if name.find(" ") > 0:
-        #     first_name, last_name = tuple(name.split())
-        # else:
-        #     first_name, last_name = (name, "")
-        first_name, last_name = ("SS", "FF")
-        password = request.data.get("password")
-        print(name, first_name, last_name, password)
-        # serializer = UserRegistrationSerializer(data=request.data)
-        serializer = UserRegistrationSerializer(data={
-            "username": request.data.get("username"),
-            "first_name": first_name,
-            "last_name": last_name,
-            "password": password,
-        })
+        # POST data в формате QueryDict, все данны передаются в качестве ключа словаря
+        data_req = json.loads(list(request.POST.dict().items())[0][0])
+
+        log.info("Запрос на регистрацию пользователя %s", data_req.get("username"))
+        print("data_req", data_req)
+        serializer = UserRegistrationSerializer(
+            data={
+                "username": data_req.get("username"),
+                "password": data_req.get("password"),
+            }
+        )
         if serializer.is_valid():
             serializer.save()
+            log.info("Пользователь %s зарегистрирован", data_req.get("username"))
+
+            user = authenticate(
+                self.request,
+                username=data_req.get("username"),
+                password=data_req.get("password"),
+            )
+            log.debug("Login new user as %s", data_req.get("username"))
+            login(request=self.request, user=user)
+
             return Response(
                 {"message": "User registered successfully"},
                 status=status.HTTP_201_CREATED,
             )
         else:
-            log.error("Данные в форме некорректны")
+            log.error("Данные в форме регистрации некорректны %s", serializer.errors)
             return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
 
