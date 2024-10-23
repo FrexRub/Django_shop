@@ -1,17 +1,23 @@
 import logging
 import json
+from dataclasses import asdict
 
 from django.contrib.auth.models import User
 from django.contrib.auth import logout
 from django.contrib.auth import authenticate, login
-from django.core.exceptions import PermissionDenied
 from django.urls import reverse_lazy
 from rest_framework import status
 from rest_framework.response import Response
-from rest_framework.viewsets import ModelViewSet
 from rest_framework.views import APIView
 from rest_framework import exceptions
-from .serializers import UserRegistrationSerializer, UserLoginSerializer
+
+from .serializers import (
+    UserRegistrationSerializer,
+    UserLoginSerializer,
+    ProfileSerializer,
+)
+from .models import Profile
+from services.schemas import ProfileSchema
 
 log = logging.getLogger(__name__)
 
@@ -107,5 +113,29 @@ class LogoutAPIView(APIView):
         return Response({"detail": "Logout Successful"}, status=status.HTTP_200_OK)
 
 
-class UserViewSet(ModelViewSet):
-    queryset = User.objects.all()
+class ProfileView(APIView):
+    def get(self, request):
+        profile: Profile = (
+            Profile.objects.select_related("user")
+            .filter(user=self.request.user)
+            .first()
+        )
+        log.info("Загрузка профиля пользователя %s", self.request.user)
+        res_profile = ProfileSchema(
+            fullName=profile.user.first_name,
+            email=profile.user.email,
+            phone=profile.phone_number,
+            avatar={"src": profile.avatar, "alt": profile.slug},
+        )
+
+        serializer = ProfileSerializer(data=asdict(res_profile))
+        if serializer.is_valid():
+            log.info("Успешная валидация данных пользователя %s", serializer.data)
+
+            return Response(
+                serializer.data,
+                status=status.HTTP_200_OK,
+            )
+
+        log.error("Данные в форме регистрации некорректны %s", serializer.errors)
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)

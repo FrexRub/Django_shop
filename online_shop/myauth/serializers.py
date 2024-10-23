@@ -23,3 +23,10 @@ class UserRegistrationSerializer(serializers.ModelSerializer):
         Profile.objects.create(user=user)
 
         return user
+
+
+class ProfileSerializer(serializers.Serializer):
+    fullName = serializers.CharField(allow_blank=True, max_length=150)
+    email = serializers.CharField(allow_blank=True)
+    phone = serializers.CharField(allow_blank=True)
+    avatar = serializers.DictField(child=serializers.CharField(allow_blank=True))

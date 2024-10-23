@@ -21,11 +21,16 @@ from django.contrib import admin
 from django.urls import path, include
 from rest_framework.routers import DefaultRouter
 
-from myauth.views import UserViewSet, UserRegistrationView, LogoutAPIView, UserLoginView
+from myauth.views import (
+    ProfileView,
+    UserRegistrationView,
+    LogoutAPIView,
+    UserLoginView,
+)
 
 
 router = DefaultRouter()
-router.register("users", UserViewSet)
+# router.register("profile", ProfileView)
 
 urlpatterns = [
     path("admin/", admin.site.urls),
@@ -33,6 +38,7 @@ urlpatterns = [
     path("api/sign-up/", UserRegistrationView.as_view(), name="sign_up"),
     path("api/sign-out/", LogoutAPIView.as_view(), name="logout"),
     path("api/sign-in/", UserLoginView.as_view(), name="sign_in"),
+    path("api/profile/", ProfileView.as_view(), name="profile"),
     path("api/", include(router.urls)),
 ]
 
