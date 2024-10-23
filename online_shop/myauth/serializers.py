@@ -4,6 +4,11 @@ from django.contrib.auth.models import User
 from .models import Profile
 
 
+class UserLoginSerializer(serializers.Serializer):
+    username = serializers.CharField(max_length=150)
+    password = serializers.CharField()
+
+
 class UserRegistrationSerializer(serializers.ModelSerializer):
     class Meta:
         model = User
