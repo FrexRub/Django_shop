@@ -30,3 +30,14 @@ class ProfileSerializer(serializers.Serializer):
     email = serializers.CharField(allow_blank=True)
     phone = serializers.CharField(allow_blank=True)
     avatar = serializers.DictField(child=serializers.CharField(allow_blank=True))
+
+
+class UserAvatarSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Profile
+        fields = ["avatar"]
+
+    def save(self, *args, **kwargs):
+        if self.instance.avatar:
+            self.instance.avatar.delete()
+        return super().save(*args, **kwargs)

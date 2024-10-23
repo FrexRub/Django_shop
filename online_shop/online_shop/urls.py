@@ -26,6 +26,7 @@ from myauth.views import (
     UserRegistrationView,
     LogoutAPIView,
     UserLoginView,
+    UserAvatarUpload,
 )
 
 
@@ -38,9 +39,11 @@ urlpatterns = [
     path("api/sign-up/", UserRegistrationView.as_view(), name="sign_up"),
     path("api/sign-out/", LogoutAPIView.as_view(), name="logout"),
     path("api/sign-in/", UserLoginView.as_view(), name="sign_in"),
+    path("api/profile/avatar/", UserAvatarUpload.as_view(), name="avatar"),
     path("api/profile/", ProfileView.as_view(), name="profile"),
     path("api/", include(router.urls)),
 ]
 
 if settings.DEBUG:
     urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
+    urlpatterns += static(settings.STATIC_URL, document_root=settings.STATIC_ROOT)
