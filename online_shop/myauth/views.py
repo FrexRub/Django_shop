@@ -11,7 +11,7 @@ from rest_framework.response import Response
 from rest_framework.views import APIView
 from rest_framework import exceptions
 from rest_framework.permissions import IsAuthenticated
-from rest_framework.parsers import MultiPartParser, FormParser
+from rest_framework.parsers import MultiPartParser, FormParser, FileUploadParser
 
 from .serializers import (
     UserRegistrationSerializer,
@@ -128,9 +128,10 @@ class ProfileView(APIView):
             fullName=profile.user.first_name,
             email=profile.user.email,
             phone=profile.phone_number,
-            avatar={"src": profile.avatar, "alt": profile.slug},
+            avatar={"src": str(profile.avatar), "alt": profile.slug},
         )
 
+        print("Profile:", asdict(res_profile))
         serializer = ProfileSerializer(data=asdict(res_profile))
         if serializer.is_valid():
             log.info("Успешная валидация данных пользователя %s", serializer.data)
@@ -145,8 +146,20 @@ class ProfileView(APIView):
 
 
 class UserAvatarUpload(APIView):
+    # parser_classes = (FileUploadParser,)
     parser_classes = [MultiPartParser, FormParser]
     permission_classes = [IsAuthenticated]
+
+    # def put(self, request, filename, format=None):
+    #     profile: Profile = (
+    #         Profile.objects.select_related("user")
+    #         .filter(user=self.request.user)
+    #         .first()
+    #     )
+    #
+    #     avatar = request.FILES.get('avatar')
+    #     # do some stuff with uploaded file
+    #     return Response(status=204)
 
     def post(self, request, format=None):
         profile: Profile = (
@@ -155,6 +168,7 @@ class UserAvatarUpload(APIView):
             .first()
         )
         serializer = UserAvatarSerializer(data=request.data, instance=profile)
+        print(request.data)
         if serializer.is_valid():
             serializer.save()
             return Response(serializer.data, status=status.HTTP_200_OK)
