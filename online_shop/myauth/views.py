@@ -27,6 +27,18 @@ from services.schemas import ProfileSchema
 log = logging.getLogger(__name__)
 
 
+def get_profile_user(user: User) -> Profile:
+    """
+    Поиск профиля пользователя
+    :param user: User
+        объект конкретного пользователя
+    :return: Profile
+        профиль пользователя
+    """
+    profile: Profile = Profile.objects.select_related("user").filter(user=user).first()
+    return profile
+
+
 class UserLoginView(APIView):
     def post(self, request):
         # POST data в формате QueryDict, все данные передаются в качестве ключа словаря
@@ -156,11 +168,7 @@ class UserAvatarUpload(APIView):
     permission_classes = [IsAuthenticated]
 
     def post(self, request, format=None):
-        profile: Profile = (
-            Profile.objects.select_related("user")
-            .filter(user=self.request.user)
-            .first()
-        )
+        profile = get_profile_user(self.request.user)
         serializer = UserAvatarSerializer(data=request.data, instance=profile)
         print(request.data)
         if serializer.is_valid():
@@ -169,3 +177,8 @@ class UserAvatarUpload(APIView):
             return Response(serializer.data, status=status.HTTP_200_OK)
         else:
             return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
+
+class ChangePasswordView(APIView):
+    def post(self, request, format=None):
+        profile = get_profile_user(self.request.user)

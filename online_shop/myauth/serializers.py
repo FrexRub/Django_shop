@@ -1,3 +1,5 @@
+import re
+
 from rest_framework import serializers
 from django.contrib.auth.models import User
 
@@ -14,6 +16,17 @@ class UserRegistrationSerializer(serializers.ModelSerializer):
         model = User
         fields = ["username", "password"]
         extra_kwargs = {"password": {"write_only": True}}
+
+    def validate_password(self, value):
+        print("START VALIDATE PASSWORD")
+        pattern_password = (
+            r"^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,}$"
+        )
+
+        if re.search(pattern_password, value):
+            return value
+        else:
+            raise serializers.ValidationError("Invalid password")
 
     def create(self, validated_data):
         password = validated_data.pop("password")
