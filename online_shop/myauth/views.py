@@ -11,7 +11,7 @@ from rest_framework.response import Response
 from rest_framework.views import APIView
 from rest_framework import exceptions
 from rest_framework.permissions import IsAuthenticated
-from rest_framework.parsers import MultiPartParser, FormParser, FileUploadParser
+from rest_framework.parsers import MultiPartParser, FormParser
 
 from .serializers import (
     UserRegistrationSerializer,
@@ -146,20 +146,8 @@ class ProfileView(APIView):
 
 
 class UserAvatarUpload(APIView):
-    # parser_classes = (FileUploadParser,)
     parser_classes = [MultiPartParser, FormParser]
     permission_classes = [IsAuthenticated]
-
-    # def put(self, request, filename, format=None):
-    #     profile: Profile = (
-    #         Profile.objects.select_related("user")
-    #         .filter(user=self.request.user)
-    #         .first()
-    #     )
-    #
-    #     avatar = request.FILES.get('avatar')
-    #     # do some stuff with uploaded file
-    #     return Response(status=204)
 
     def post(self, request, format=None):
         profile: Profile = (

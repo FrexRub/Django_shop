@@ -21,27 +21,13 @@ from django.contrib import admin
 from django.urls import path, include
 from rest_framework.routers import DefaultRouter
 
-from myauth.views import (
-    ProfileView,
-    UserRegistrationView,
-    LogoutAPIView,
-    UserLoginView,
-    UserAvatarUpload,
-)
-
-
 router = DefaultRouter()
 # router.register("profile", ProfileView)
 
 urlpatterns = [
     path("admin/", admin.site.urls),
     path("", include("frontend.urls")),
-    path("api/sign-up/", UserRegistrationView.as_view(), name="sign_up"),
-    path("api/sign-out/", LogoutAPIView.as_view(), name="logout"),
-    path("api/sign-in/", UserLoginView.as_view(), name="sign_in"),
-    path("api/profile/avatar/", UserAvatarUpload.as_view(), name="avatar"),
-    path("api/profile/", ProfileView.as_view(), name="profile"),
-    path("api/", include(router.urls)),
+    path("api/", include("api.urls")),
 ]
 
 if settings.DEBUG:
