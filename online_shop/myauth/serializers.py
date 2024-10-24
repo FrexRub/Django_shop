@@ -1,10 +1,19 @@
 import re
+import logging
 
 from rest_framework import serializers
 from django.contrib.auth.models import User
 
 from .models import Profile
 
+log = logging.getLogger(__name__)
+
+# PATTERN_PASSWORD = (
+#     r"^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,}$"
+# )
+PATTERN_PASSWORD = (
+    r'^(?=.*?[a-z])(?=.*?[A-Z])(?=.*?[0-9])(?=.*?[!"#\$%&\(\)\*\+,-\.\/:;<=>\?@[\]\^_`\{\|}~])[a-zA-Z0-9!\$%&\(\)\*\+,-\.\/:;<=>\?@[\]\^_`\{\|}~]{8,}$'
+)
 
 class UserLoginSerializer(serializers.Serializer):
     username = serializers.CharField(max_length=150)
@@ -18,14 +27,13 @@ class UserRegistrationSerializer(serializers.ModelSerializer):
         extra_kwargs = {"password": {"write_only": True}}
 
     def validate_password(self, value):
-        print("START VALIDATE PASSWORD")
-        pattern_password = (
-            r"^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,}$"
-        )
+        log.info("Начало валидации пароля")
 
-        if re.search(pattern_password, value):
+        if re.search(PATTERN_PASSWORD, value):
+            log.info("Пароль соответствует политике безопасности")
             return value
         else:
+            log.info("Пароль не соответствует политике безопасности")
             raise serializers.ValidationError("Invalid password")
 
     def create(self, validated_data):
@@ -43,6 +51,9 @@ class ProfileSerializer(serializers.Serializer):
     email = serializers.CharField(allow_blank=True)
     phone = serializers.CharField(allow_blank=True)
     avatar = serializers.DictField(child=serializers.CharField(allow_blank=True))
+
+    # def update(self, instance, validated_data):
+    #     raise NotImplementedError('`update()` must be implemented.')
 
 
 class UserAvatarSerializer(serializers.ModelSerializer):

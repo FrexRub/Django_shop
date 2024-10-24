@@ -133,6 +133,23 @@ class LogoutAPIView(APIView):
 class ProfileView(APIView):
     permission_classes = [IsAuthenticated]
 
+    def post(self, request, format=None):
+        profile = get_profile_user(self.request.user)
+        log.info("Изменение данных профиля пользователя %s", self.request.user)
+        print(self.request.user, "->", request.data)
+        serializer = ProfileSerializer(data=request.data)
+
+        if serializer.is_valid():
+            # serializer.save()
+            log.info("Изменение данных профиля пользователя внесены")
+            return Response(
+                {"message": "User registered successfully"},
+                status=status.HTTP_201_CREATED,
+            )
+        else:
+            log.error("Данные некорректны %s", serializer.errors)
+            return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
     def get(self, request):
         profile: Profile = (
             Profile.objects.select_related("user")
@@ -170,7 +187,6 @@ class UserAvatarUpload(APIView):
     def post(self, request, format=None):
         profile = get_profile_user(self.request.user)
         serializer = UserAvatarSerializer(data=request.data, instance=profile)
-        print(request.data)
         if serializer.is_valid():
             serializer.save()
             # return redirect(request.META["HTTP_REFERER"])
@@ -180,5 +196,10 @@ class UserAvatarUpload(APIView):
 
 
 class ChangePasswordView(APIView):
+    permission_classes = [IsAuthenticated]
+
     def post(self, request, format=None):
         profile = get_profile_user(self.request.user)
+        log.info("Изменения текущего пароля пользователя")
+        print(self.request.user, "->", request)
+        return Response({"rep": "ok"}, status=status.HTTP_200_OK)
