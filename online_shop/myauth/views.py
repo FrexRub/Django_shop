@@ -2,10 +2,12 @@ import logging
 import json
 from dataclasses import asdict
 
+import django.http
 from django.contrib.auth.models import User
 from django.contrib.auth import logout
 from django.contrib.auth import authenticate, login
 from django.urls import reverse_lazy
+from django.shortcuts import redirect
 from rest_framework import status
 from rest_framework.response import Response
 from rest_framework.views import APIView
@@ -130,10 +132,12 @@ class ProfileView(APIView):
             fullName=profile.user.first_name,
             email=profile.user.email,
             phone=profile.phone_number,
-            avatar={"src": str(profile.avatar), "alt": profile.slug},
+            avatar={
+                "src": "".join(["/media/", str(profile.avatar)]),
+                "alt": profile.slug,
+            },
         )
 
-        print("Profile:", asdict(res_profile))
         serializer = ProfileSerializer(data=asdict(res_profile))
         if serializer.is_valid():
             log.info("Успешная валидация данных пользователя %s", serializer.data)
@@ -161,6 +165,7 @@ class UserAvatarUpload(APIView):
         print(request.data)
         if serializer.is_valid():
             serializer.save()
+            # return redirect(request.META["HTTP_REFERER"])
             return Response(serializer.data, status=status.HTTP_200_OK)
         else:
             return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)

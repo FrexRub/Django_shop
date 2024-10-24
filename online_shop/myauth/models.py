@@ -1,12 +1,23 @@
 from django.contrib.auth.models import User
 from django.db import models
 from django.core.validators import FileExtensionValidator
+from django.core.exceptions import ValidationError
 from django.urls import reverse
 
 from services.utils import unique_slugify
 
+MAX_SIZE_FILE = 2
+
+
+def validate_file_size(value):
+    filesize = value.size
+
+    if filesize > MAX_SIZE_FILE * 1024 * 1024:
+        raise ValidationError(f"You cannot upload file more than {MAX_SIZE_FILE}Mb")
+
+
 def user_directory_path(instance, filename):
-    return "user_{pk}/{filename}".format(pk=instance.user.id, filename=filename)
+    return "profile/user_{pk}/{filename}".format(pk=instance.user.id, filename=filename)
 
 
 class Profile(models.Model):
@@ -17,17 +28,21 @@ class Profile(models.Model):
         null=True,
         blank=True,
         upload_to=user_directory_path,
-        validators=[FileExtensionValidator(allowed_extensions=("png", "jpg", "jpeg"))],
+        validators=[
+            FileExtensionValidator(allowed_extensions=("png", "jpg", "jpeg")),
+            validate_file_size,
+        ],
     )
-    slug = models.SlugField(verbose_name='URL', max_length=255, blank=True, unique=True)
+    slug = models.SlugField(verbose_name="URL", max_length=255, blank=True, unique=True)
 
     class Meta:
         """
         Сортировка, название таблицы в базе данных
         """
-        ordering = ('user',)
-        verbose_name = 'Профиль'
-        verbose_name_plural = 'Профили'
+
+        ordering = ("user",)
+        verbose_name = "Профиль"
+        verbose_name_plural = "Профили"
 
     def save(self, *args, **kwargs):
         """
@@ -47,4 +62,4 @@ class Profile(models.Model):
         """
         Ссылка на профиль
         """
-        return reverse('profile_detail', kwargs={'slug': self.slug})
+        return reverse("profile_detail", kwargs={"slug": self.slug})
