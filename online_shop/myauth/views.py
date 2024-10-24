@@ -117,6 +117,8 @@ class LogoutAPIView(APIView):
 
 
 class ProfileView(APIView):
+    permission_classes = [IsAuthenticated]
+
     def get(self, request):
         profile: Profile = (
             Profile.objects.select_related("user")
