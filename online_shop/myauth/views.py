@@ -134,13 +134,20 @@ class ProfileView(APIView):
     permission_classes = [IsAuthenticated]
 
     def post(self, request, format=None):
-        profile = get_profile_user(self.request.user)
+        user: User = self.request.user
+        profile: Profile = get_profile_user(user)
         log.info("Изменение данных профиля пользователя %s", self.request.user)
         print(self.request.user, "->", request.data)
         serializer = ProfileSerializer(data=request.data)
-
         if serializer.is_valid():
-            # serializer.save()
+            # Запись данных в модель пользователя
+            user.first_name = request.data.get("fullName")
+            user.email = request.data.get("email")
+            user.save()
+
+            # Запись данных в модель профиля пользователя
+            profile.phone_number = request.data.get("phone")
+            profile.save()
             log.info("Изменение данных профиля пользователя внесены")
             return Response(
                 {"message": "User registered successfully"},
