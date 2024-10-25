@@ -18,7 +18,8 @@ from rest_framework.parsers import MultiPartParser, FormParser
 from .serializers import (
     UserRegistrationSerializer,
     UserLoginSerializer,
-    ProfileSerializer,
+    ProfileSerializerGet,
+    ProfileSerializerPost,
     UserAvatarSerializer,
 )
 from .models import Profile
@@ -138,14 +139,32 @@ class ProfileView(APIView):
         profile: Profile = get_profile_user(user)
         log.info("Изменение данных профиля пользователя %s", self.request.user)
         print(self.request.user, "->", request.data)
-        serializer = ProfileSerializer(data=request.data)
+        serializer = ProfileSerializerPost(data=request.data)
         if serializer.is_valid():
             # Запись данных в модель пользователя
             user.first_name = request.data.get("fullName")
+
+            if (
+                User.objects.filter(email=request.data.get("email"))
+                .exclude(first_name=user.first_name)
+                .exists()
+            ):
+                return Response(
+                    {"err": "Email in use"}, status=status.HTTP_400_BAD_REQUEST
+                )
+
             user.email = request.data.get("email")
             user.save()
 
             # Запись данных в модель профиля пользователя
+            if (
+                Profile.objects.filter(phone_number=request.data.get("phone"))
+                .exclude(user=user)
+                .exists()
+            ):
+                return Response(
+                    {"err": "Phone in use"}, status=status.HTTP_400_BAD_REQUEST
+                )
             profile.phone_number = request.data.get("phone")
             profile.save()
             log.info("Изменение данных профиля пользователя внесены")
@@ -158,11 +177,8 @@ class ProfileView(APIView):
             return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
     def get(self, request):
-        profile: Profile = (
-            Profile.objects.select_related("user")
-            .filter(user=self.request.user)
-            .first()
-        )
+        profile: Profile = get_profile_user(self.request.user)
+
         log.info("Загрузка профиля пользователя %s", self.request.user)
         res_profile = ProfileSchema(
             fullName=profile.user.first_name,
@@ -174,7 +190,7 @@ class ProfileView(APIView):
             },
         )
 
-        serializer = ProfileSerializer(data=asdict(res_profile))
+        serializer = ProfileSerializerGet(data=asdict(res_profile))
         if serializer.is_valid():
             log.info("Успешная валидация данных пользователя %s", serializer.data)
 

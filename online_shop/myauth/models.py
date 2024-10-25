@@ -8,7 +8,10 @@ from django.core.validators import RegexValidator
 from services.utils import unique_slugify
 
 MAX_SIZE_FILE = 2
-phone_number_validator = RegexValidator(r'^((8|\+7)[\- ]?)?(\(?\d{3}\)?[\- ]?)?[\d\- ]{7,10}$')
+phone_number_validator = RegexValidator(
+    r"^((8|\+7)[\- ]?)?(\(?\d{3}\)?[\- ]?)?[\d\- ]{7,10}$"
+)
+
 
 def validate_file_size(value):
     filesize = value.size
@@ -23,14 +26,16 @@ def user_directory_path(instance, filename):
 
 class Profile(models.Model):
     user = models.OneToOneField(User, on_delete=models.CASCADE, related_name="profile")
-    phone_number = models.CharField(max_length=15, verbose_name="Телефон", validators=[phone_number_validator])
+    phone_number = models.CharField(
+        max_length=15, verbose_name="Телефон", validators=[phone_number_validator]
+    )
     avatar = models.ImageField(
         verbose_name="Аватар",
         null=True,
         blank=True,
         upload_to=user_directory_path,
         validators=[
-            FileExtensionValidator(allowed_extensions=("png", "jpg", "jpeg")),
+            FileExtensionValidator(allowed_extensions=("png", "jpg", "jpeg", "gif")),
             validate_file_size,
         ],
     )

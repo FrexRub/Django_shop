@@ -11,9 +11,9 @@ log = logging.getLogger(__name__)
 # PATTERN_PASSWORD = (
 #     r"^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,}$"
 # )
-PATTERN_PASSWORD = (
-    r'^(?=.*?[a-z])(?=.*?[A-Z])(?=.*?[0-9])(?=.*?[!"#\$%&\(\)\*\+,-\.\/:;<=>\?@[\]\^_`\{\|}~])[a-zA-Z0-9!\$%&\(\)\*\+,-\.\/:;<=>\?@[\]\^_`\{\|}~]{8,}$'
-)
+PATTERN_PASSWORD = r'^(?=.*?[a-z])(?=.*?[A-Z])(?=.*?[0-9])(?=.*?[!"#\$%&\(\)\*\+,-\.\/:;<=>\?@[\]\^_`\{\|}~])[a-zA-Z0-9!\$%&\(\)\*\+,-\.\/:;<=>\?@[\]\^_`\{\|}~]{8,}$'
+PATTERN_PHONE = r"^((8|\+7)[\- ]?)?(\(?\d{3}\)?[\- ]?)?[\d\- ]{7,10}$"
+
 
 class UserLoginSerializer(serializers.Serializer):
     username = serializers.CharField(max_length=150)
@@ -46,14 +46,27 @@ class UserRegistrationSerializer(serializers.ModelSerializer):
         return user
 
 
-class ProfileSerializer(serializers.Serializer):
+class ProfileSerializerGet(serializers.Serializer):
     fullName = serializers.CharField(allow_blank=True, max_length=150)
     email = serializers.CharField(allow_blank=True)
     phone = serializers.CharField(allow_blank=True)
     avatar = serializers.DictField(child=serializers.CharField(allow_blank=True))
 
-    # def update(self, instance, validated_data):
-    #     raise NotImplementedError('`update()` must be implemented.')
+
+class ProfileSerializerPost(serializers.Serializer):
+    fullName = serializers.CharField(allow_blank=True, max_length=150)
+    email = serializers.CharField(allow_blank=True)
+    phone = serializers.CharField(allow_blank=True)
+
+    def validate_phone(self, value):
+        log.info("Начало валидации телефона")
+
+        if re.search(PATTERN_PHONE, value):
+            log.info("Телефон указан верно")
+            return value
+        else:
+            log.info("Телефон указан неверно")
+            raise serializers.ValidationError("Invalid phone")
 
 
 class UserAvatarSerializer(serializers.ModelSerializer):
