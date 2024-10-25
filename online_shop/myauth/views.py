@@ -14,6 +14,12 @@ from rest_framework.views import APIView
 from rest_framework import exceptions
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.parsers import MultiPartParser, FormParser
+from drf_spectacular.utils import (
+    extend_schema_view,
+    extend_schema,
+    OpenApiResponse,
+    OpenApiExample,
+)
 
 from .serializers import (
     UserRegistrationSerializer,
@@ -41,6 +47,7 @@ def get_profile_user(user: User) -> Profile:
     return profile
 
 
+@extend_schema(tags=["auth"])
 class UserLoginView(APIView):
     def post(self, request):
         # POST data в формате QueryDict, все данные передаются в качестве ключа словаря
@@ -83,6 +90,7 @@ class UserLoginView(APIView):
             return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
 
+@extend_schema(tags=["auth"])
 class UserRegistrationView(APIView):
     def post(self, request):
         # POST data в формате QueryDict, все данные передаются в качестве ключа словаря
@@ -122,7 +130,9 @@ class UserRegistrationView(APIView):
             return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
 
+@extend_schema(tags=["auth"])
 class LogoutAPIView(APIView):
+    permission_classes = [IsAuthenticated]
     next_page = reverse_lazy("home")
 
     def post(self, request):
@@ -132,6 +142,7 @@ class LogoutAPIView(APIView):
         return Response({"detail": "Logout Successful"}, status=status.HTTP_200_OK)
 
 
+@extend_schema(tags=["profile"])
 class ProfileView(APIView):
     permission_classes = [IsAuthenticated]
 
@@ -204,6 +215,7 @@ class ProfileView(APIView):
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
 
+@extend_schema(tags=["profile"])
 class UserAvatarUpload(APIView):
     parser_classes = [MultiPartParser, FormParser]
     permission_classes = [IsAuthenticated]
@@ -219,6 +231,7 @@ class UserAvatarUpload(APIView):
             return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
 
+@extend_schema(tags=["profile"])
 class ChangePasswordView(APIView):
     permission_classes = [IsAuthenticated]
 
