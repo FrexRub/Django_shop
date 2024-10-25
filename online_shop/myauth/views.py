@@ -21,6 +21,7 @@ from .serializers import (
     ProfileSerializerGet,
     ProfileSerializerPost,
     UserAvatarSerializer,
+    PasswordSerializer,
 )
 from .models import Profile
 from services.schemas import ProfileSchema
@@ -67,7 +68,7 @@ class UserLoginView(APIView):
                 login(request=self.request, user=user)
                 log.info("Пользователь %s авторизовался", username)
             else:
-                log.info("Неверный пароль", username)
+                log.info("Неверный пароль пользователя %s", username)
                 return Response(
                     {"message": "Invalid password"},
                     status=status.HTTP_403_FORBIDDEN,
@@ -222,7 +223,25 @@ class ChangePasswordView(APIView):
     permission_classes = [IsAuthenticated]
 
     def post(self, request, format=None):
-        profile = get_profile_user(self.request.user)
-        log.info("Изменения текущего пароля пользователя")
-        print(self.request.user, "->", request)
-        return Response({"rep": "ok"}, status=status.HTTP_200_OK)
+        user: User = self.request.user
+        log.info("Изменения текущего пароля пользователя %s", user.username)
+
+        if user.check_password(request.data.get("passwordCurrent")):
+            log.info("Текущий пароль пользователя %s указан верно", user.username)
+        else:
+            log.info("Неверный пароль пользователя %s", user.username)
+            return Response(
+                {"message": "Invalid password"},
+                status=status.HTTP_403_FORBIDDEN,
+            )
+        serializer = PasswordSerializer(data={"password": request.data.get("password")})
+        if serializer.is_valid():
+            user.set_password(request.data.get("password"))
+            user.save()
+            log.info("Успешная смена пароля пользователя %s", user.username)
+            return Response(
+                {"message": "ok"},
+                status=status.HTTP_200_OK,
+            )
+        else:
+            return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)

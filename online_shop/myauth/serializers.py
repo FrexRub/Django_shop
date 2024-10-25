@@ -78,3 +78,17 @@ class UserAvatarSerializer(serializers.ModelSerializer):
         if self.instance.avatar:
             self.instance.avatar.delete()
         return super().save(*args, **kwargs)
+
+
+class PasswordSerializer(serializers.Serializer):
+    password = serializers.CharField(allow_blank=True)
+
+    def validate_password(self, value):
+        log.info("Начало валидации пароля")
+
+        if re.search(PATTERN_PASSWORD, value):
+            log.info("Пароль соответствует политике безопасности")
+            return value
+        else:
+            log.info("Пароль не соответствует политике безопасности")
+            raise serializers.ValidationError("Invalid password")
