@@ -15,6 +15,10 @@ PATTERN_PASSWORD = r'^(?=.*?[a-z])(?=.*?[A-Z])(?=.*?[0-9])(?=.*?[!"#\$%&\(\)\*\+
 PATTERN_PHONE = r"^((8|\+7)[\- ]?)?(\(?\d{3}\)?[\- ]?)?[\d\- ]{7,10}$"
 
 
+class ResultSerializer(serializers.Serializer):
+    message = serializers.CharField()
+
+
 class UserLoginSerializer(serializers.Serializer):
     username = serializers.CharField(max_length=150)
     password = serializers.CharField()

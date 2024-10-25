@@ -28,6 +28,7 @@ from .serializers import (
     ProfileSerializerPost,
     UserAvatarSerializer,
     PasswordSerializer,
+    ResultSerializer,
 )
 from .models import Profile
 from services.schemas import ProfileSchema
@@ -47,8 +48,24 @@ def get_profile_user(user: User) -> Profile:
     return profile
 
 
-@extend_schema(tags=["auth"])
+# @extend_schema_view(
+#     create=extend_schema(
+#         summary="Авторизация пользователя",
+#         request=UserLoginSerializer,
+#         responses={
+#             status.HTTP_200_OK: ResultSerializer,
+#             status.HTTP_400_BAD_REQUEST: ResultSerializer,
+#             status.HTTP_500_INTERNAL_SERVER_ERROR: OpenApiResponse(
+#                 response=None,
+#                 description="Что-то пошло не так",
+#             ),
+#         },
+#     ),
+# )
 class UserLoginView(APIView):
+    @extend_schema(
+        tags=["auth"], request=UserLoginSerializer, responses=ResultSerializer
+    )
     def post(self, request):
         # POST data в формате QueryDict, все данные передаются в качестве ключа словаря
         data_log = json.loads(list(request.POST.dict().items())[0][0])
@@ -90,8 +107,10 @@ class UserLoginView(APIView):
             return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
 
-@extend_schema(tags=["auth"])
 class UserRegistrationView(APIView):
+    @extend_schema(
+        tags=["auth"], request=UserRegistrationSerializer, responses=ResultSerializer
+    )
     def post(self, request):
         # POST data в формате QueryDict, все данные передаются в качестве ключа словаря
         data_req = json.loads(list(request.POST.dict().items())[0][0])
@@ -130,16 +149,16 @@ class UserRegistrationView(APIView):
             return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
 
-@extend_schema(tags=["auth"])
 class LogoutAPIView(APIView):
     permission_classes = [IsAuthenticated]
     next_page = reverse_lazy("home")
 
+    @extend_schema(tags=["auth"], request=None, responses=ResultSerializer)
     def post(self, request):
         # Directly logs out the user who made the request and deletes their session.
         logout(request)
         # Return success response
-        return Response({"detail": "Logout Successful"}, status=status.HTTP_200_OK)
+        return Response({"message": "Logout Successful"}, status=status.HTTP_200_OK)
 
 
 @extend_schema(tags=["profile"])
