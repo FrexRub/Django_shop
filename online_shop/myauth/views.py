@@ -67,16 +67,22 @@ class UserLoginView(APIView):
         tags=["auth"], request=UserLoginSerializer, responses=ResultSerializer
     )
     def post(self, request):
-        # POST data в формате QueryDict, все данные передаются в качестве ключа словаря
-        data_log = json.loads(list(request.POST.dict().items())[0][0])
-        username = data_log.get("username")
+        if request.data.get("username"):
+            username = request.data.get("username")
+            password = request.data.get("password")
+        else:
+            # POST data в формате QueryDict, все данные передаются в качестве ключа словаря
+            data_log = json.loads(list(request.POST.dict().items())[0][0])
+            username = data_log.get("username")
+            password = data_log.get("password")
+
         log.info("Запрос на аутентификацию пользователя %s", username)
 
         # Проверка правильности введенных данных
         serializer = UserLoginSerializer(
             data={
                 "username": username,
-                "password": data_log.get("password"),
+                "password": password,
             }
         )
         if serializer.is_valid():
@@ -88,7 +94,7 @@ class UserLoginView(APIView):
                 raise exceptions.AuthenticationFailed("No such user")
 
             # Проверка введенного пароля
-            if user.check_password(data_log.get("password")):
+            if user.check_password(password):
                 login(request=self.request, user=user)
                 log.info("Пользователь %s авторизовался", username)
             else:
