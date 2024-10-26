@@ -118,12 +118,18 @@ class UserRegistrationView(APIView):
         tags=["auth"], request=UserRegistrationSerializer, responses=ResultSerializer
     )
     def post(self, request):
-        # POST data в формате QueryDict, все данные передаются в качестве ключа словаря
-        data_req = json.loads(list(request.POST.dict().items())[0][0])
+        if request.data.get("username"):
+            username = request.data.get("username")
+            password = request.data.get("password")
+        else:
+            # POST data в формате QueryDict, все данные передаются в качестве ключа словаря
+            data_req = json.loads(list(request.POST.dict().items())[0][0])
+            username = data_req.get("username")
+            password = data_req.get("password")
 
-        log.info("Запрос на регистрацию пользователя %s", data_req.get("username"))
+        log.info("Запрос на регистрацию пользователя %s", username)
 
-        if User.objects.filter(username=data_req.get("username")).exists():
+        if User.objects.filter(username=username).exists():
             return Response(
                 {"message": "Username is already in use"},
                 status=status.HTTP_400_BAD_REQUEST,
@@ -131,19 +137,19 @@ class UserRegistrationView(APIView):
 
         serializer = UserRegistrationSerializer(
             data={
-                "username": data_req.get("username"),
-                "password": data_req.get("password"),
+                "username": username,
+                "password": password,
             }
         )
         if serializer.is_valid():
             serializer.save()
-            log.info("Пользователь %s зарегистрирован", data_req.get("username"))
+            log.info("Пользователь %s зарегистрирован", username)
             user = authenticate(
                 self.request,
-                username=data_req.get("username"),
-                password=data_req.get("password"),
+                username=username,
+                password=password,
             )
-            log.debug("Login new user as %s", data_req.get("username"))
+            log.info("Логирование нового пользователя как %s", username)
             login(request=self.request, user=user)
 
             return Response(
@@ -161,9 +167,8 @@ class LogoutAPIView(APIView):
 
     @extend_schema(tags=["auth"], request=None, responses=ResultSerializer)
     def post(self, request):
-        # Directly logs out the user who made the request and deletes their session.
+        log.info("Выход пользователя %s из системы", self.request.user.username)
         logout(request)
-        # Return success response
         return Response({"message": "Logout Successful"}, status=status.HTTP_200_OK)
 
 
@@ -182,9 +187,9 @@ class ProfileView(APIView):
             user.first_name = request.data.get("fullName")
 
             if (
-                User.objects.filter(email=request.data.get("email"))
-                .exclude(first_name=user.first_name)
-                .exists()
+                    User.objects.filter(email=request.data.get("email"))
+                            .exclude(first_name=user.first_name)
+                            .exists()
             ):
                 return Response(
                     {"err": "Email in use"}, status=status.HTTP_400_BAD_REQUEST
@@ -195,9 +200,9 @@ class ProfileView(APIView):
 
             # Запись данных в модель профиля пользователя
             if (
-                Profile.objects.filter(phone_number=request.data.get("phone"))
-                .exclude(user=user)
-                .exists()
+                    Profile.objects.filter(phone_number=request.data.get("phone"))
+                            .exclude(user=user)
+                            .exists()
             ):
                 return Response(
                     {"err": "Phone in use"}, status=status.HTTP_400_BAD_REQUEST
