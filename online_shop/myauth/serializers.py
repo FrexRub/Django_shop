@@ -51,9 +51,9 @@ class UserRegistrationSerializer(serializers.ModelSerializer):
 
 
 class ProfileSerializerGet(serializers.Serializer):
-    fullName = serializers.CharField(allow_blank=True, max_length=150)
-    email = serializers.CharField(allow_blank=True)
-    phone = serializers.CharField(allow_blank=True)
+    fullName = serializers.CharField(allow_blank=True, max_length=150, style={'input_type': 'fullName'})
+    email = serializers.CharField(allow_blank=True, style={'input_type': 'email'})
+    phone = serializers.CharField(allow_blank=True, style={'input_type': 'phone'})
     avatar = serializers.DictField(child=serializers.CharField(allow_blank=True))
 
 

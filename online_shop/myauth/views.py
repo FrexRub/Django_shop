@@ -48,23 +48,30 @@ def get_profile_user(user: User) -> Profile:
     return profile
 
 
-# @extend_schema_view(
-#     create=extend_schema(
-#         summary="Авторизация пользователя",
-#         request=UserLoginSerializer,
-#         responses={
-#             status.HTTP_200_OK: ResultSerializer,
-#             status.HTTP_400_BAD_REQUEST: ResultSerializer,
-#             status.HTTP_500_INTERNAL_SERVER_ERROR: OpenApiResponse(
-#                 response=None,
-#                 description="Что-то пошло не так",
-#             ),
-#         },
-#     ),
-# )
 class UserLoginView(APIView):
     @extend_schema(
-        tags=["auth"], request=UserLoginSerializer, responses=ResultSerializer
+        tags=["auth"],
+        summary="Вход пользователя в личный кабинет",
+        request=UserLoginSerializer,
+        responses={
+            status.HTTP_200_OK: ResultSerializer,
+            status.HTTP_400_BAD_REQUEST: ResultSerializer,
+            status.HTTP_500_INTERNAL_SERVER_ERROR: OpenApiResponse(
+                response=None,
+                description="Что-то пошло не так",
+            )
+        },
+        examples=[
+            OpenApiExample(
+                "Login example",
+                description="Пример заполнения полей для логирования",
+                value={
+                    "username": "User1",
+                    "password": "qwertY&01",
+                },
+                status_codes=[str(status.HTTP_200_OK)]
+            )
+        ],
     )
     def post(self, request):
         if request.data.get("username"):
@@ -115,7 +122,28 @@ class UserLoginView(APIView):
 
 class UserRegistrationView(APIView):
     @extend_schema(
-        tags=["auth"], request=UserRegistrationSerializer, responses=ResultSerializer
+        tags=["auth"],
+        summary="Регистрация пользователя на сайте",
+        request=UserRegistrationSerializer,
+        responses={
+            status.HTTP_201_CREATED: ResultSerializer,
+            status.HTTP_400_BAD_REQUEST: ResultSerializer,
+            status.HTTP_500_INTERNAL_SERVER_ERROR: OpenApiResponse(
+                response=None,
+                description="Что-то пошло не так",
+            )
+        },
+        examples=[
+            OpenApiExample(
+                "Registration example",
+                description="Пример заполнения полей для регистрации",
+                value={
+                    "username": "User1",
+                    "password": "qwertY&01",
+                },
+                status_codes=[str(status.HTTP_201_CREATED)]
+            )
+        ],
     )
     def post(self, request):
         if request.data.get("username"):
@@ -165,22 +193,68 @@ class LogoutAPIView(APIView):
     permission_classes = [IsAuthenticated]
     next_page = reverse_lazy("home")
 
-    @extend_schema(tags=["auth"], request=None, responses=ResultSerializer)
+    @extend_schema(
+        tags=["auth"],
+        summary="Выход пользователя из личного кабинета",
+        request=None,
+        responses={
+            status.HTTP_200_OK: ResultSerializer,
+            status.HTTP_400_BAD_REQUEST: ResultSerializer,
+            status.HTTP_500_INTERNAL_SERVER_ERROR: OpenApiResponse(
+                response=None,
+                description="Что-то пошло не так",
+            )
+        },
+        examples=[
+            OpenApiExample(
+                "Registration example",
+                description="Пример заполнения полей для регистрации",
+                value={
+                    "username": "User1",
+                    "password": "qwertY&01",
+                },
+                status_codes=[str(status.HTTP_201_CREATED)]
+            )
+        ],
+    )
     def post(self, request):
         log.info("Выход пользователя %s из системы", self.request.user.username)
         logout(request)
         return Response({"message": "Logout Successful"}, status=status.HTTP_200_OK)
 
 
-@extend_schema(tags=["profile"])
 class ProfileView(APIView):
     permission_classes = [IsAuthenticated]
 
+    @extend_schema(
+        tags=["profile"],
+        summary="Редактирование профиля пользователя",
+        request=ProfileSerializerPost,
+        responses={
+            status.HTTP_200_OK: ResultSerializer,
+            status.HTTP_400_BAD_REQUEST: ResultSerializer,
+            status.HTTP_500_INTERNAL_SERVER_ERROR: OpenApiResponse(
+                response=None,
+                description="Что-то пошло не так",
+            )
+        },
+        examples=[
+            OpenApiExample(
+                "Profile edit example",
+                description="Пример заполнения полей для редактирования профиля",
+                value={
+                    "fullName": "Алексей Иванов",
+                    "phone": "+79151232358",
+                    "email": "alex@shop.com",
+                },
+                status_codes=[str(status.HTTP_200_OK)]
+            )
+        ],
+    )
     def post(self, request, format=None):
         user: User = self.request.user
         profile: Profile = get_profile_user(user)
         log.info("Изменение данных профиля пользователя %s", self.request.user)
-        print(self.request.user, "->", request.data)
         serializer = ProfileSerializerPost(data=request.data)
         if serializer.is_valid():
             # Запись данных в модель пользователя
@@ -218,6 +292,35 @@ class ProfileView(APIView):
             log.error("Данные некорректны %s", serializer.errors)
             return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
+    @extend_schema(
+        tags=["profile"],
+        summary="Загрузка профиля пользователя",
+        request=None,
+        responses={
+            status.HTTP_200_OK: ProfileSerializerGet,
+            status.HTTP_400_BAD_REQUEST: ResultSerializer,
+            status.HTTP_500_INTERNAL_SERVER_ERROR: OpenApiResponse(
+                response=None,
+                description="Что-то пошло не так",
+            )
+        },
+        examples=[
+            OpenApiExample(
+                "Profile example",
+                description="Пример профиля",
+                value={
+                    "fullName": "Annoying Orange",
+                    "email": "no-reply@mail.ru",
+                    "phone": "88002000600",
+                    "avatar": {
+                        "src": "/3.png",
+                        "alt": "Image alt string"
+                    }
+                },
+                status_codes=[str(status.HTTP_200_OK)]
+            )
+        ],
+    )
     def get(self, request):
         profile: Profile = get_profile_user(self.request.user)
 
@@ -245,11 +348,23 @@ class ProfileView(APIView):
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
 
-@extend_schema(tags=["profile"])
 class UserAvatarUpload(APIView):
     parser_classes = [MultiPartParser, FormParser]
     permission_classes = [IsAuthenticated]
 
+    @extend_schema(
+        tags=["profile"],
+        summary="Изменение профиля аватара",
+        request=None,
+        responses={
+            status.HTTP_200_OK: None,
+            status.HTTP_400_BAD_REQUEST: ResultSerializer,
+            status.HTTP_500_INTERNAL_SERVER_ERROR: OpenApiResponse(
+                response=None,
+                description="Что-то пошло не так",
+            )
+        },
+    )
     def post(self, request, format=None):
         profile = get_profile_user(self.request.user)
         serializer = UserAvatarSerializer(data=request.data, instance=profile)
@@ -261,10 +376,34 @@ class UserAvatarUpload(APIView):
             return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
 
-@extend_schema(tags=["profile"])
 class ChangePasswordView(APIView):
     permission_classes = [IsAuthenticated]
 
+    @extend_schema(
+        tags=["profile"],
+        summary="Изменение пароля пользователя",
+        request=PasswordSerializer,
+        responses={
+            status.HTTP_200_OK: ResultSerializer,
+            status.HTTP_400_BAD_REQUEST: ResultSerializer,
+            status.HTTP_500_INTERNAL_SERVER_ERROR: OpenApiResponse(
+                response=None,
+                description="Что-то пошло не так",
+            )
+        },
+        examples=[
+            OpenApiExample(
+                "Password edit example",
+                description="Пример изменения пароля",
+                value={
+                    "passwordCurrent": "old password",
+                    "password": "new password",
+                    "passwordReply": "reply new password",
+                },
+                status_codes=[str(status.HTTP_200_OK)]
+            )
+        ],
+    )
     def post(self, request, format=None):
         user: User = self.request.user
         log.info("Изменения текущего пароля пользователя %s", user.username)
@@ -277,6 +416,14 @@ class ChangePasswordView(APIView):
                 {"message": "Invalid password"},
                 status=status.HTTP_403_FORBIDDEN,
             )
+
+        if request.data.get("password") != request.data.get("passwordReply"):
+            log.info("Пароли не совпадают", user.username)
+            return Response(
+                {"message": "Passwords don't match"},
+                status=status.HTTP_400_BAD_REQUEST,
+            )
+
         serializer = PasswordSerializer(data={"password": request.data.get("password")})
         if serializer.is_valid():
             user.set_password(request.data.get("password"))
