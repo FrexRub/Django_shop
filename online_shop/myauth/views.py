@@ -262,31 +262,34 @@ class ProfileView(APIView):
 
             if (
                     User.objects.filter(email=request.data.get("email"))
-                            .exclude(first_name=user.first_name)
+                            .exclude(username=user.username)
                             .exists()
             ):
+                log.info("Пользователь с данным email уже зарегистрирован")
                 return Response(
-                    {"err": "Email in use"}, status=status.HTTP_400_BAD_REQUEST
+                    {"message": "Email in use"}, status=status.HTTP_400_BAD_REQUEST
                 )
 
             user.email = request.data.get("email")
-            user.save()
 
             # Запись данных в модель профиля пользователя
             if (
-                    Profile.objects.filter(phone_number=request.data.get("phone"))
-                            .exclude(user=user)
+                    Profile.objects.select_related("user")
+                            .filter(phone_number=request.data.get("phone"))
+                            .exclude(user__username=user.username)
                             .exists()
             ):
+                log.info("Пользователь с данным телефонов уже зарегистрирован")
                 return Response(
-                    {"err": "Phone in use"}, status=status.HTTP_400_BAD_REQUEST
+                    {"message": "Phone in use"}, status=status.HTTP_400_BAD_REQUEST
                 )
             profile.phone_number = request.data.get("phone")
             profile.save()
+            user.save()
             log.info("Изменение данных профиля пользователя внесены")
             return Response(
                 {"message": "User registered successfully"},
-                status=status.HTTP_201_CREATED,
+                status=status.HTTP_200_OK,
             )
         else:
             log.error("Данные некорректны %s", serializer.errors)
