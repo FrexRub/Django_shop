@@ -421,7 +421,7 @@ class ChangePasswordView(APIView):
             )
 
         if request.data.get("password") != request.data.get("passwordReply"):
-            log.info("Пароли не совпадают", user.username)
+            log.info("Пароли не совпадают %s", user.username)
             return Response(
                 {"message": "Passwords don't match"},
                 status=status.HTTP_400_BAD_REQUEST,

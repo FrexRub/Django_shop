@@ -42,8 +42,6 @@ class UserRegistrationViewTestCase(TestCase):
             "password": "1qaz!QAZ"
         }
         response = self.client.post(reverse("api:sign_up"), user)
-        # profile: Profile = Profile.objects.select_related("user").filter(user__username="TestUser1").first()
-        # print("profile:", profile.user.username, "phone_number: ", profile.phone_number, "email: ", profile.user.email)
 
         self.assertEqual(response.status_code, 201)
         self.assertTrue(
@@ -128,11 +126,9 @@ class UserEditProfileViewTestCase(TestCase):
             username="TestUser1",
             password="1qaz!QAZ"
         )
-        # cls.user_1.email = "test@shop.com"
         cls.user_1.save()
 
         cls.profile_1: Profile = Profile.objects.create(user=cls.user_1)
-        # cls.profile_1.phone_number = "+73527362875"
         cls.profile_1.save()
 
         # Create TestUser2
@@ -239,3 +235,82 @@ class UserEditProfileViewTestCase(TestCase):
         received_data = json.loads(response.content)
         self.assertEqual(response.status_code, 400)
         self.assertEqual(received_data["message"], "Phone in use")
+
+
+class UserEditPasswordViewTestCase(TestCase):
+    @classmethod
+    def setUpClass(cls):
+        # Create TestUser1
+        cls.user: User = User.objects.create_user(
+            username="TestUser",
+            password="1qaz!QAZ"
+        )
+        cls.user.save()
+
+    @classmethod
+    def tearDownClass(cls):
+        cls.user.delete()
+
+    def test_invalid_password(self):
+        """
+        Тестирование редактирования профиля (неверный пароль пользователя)
+        """
+        self.client.force_login(self.user)
+        data_pass = {
+            "passwordCurrent": "1qaz!QAZ!",
+            "password": "2wsx@WSX",
+            "passwordReply": "2wsx@WSX",
+        }
+
+        response = self.client.post(reverse("api:edit_password"), data_pass)
+        received_data = json.loads(response.content)
+        self.assertEqual(response.status_code, 403)
+        self.assertEqual(received_data["message"], "Invalid password")
+
+    def test_password_bad(self):
+        """
+        Тестирование редактирования профиля (задаваемые пароли небезопасны)
+        """
+        self.client.force_login(self.user)
+        data_pass = {
+            "passwordCurrent": "1qaz!QAZ",
+            "password": "123456",
+            "passwordReply": "123456",
+        }
+
+        response = self.client.post(reverse("api:edit_password"), data_pass)
+        received_data = json.loads(response.content)
+        self.assertEqual(response.status_code, 400)
+        self.assertEqual(received_data["password"][0], "Invalid password")
+
+    def test_password_dont_match(self):
+        """
+        Тестирование редактирования профиля (задаваемые пароли не совпадают)
+        """
+        self.client.force_login(self.user)
+        data_pass = {
+            "passwordCurrent": "1qaz!QAZ",
+            "password": "2wsx@WSX!",
+            "passwordReply": "2wsx@WSX",
+        }
+
+        response = self.client.post(reverse("api:edit_password"), data_pass)
+        received_data = json.loads(response.content)
+        self.assertEqual(response.status_code, 400)
+        self.assertEqual(received_data["message"], "Passwords don't match")
+
+    def test_password_ok(self):
+        """
+        Тестирование редактирования профиля (изменение пароля)
+        """
+        self.client.force_login(self.user)
+        data_pass = {
+            "passwordCurrent": "1qaz!QAZ",
+            "password": "2wsx@WSX",
+            "passwordReply": "2wsx@WSX",
+        }
+
+        response = self.client.post(reverse("api:edit_password"), data_pass)
+        received_data = json.loads(response.content)
+        self.assertEqual(response.status_code, 200)
+        self.assertEqual(received_data["message"], "ok")
