@@ -11,6 +11,8 @@ https://docs.djangoproject.com/en/5.1/ref/settings/
 """
 
 from pathlib import Path
+from os import getenv
+import logging.config
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
@@ -20,12 +22,20 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 # See https://docs.djangoproject.com/en/5.1/howto/deployment/checklist/
 
 # SECURITY WARNING: keep the secret key used in production secret!
-SECRET_KEY = "django-insecure-h1tifkmrx_sq#w6vujmel_yl%wu54_3klc&nh@420bl(w&th$y"
+SECRET_KEY = getenv(
+    "DJANGO_SECRET_KEY",
+    "django-insecure-hvxn%qq=gyw^4*o2lo1#bw0=wh#ux9s8h!=@c608arf_gz3+^7"
+)
 
 # SECURITY WARNING: don't run with debug turned on in production!
+# DEBUG = getenv("DJANGO_DEBUG", "0") == "1"
 DEBUG = True
 
-ALLOWED_HOSTS = []
+ALLOWED_HOSTS = [
+    "0.0.0.0",
+    "127.0.0.1",
+] + getenv("DJANGO_ALLOWED_HOSTS", "").split(",")
+
 
 
 # Application definition
@@ -39,6 +49,7 @@ INSTALLED_APPS = [
     "django.contrib.staticfiles",
     "rest_framework",
     "drf_spectacular",
+    "debug_toolbar",
     "frontend",
     "myauth.apps.MyauthConfig",
     "api.apps.ApiConfig",
@@ -52,6 +63,7 @@ MIDDLEWARE = [
     "django.contrib.auth.middleware.AuthenticationMiddleware",
     "django.contrib.messages.middleware.MessageMiddleware",
     "django.middleware.clickjacking.XFrameOptionsMiddleware",
+    "debug_toolbar.middleware.DebugToolbarMiddleware",
 ]
 
 ROOT_URLCONF = "online_shop.urls"
@@ -74,6 +86,9 @@ TEMPLATES = [
 
 WSGI_APPLICATION = "online_shop.wsgi.application"
 
+INTERNAL_IPS = [
+    "127.0.0.1",
+]
 
 # Database
 # https://docs.djangoproject.com/en/5.1/ref/settings/#databases
@@ -148,6 +163,8 @@ SPECTACULAR_SETTINGS = {
     "VERSION": "1.0.0",
     "SERVE_INCLUDE_SCHEMA": False,
 }
+
+LOGLEVEL = getenv("DJANGO_LOGLEVEL", "info").upper()
 
 LOGGING = {
     "version": 1,

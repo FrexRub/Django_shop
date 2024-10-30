@@ -31,6 +31,7 @@ from .serializers import (
     ResultSerializer,
 )
 from .models import Profile
+from online_shop import settings
 from services.schemas import ProfileSchema
 
 log = logging.getLogger(__name__)
@@ -84,6 +85,7 @@ class UserLoginView(APIView):
             password = data_log.get("password")
 
         log.info("Запрос на аутентификацию пользователя %s", username)
+        log.info("DEBUG %s", settings.DEBUG)
 
         # Проверка правильности введенных данных
         serializer = UserLoginSerializer(
