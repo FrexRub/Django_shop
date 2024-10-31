@@ -6,19 +6,11 @@ from django.core.exceptions import ValidationError
 from django.urls import reverse
 from django.core.validators import RegexValidator
 
-from services.utils import unique_slugify
+from services.utils import unique_slugify, validate_file_size
 
-MAX_SIZE_FILE = 2
 phone_number_validator = RegexValidator(
     r"^((8|\+7)[\- ]?)?(\(?\d{3}\)?[\- ]?)?[\d\- ]{7,10}$"
 )
-
-
-def validate_file_size(value):
-    filesize = value.size
-
-    if filesize > MAX_SIZE_FILE * 1024 * 1024:
-        raise ValidationError(f"You cannot upload file more than {MAX_SIZE_FILE}Mb")
 
 
 def user_directory_path(instance, filename):

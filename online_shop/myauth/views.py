@@ -342,7 +342,7 @@ class ProfileView(APIView):
 
         serializer = ProfileSerializerGet(data=asdict(res_profile))
         if serializer.is_valid():
-            log.info("Успешная валидация данных пользователя %s", serializer.data)
+            log.info("Успешная валидация данных пользователя %s", self.request.user)
 
             return Response(
                 serializer.data,
