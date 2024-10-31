@@ -1,5 +1,6 @@
 from django.contrib.auth.models import User
 from django.db import models
+from django.contrib.postgres.indexes import HashIndex
 from django.core.validators import FileExtensionValidator
 from django.core.exceptions import ValidationError
 from django.urls import reverse
@@ -43,12 +44,15 @@ class Profile(models.Model):
 
     class Meta:
         """
-        Сортировка, название таблицы в базе данных
+        Сортировка, имена в административной панели, индексы
         """
-
         ordering = ("user",)
         verbose_name = "Профиль"
         verbose_name_plural = "Профили"
+
+        indexes = [
+            HashIndex(fields=['phone_number'], name='phone_hash_index'),
+        ]
 
     def save(self, *args, **kwargs):
         """

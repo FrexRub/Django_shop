@@ -53,6 +53,7 @@ INSTALLED_APPS = [
     "frontend",
     "myauth.apps.MyauthConfig",
     "api.apps.ApiConfig",
+    "shopapp.apps.ShopappConfig"
 ]
 
 MIDDLEWARE = [
