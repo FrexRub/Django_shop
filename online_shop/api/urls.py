@@ -9,6 +9,11 @@ from myauth.views import (
     ChangePasswordView,
 )
 
+from shopapp.views import (
+    TagApiView,
+    ProductApiView,
+)
+
 app_name = "api"
 
 urlpatterns = [
@@ -18,4 +23,6 @@ urlpatterns = [
     path("profile/password/", ChangePasswordView.as_view(), name="edit_password"),
     path("profile/avatar/", UserAvatarUpload.as_view(), name="avatar"),
     path("profile/", ProfileView.as_view(), name="profile"),
+    path("tag/", TagApiView.as_view(), name="tag"),
+    path("product/<int:pk>/", ProductApiView.as_view(), name="product_details"),
 ]
