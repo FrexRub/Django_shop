@@ -14,7 +14,7 @@ phone_number_validator = RegexValidator(
 
 
 def user_directory_path(instance, filename):
-    return "images/profile/user_{pk}/{filename}".format(pk=instance.user.id, filename=filename)
+    return "profile/user_{pk}/{filename}".format(pk=instance.user.id, filename=filename)
 
 
 class Profile(models.Model):
