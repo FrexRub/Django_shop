@@ -151,8 +151,8 @@ class ProductImage(models.Model):
     product = models.ForeignKey(
         Product, on_delete=models.CASCADE, related_name="images"
     )
-    image = models.ImageField(upload_to=product_images_directory_path)
-    description = models.CharField(max_length=200, null=False, blank=True)
+    src = models.ImageField(upload_to=product_images_directory_path)
+    alt = models.CharField(max_length=200, null=False, blank=True)
 
     class Meta:
         """
@@ -167,7 +167,7 @@ class ProductImage(models.Model):
         """
         Возвращение строки
         """
-        return self.description
+        return self.alt
 
 
 class Review(models.Model):

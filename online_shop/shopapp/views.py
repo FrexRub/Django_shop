@@ -1,6 +1,8 @@
 import logging
+import json
 
 from django.shortcuts import get_object_or_404
+from django.http import HttpResponse, JsonResponse
 from django.core.exceptions import ObjectDoesNotExist
 from rest_framework import status
 from rest_framework.views import APIView
@@ -52,13 +54,13 @@ class ProductApiView(APIView):
             .first()
         )
 
-        print(product)
         if product is None:
             return Response(
                 {"massage": "Product not found"},
                 status=status.HTTP_400_BAD_REQUEST,
             )
         serializer = ProductSerializer(product)
+
         return Response(
             serializer.data,
             status=status.HTTP_200_OK,
