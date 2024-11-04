@@ -1,6 +1,7 @@
 import logging
 
 from rest_framework import serializers
+from django.db.models import Avg
 from django.contrib.auth.models import User
 
 from .models import (
@@ -31,29 +32,23 @@ class SpecificationSerializer(serializers.ModelSerializer):
         )
 
 
-# class UserNameSerializer(serializers.ModelSerializer):
-#     class Meta:
-#         model = User
-#         fields = ("first_name",)
-#         # fields = ("first_name", "email", )
-
-
 class ReviewSerializer(serializers.ModelSerializer):
     # вывод имени из связанной модели User
     author = serializers.SlugRelatedField(
         queryset=User.objects.all(), slug_field="first_name"
     )
-    # вывод email из связанной модели User
-    # email = serializers.SlugRelatedField(
-    #     queryset=User.objects.all(), slug_field="email"
-    # )
-    # ToDo email
+    # создание дополнительного поля email с данными из модели User
+    email = serializers.SerializerMethodField()
+
+    def get_email(self, obj):
+        user: User = User.objects.first()
+        return user.email
 
     class Meta:
         model = Review
         fields = (
             "author",
-            # "email",
+            "email",
             "text",
             "rate",
             "date",
@@ -75,11 +70,15 @@ class ProductSerializer(serializers.ModelSerializer):
     reviews = ReviewSerializer(many=True, read_only=True)
     # вывод списка только значений из пары ключ: значение
     tags = serializers.StringRelatedField(many=True)
-    # ToDo rating
-    # вывод id из связанной модели Category
+    # вывод только id из связанной модели Category
     category = serializers.SlugRelatedField(
         queryset=Category.objects.all(), slug_field="id"
     )
+    # создание дополнительного поля с расчетным средним значением
+    rating = serializers.SerializerMethodField()
+
+    def get_rating(self, obj):
+        return Product.objects.aggregate(rating=Avg("reviews__rate"))["rating"]
 
     class Meta:
         model = Product
@@ -98,4 +97,5 @@ class ProductSerializer(serializers.ModelSerializer):
             "tags",
             "reviews",
             "specifications",
+            "rating",
         )

@@ -4,6 +4,7 @@ import json
 from django.shortcuts import get_object_or_404
 from django.http import HttpResponse, JsonResponse
 from django.core.exceptions import ObjectDoesNotExist
+from django.db.models import Avg
 from rest_framework import status
 from rest_framework.views import APIView
 from rest_framework.response import Response
@@ -47,6 +48,7 @@ class ProductApiView(APIView):
     def get(self, request, pk: int):
         product: Product = (
             Product.objects.filter(pk=pk)
+            .annotate(rating=Avg("reviews__rate"))
             .select_related("category")
             .prefetch_related(
                 "tags", "images", "specifications", "reviews", "reviews__author"
