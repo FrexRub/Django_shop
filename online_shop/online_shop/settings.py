@@ -24,7 +24,7 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 # SECURITY WARNING: keep the secret key used in production secret!
 SECRET_KEY = getenv(
     "DJANGO_SECRET_KEY",
-    "django-insecure-hvxn%qq=gyw^4*o2lo1#bw0=wh#ux9s8h!=@c608arf_gz3+^7"
+    "django-insecure-hvxn%qq=gyw^4*o2lo1#bw0=wh#ux9s8h!=@c608arf_gz3+^7",
 )
 
 # SECURITY WARNING: don't run with debug turned on in production!
@@ -34,8 +34,9 @@ DEBUG = True
 ALLOWED_HOSTS = [
     "0.0.0.0",
     "127.0.0.1",
-] + getenv("DJANGO_ALLOWED_HOSTS", "").split(",")
-
+] + getenv(
+    "DJANGO_ALLOWED_HOSTS", ""
+).split(",")
 
 
 # Application definition
@@ -47,13 +48,14 @@ INSTALLED_APPS = [
     "django.contrib.sessions",
     "django.contrib.messages",
     "django.contrib.staticfiles",
+    "django_dump_load_utf8",
     "rest_framework",
     "drf_spectacular",
     "debug_toolbar",
     "frontend",
     "myauth.apps.MyauthConfig",
     "api.apps.ApiConfig",
-    "shopapp.apps.ShopappConfig"
+    "shopapp.apps.ShopappConfig",
 ]
 
 MIDDLEWARE = [
@@ -96,13 +98,13 @@ INTERNAL_IPS = [
 
 
 DATABASES = {
-    'default': {
-        'ENGINE': 'django.db.backends.postgresql',
-        'NAME': 'shop_db',
-        'USER': 'postgres',
-        'PASSWORD': 'admin',
-        'HOST': 'localhost',
-        'PORT': 5432,
+    "default": {
+        "ENGINE": "django.db.backends.postgresql",
+        "NAME": "shop_db",
+        "USER": "postgres",
+        "PASSWORD": "admin",
+        "HOST": "localhost",
+        "PORT": 5432,
     }
 }
 
@@ -131,7 +133,7 @@ AUTH_PASSWORD_VALIDATORS = [
 
 LANGUAGE_CODE = "ru-Ru"
 
-TIME_ZONE = 'Europe/Moscow'
+TIME_ZONE = "Europe/Moscow"
 
 USE_I18N = True
 

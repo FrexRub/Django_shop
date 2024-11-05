@@ -138,6 +138,17 @@ django = ">=4.2.9"
 sqlparse = ">=0.2"
 
 [[package]]
+name = "django-dump-load-utf8"
+version = "0.0.4"
+description = "Django command dumpdatautf8 and loaddatautf8"
+optional = false
+python-versions = ">=3.8"
+files = [
+    {file = "django-dump-load-utf8-0.0.4.tar.gz", hash = "sha256:963b8428803551007a53770aa60ceb9b02a59ec22c7a56b7aacda811772f2d17"},
+    {file = "django_dump_load_utf8-0.0.4-py3-none-any.whl", hash = "sha256:9f2002ab5eba55b5c4230667b6a7144a5a6aad9da89ee6f5b8bd323b00548110"},
+]
+
+[[package]]
 name = "django-filter"
 version = "24.3"
 description = "Django-filter is a reusable Django application for allowing users to filter querysets dynamically."
@@ -632,4 +643,4 @@ files = [
 [metadata]
 lock-version = "2.0"
 python-versions = "^3.11"
-content-hash = "4aa1fe023e03de43b5a5bec4335f339eb679f685367cc270339bd922afb582cd"
+content-hash = "7d313119c76df46eaa74260fd4f2db4971aa1eee943968bfe681fdbafe70e2de"
