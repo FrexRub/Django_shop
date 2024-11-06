@@ -1,5 +1,6 @@
 import logging
 import json
+from dataclasses import asdict
 
 from django.shortcuts import get_object_or_404
 from django.contrib.auth.models import User
@@ -25,6 +26,8 @@ from .serializers import (
     ProductSerializer,
     ProductShortSerializer,
 )
+
+from services.schemas import CategoriesSchema
 
 log = logging.getLogger(__name__)
 
@@ -85,3 +88,31 @@ class ProductReviewApiView(APIView):
         product: Product = get_object_or_404(ProductReviewApiView, pk=pk)
 
         # ToDo serilazed
+
+
+class CategoriesApiView(APIView):
+    def get(self, request):
+        log.info("Загрузка категорий товара")
+        data_сategories = []
+        сategories = Category.objects.all()
+        for сategory in сategories:
+            data_сategory = CategoriesSchema(
+                id=сategory.id,
+                title=сategory.title,
+                image={
+                    # "src": "".join(["/media/", str(profile.avatar)]),
+                    "src": str(сategory.image),
+                    "alt": сategory.slug,
+                },
+            )
+            res_сategory = asdict(data_сategory)
+            res_сategory["subcategories"] = list()
+            res_сategory["subcategories"].append(asdict(data_сategory))
+            data_сategories.append(res_сategory)
+
+        # serializer = ProfileSerializerGet(data=asdict(res_profile))
+
+        return Response(
+            data_сategories,
+            status=status.HTTP_200_OK,
+        )

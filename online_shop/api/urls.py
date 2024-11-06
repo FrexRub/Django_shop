@@ -13,6 +13,7 @@ from shopapp.views import (
     TagApiView,
     ProductApiView,
     ProductReviewApiView,
+    CategoriesApiView,
 )
 
 app_name = "api"
@@ -25,6 +26,7 @@ urlpatterns = [
     path("profile/avatar/", UserAvatarUpload.as_view(), name="avatar"),
     path("profile/", ProfileView.as_view(), name="profile"),
     path("tag/", TagApiView.as_view(), name="tag"),
+    path("categories/", CategoriesApiView.as_view(), name="categories"),
     path("product/<int:pk>/", ProductApiView.as_view(), name="product_details"),
     path(
         "product/<int:pk>/review/",

@@ -7,3 +7,10 @@ class ProfileSchema:
     email: str
     phone: str
     avatar: dict[str, str]
+
+
+@dataclass
+class CategoriesSchema:
+    id: int
+    title: str
+    image: dict[str, str]
