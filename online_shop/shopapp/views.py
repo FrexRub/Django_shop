@@ -137,8 +137,10 @@ class CatalogApiView(APIView):
         print("limit", limit)
 
         products = Product.objects.all()
+        print(products)
         serializer = CatalodSerializer(products)
         print(serializer.data)
+        # print(serializer.errors)
 
         return Response(
             serializer.data,
