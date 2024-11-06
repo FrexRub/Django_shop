@@ -2,12 +2,14 @@ import logging
 import json
 
 from django.shortcuts import get_object_or_404
+from django.contrib.auth.models import User
 from django.http import HttpResponse, JsonResponse
 from django.core.exceptions import ObjectDoesNotExist
 from django.db.models import Avg
 from rest_framework import status
 from rest_framework.views import APIView
 from rest_framework.response import Response
+from rest_framework.permissions import IsAuthenticated
 
 from .models import (
     Product,
@@ -21,6 +23,7 @@ from .models import (
 from .serializers import (
     TagSerializer,
     ProductSerializer,
+    ProductShortSerializer,
 )
 
 log = logging.getLogger(__name__)
@@ -67,3 +70,18 @@ class ProductApiView(APIView):
             serializer.data,
             status=status.HTTP_200_OK,
         )
+
+
+class ProductReviewApiView(APIView):
+    permission_classes = [IsAuthenticated]
+
+    def post(self, request, pk: int):
+        author = request.data.get("author")
+        email = request.data.get("author")
+        text = request.data.get("author")
+        rate = request.data.get("author")
+
+        user: User = self.request.user
+        product: Product = get_object_or_404(ProductReviewApiView, pk=pk)
+
+        # ToDo serilazed

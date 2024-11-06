@@ -1,7 +1,7 @@
 import logging
 
 from rest_framework import serializers
-from django.db.models import Avg
+from django.db.models import Avg, Count
 from django.contrib.auth.models import User
 
 from .models import (
@@ -97,5 +97,42 @@ class ProductSerializer(serializers.ModelSerializer):
             "tags",
             "reviews",
             "specifications",
+            "rating",
+        )
+
+
+class ProductShortSerializer(serializers.ModelSerializer):
+    images = ProductImageSerializer(many=True, read_only=True)
+    # вывод только id из связанной модели Category
+    category = serializers.SlugRelatedField(
+        queryset=Category.objects.all(), slug_field="id"
+    )
+    # расчет количества отзывов о продукте
+    reviews = serializers.SerializerMethodField()
+    # создание дополнительного поля с расчетным средним значением
+    rating = serializers.SerializerMethodField()
+
+    def get_rating(self, obj):
+        return Product.objects.aggregate(rating=Avg("reviews__rate"))["rating"]
+
+    def get_reviews(self, obj):
+        return Product.objects.aggregate(reviews=Count("reviews__id"))["reviews"]
+
+    class Meta:
+        model = Product
+        # для вывода данных из связанных таблиц, а не только перечень id
+        depth = 1
+        fields = (
+            "id",
+            "category",
+            "price",
+            "count",
+            "date",
+            "title",
+            "description",
+            "freeDelivery",
+            "images",
+            "tags",
+            "reviews",
             "rating",
         )
