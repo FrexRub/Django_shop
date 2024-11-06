@@ -56,6 +56,11 @@ class ReviewSerializer(serializers.ModelSerializer):
 
 
 class ProductImageSerializer(serializers.ModelSerializer):
+    src = serializers.SerializerMethodField()
+
+    def get_src(self, obj):
+        return "".join(["/media/", str(obj.src)])
+
     class Meta:
         model = ProductImage
         fields = (
@@ -136,3 +141,7 @@ class ProductShortSerializer(serializers.ModelSerializer):
             "reviews",
             "rating",
         )
+
+
+class CatalodSerializer(serializers.Serializer):
+    items = ProductShortSerializer(many=True, read_only=True)

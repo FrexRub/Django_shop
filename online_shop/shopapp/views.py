@@ -25,6 +25,7 @@ from .serializers import (
     TagSerializer,
     ProductSerializer,
     ProductShortSerializer,
+    CatalodSerializer,
 )
 
 from services.schemas import CategoriesSchema
@@ -100,8 +101,7 @@ class CategoriesApiView(APIView):
                 id=сategory.id,
                 title=сategory.title,
                 image={
-                    # "src": "".join(["/media/", str(profile.avatar)]),
-                    "src": str(сategory.image),
+                    "src": "".join(["/media/", str(сategory.image)]),
                     "alt": сategory.slug,
                 },
             )
@@ -114,5 +114,33 @@ class CategoriesApiView(APIView):
 
         return Response(
             data_сategories,
+            status=status.HTTP_200_OK,
+        )
+
+
+class CatalogApiView(APIView):
+    def get(self, request):
+        filter = request.GET.get("filter")
+        currentPage = request.GET.get("currentPage")
+        category = request.GET.get("category")
+        sort = request.GET.get("sort")
+        sortType = request.GET.get("sortType")
+        tags = request.GET.get("tags")
+        limit = request.GET.get("limit")
+
+        print("filter", filter)
+        print("currentPage", currentPage)
+        print("category", category)
+        print("sort", sort)
+        print("sortType", sortType)
+        print("tags", tags)
+        print("limit", limit)
+
+        products = Product.objects.all()
+        serializer = CatalodSerializer(products)
+        print(serializer.data)
+
+        return Response(
+            serializer.data,
             status=status.HTTP_200_OK,
         )
