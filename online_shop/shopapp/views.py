@@ -20,12 +20,12 @@ from .models import (
     Category,
     Specification,
 )
+from myauth.models import Profile
 
 from .serializers import (
     TagSerializer,
     ProductSerializer,
     ProductShortSerializer,
-    CatalodSerializer,
 )
 
 from services.schemas import CategoriesSchema
@@ -76,17 +76,43 @@ class ProductApiView(APIView):
         )
 
 
+class GetUserForReviewApiView(APIView):
+    permission_classes = [IsAuthenticated]
+
+    def get(self, request):
+        """
+        Для заполнения данных пользователя в форме отзыва (изменения в исходный код фронтенда)
+        :param request:
+            параметры запроса
+        :return:
+        """
+        user: User = request.user
+        email: str = user.email
+        author: str = user.first_name if user.first_name else user.username
+        return Response(
+            {
+                "author": author,
+                "email": email,
+            },
+            status=status.HTTP_200_OK,
+        )
+
+
 class ProductReviewApiView(APIView):
     permission_classes = [IsAuthenticated]
 
     def post(self, request, pk: int):
         author = request.data.get("author")
-        email = request.data.get("author")
-        text = request.data.get("author")
-        rate = request.data.get("author")
+        email = request.data.get("email")
+        text = request.data.get("text")
+        rate = request.data.get("rate")
 
         user: User = self.request.user
-        product: Product = get_object_or_404(ProductReviewApiView, pk=pk)
+        product: Product = get_object_or_404(Product, pk=pk)
+        print("author", author)
+        print("email", email)
+        print("text", text)
+        print("rate", rate)
 
         # ToDo serilazed
 
@@ -120,6 +146,7 @@ class CategoriesApiView(APIView):
 
 class CatalogApiView(APIView):
     def get(self, request):
+        # ToDo pagination and Filter
         filter = request.GET.get("filter")
         currentPage = request.GET.get("currentPage")
         category = request.GET.get("category")
@@ -137,12 +164,14 @@ class CatalogApiView(APIView):
         print("limit", limit)
 
         products = Product.objects.all()
-        print(products)
-        serializer = CatalodSerializer(products)
-        print(serializer.data)
-        # print(serializer.errors)
+        serializer = ProductShortSerializer(products, many=True)
+        data = {
+            "items": serializer.data,
+            "currentPage": 5,
+            "lastPage": 10,
+        }
 
         return Response(
-            serializer.data,
+            data,
             status=status.HTTP_200_OK,
         )

@@ -143,22 +143,22 @@ class ProductShortSerializer(serializers.ModelSerializer):
         )
 
 
-class CatalodSerializer(serializers.ModelSerializer):
-    items = ProductShortSerializer(many=True, read_only=True)
-
-    class Meta:
-        model = Product
-        depth = 1
-        fields = (
-            "id",
-            "category",
-            "price",
-            "count",
-            "date",
-            "title",
-            "description",
-            "freeDelivery",
-            "images",
-            "tags",
-            "items",
-        )
+# class CatalodSerializer(serializers.ModelSerializer):
+#     items = ProductShortSerializer(many=True, read_only=True)
+#
+#     class Meta:
+#         model = Product
+#         depth = 1
+#         fields = (
+#             "id",
+#             "category",
+#             "price",
+#             "count",
+#             "date",
+#             "title",
+#             "description",
+#             "freeDelivery",
+#             "images",
+#             "tags",
+#             "items",
+#         )

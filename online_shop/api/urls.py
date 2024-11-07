@@ -15,6 +15,7 @@ from shopapp.views import (
     ProductReviewApiView,
     CategoriesApiView,
     CatalogApiView,
+    GetUserForReviewApiView,
 )
 
 app_name = "api"
@@ -29,10 +30,11 @@ urlpatterns = [
     path("tag/", TagApiView.as_view(), name="tag"),
     path("categories/", CategoriesApiView.as_view(), name="categories"),
     path("catalog/", CatalogApiView.as_view(), name="catalog"),
+    path("product/reviews/", GetUserForReviewApiView.as_view(), name="get_review"),
     path("product/<int:pk>/", ProductApiView.as_view(), name="product_details"),
     path(
-        "product/<int:pk>/review/",
+        "product/<int:pk>/reviews/",
         ProductReviewApiView.as_view(),
-        name="product_review",
+        name="product_reviews",
     ),
 ]

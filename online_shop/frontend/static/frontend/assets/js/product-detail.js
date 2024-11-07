@@ -10,6 +10,14 @@ var mix = {
             this.count = this.count + value
             if (this.count < 1) this.count = 1
         },
+        getReview() {
+            this.getData(`/api/product/reviews/`).then(data => {
+                this.review.author = data.author
+                this.review.email = data.email
+            }).catch(() => {
+                console.warn('Ошибка при получении профиля')
+            })
+        },
         getProduct() {
             const productId = location.pathname.startsWith('/product/')
             ? Number(location.pathname.replace('/product/', '').replace('/', ''))
@@ -49,6 +57,9 @@ var mix = {
     },
     mounted () {
         this.getProduct();
+    },
+    created() {
+        this.getReview();
     },
     data() {
         return {
