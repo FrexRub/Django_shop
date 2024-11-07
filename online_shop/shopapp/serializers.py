@@ -32,6 +32,12 @@ class SpecificationSerializer(serializers.ModelSerializer):
         )
 
 
+class ReviewDBSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Review
+        fields = ("text", "rate")
+
+
 class ReviewSerializer(serializers.ModelSerializer):
     # вывод имени из связанной модели User
     author = serializers.SlugRelatedField(
@@ -141,24 +147,3 @@ class ProductShortSerializer(serializers.ModelSerializer):
             "reviews",
             "rating",
         )
-
-
-# class CatalodSerializer(serializers.ModelSerializer):
-#     items = ProductShortSerializer(many=True, read_only=True)
-#
-#     class Meta:
-#         model = Product
-#         depth = 1
-#         fields = (
-#             "id",
-#             "category",
-#             "price",
-#             "count",
-#             "date",
-#             "title",
-#             "description",
-#             "freeDelivery",
-#             "images",
-#             "tags",
-#             "items",
-#         )

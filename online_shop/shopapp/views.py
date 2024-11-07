@@ -26,6 +26,7 @@ from .serializers import (
     TagSerializer,
     ProductSerializer,
     ProductShortSerializer,
+    ReviewDBSerializer,
 )
 
 from services.schemas import CategoriesSchema
@@ -53,6 +54,7 @@ class TagApiView(APIView):
 
 class ProductApiView(APIView):
     def get(self, request, pk: int):
+        log.info("Запрос информации по продукту с id %s", pk)
         product: Product = (
             Product.objects.filter(pk=pk)
             .annotate(rating=Avg("reviews__rate"))
@@ -64,12 +66,13 @@ class ProductApiView(APIView):
         )
 
         if product is None:
+            log.info("Продукт с id %s не найден", pk)
             return Response(
                 {"massage": "Product not found"},
                 status=status.HTTP_400_BAD_REQUEST,
             )
         serializer = ProductSerializer(product)
-
+        log.info("Запрос информации по продукту с id %s успешно выполнен", pk)
         return Response(
             serializer.data,
             status=status.HTTP_200_OK,
@@ -86,6 +89,10 @@ class GetUserForReviewApiView(APIView):
             параметры запроса
         :return:
         """
+        log.info(
+            "Заполнение контактной информации в форме отзыва о товаре пользователя %s",
+            request.user.username,
+        )
         user: User = request.user
         email: str = user.email
         author: str = user.first_name if user.first_name else user.username
@@ -102,19 +109,27 @@ class ProductReviewApiView(APIView):
     permission_classes = [IsAuthenticated]
 
     def post(self, request, pk: int):
-        author = request.data.get("author")
-        email = request.data.get("email")
+        log.info("Создание отзыва о товаре пользователя %s", request.user.username)
+
         text = request.data.get("text")
         rate = request.data.get("rate")
-
         user: User = self.request.user
         product: Product = get_object_or_404(Product, pk=pk)
-        print("author", author)
-        print("email", email)
-        print("text", text)
-        print("rate", rate)
 
-        # ToDo serilazed
+        serializer = ReviewDBSerializer(data=request.data)
+
+        if serializer.is_valid():
+            serializer.save(author=user, product=product)
+            log.info("Отзыв пользователя %s о товаре создан", request.user.username)
+
+            return Response(
+                {"message": "The review has been created"},
+                status=status.HTTP_201_CREATED,
+            )
+        else:
+            log.error("Данные в форме отзыва некорректны", serializer.errors)
+            print(serializer.errors)
+            return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
 
 class CategoriesApiView(APIView):
