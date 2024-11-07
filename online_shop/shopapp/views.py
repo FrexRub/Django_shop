@@ -11,6 +11,7 @@ from rest_framework import status
 from rest_framework.views import APIView
 from rest_framework.response import Response
 from rest_framework.permissions import IsAuthenticated
+from rest_framework.pagination import PageNumberPagination
 
 from .models import (
     Product,
@@ -32,6 +33,12 @@ from .serializers import (
 from services.schemas import CategoriesSchema
 
 log = logging.getLogger(__name__)
+
+
+class CustomPagination(PageNumberPagination):
+    page_size = 10
+    page_size_query_param = "page_size"
+    max_page_size = 100
 
 
 class TagApiView(APIView):
@@ -161,14 +168,16 @@ class CategoriesApiView(APIView):
 
 class CatalogApiView(APIView):
     def get(self, request):
-        # ToDo pagination and Filter
+
+        # ToDo Filter
         filter = request.GET.get("filter")
-        currentPage = request.GET.get("currentPage")
         category = request.GET.get("category")
         sort = request.GET.get("sort")
         sortType = request.GET.get("sortType")
         tags = request.GET.get("tags")
-        limit = request.GET.get("limit")
+
+        currentPage = int(request.GET.get("currentPage"))
+        limit = int(request.GET.get("limit"))
 
         print("filter", filter)
         print("currentPage", currentPage)
@@ -178,12 +187,16 @@ class CatalogApiView(APIView):
         print("tags", tags)
         print("limit", limit)
 
-        products = Product.objects.all()
-        serializer = ProductShortSerializer(products, many=True)
+        queryset = Product.objects.all()[:limit]
+        paginator = CustomPagination()
+        result_page = paginator.paginate_queryset(queryset, request)
+
+        serializer = ProductShortSerializer(result_page, many=True)
         data = {
             "items": serializer.data,
-            "currentPage": 5,
-            "lastPage": 10,
+            # "currentPage": paginator.page.number,
+            "currentPage": currentPage,
+            "lastPage": paginator.page.paginator.count,
         }
 
         return Response(
