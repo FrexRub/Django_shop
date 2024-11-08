@@ -43,7 +43,7 @@ class CustomPagination(PageNumberPagination):
 
 class TagApiView(APIView):
     def get(self, request):
-        tag_id = request.data.get("category")
+        tag_id = request.GET.get("category")
         log.info("Запрос тега продукта по его номеру %s", tag_id)
         if tag_id is None:
             log.info("Не указан номер в запросе тега продукта")
@@ -118,8 +118,9 @@ class ProductReviewApiView(APIView):
     def post(self, request, pk: int):
         log.info("Создание отзыва о товаре пользователя %s", request.user.username)
 
-        text = request.data.get("text")
-        rate = request.data.get("rate")
+        # Данные передаются в сериализатор как request.data
+        # text = request.data.get("text")
+        # rate = request.data.get("rate")
         user: User = self.request.user
         product: Product = get_object_or_404(Product, pk=pk)
 
@@ -171,23 +172,35 @@ class CatalogApiView(APIView):
 
         # ToDo Filter
         filter = request.GET.get("filter")
-        category = request.GET.get("category")
         sort = request.GET.get("sort")
         sortType = request.GET.get("sortType")
         tags = request.GET.get("tags")
 
+        category_id = int(request.GET.get("category"))
         currentPage = int(request.GET.get("currentPage"))
         limit = int(request.GET.get("limit"))
 
         print("filter", filter)
         print("currentPage", currentPage)
-        print("category", category)
+        print("category", category_id)
         print("sort", sort)
         print("sortType", sortType)
         print("tags", tags)
         print("limit", limit)
 
+        # category: Category = get_object_or_404(Category, category_id)
         queryset = Product.objects.all()[:limit]
+
+        # print("category", category)
+
+        # queryset: Product = (
+        #     Product.objects.filter(category=category)
+        #     .select_related("category")
+        #     .prefetch_related(
+        #         "tags", "images", "specifications", "reviews", "reviews__author"
+        #     )[:limit]
+        # )
+
         paginator = CustomPagination()
         result_page = paginator.paginate_queryset(queryset, request)
 
