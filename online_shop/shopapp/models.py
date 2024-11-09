@@ -65,7 +65,15 @@ class Category(models.Model):
             validate_file_size,
         ],
     )
-    tags = models.ManyToManyField(Tag, related_name="category")
+    subcategories = models.ForeignKey(
+        "self",
+        on_delete=models.CASCADE,
+        null=True,
+        blank=True,
+        related_name="category",
+        verbose_name="subcategories",
+    )
+    tags = models.ManyToManyField(Tag, null=True, blank=True, related_name="category")
     slug = models.SlugField(verbose_name="URL", max_length=255, blank=True, unique=True)
 
     class Meta:

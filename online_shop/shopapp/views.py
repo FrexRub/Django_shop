@@ -4,8 +4,6 @@ from dataclasses import asdict
 
 from django.shortcuts import get_object_or_404
 from django.contrib.auth.models import User
-from django.http import HttpResponse, JsonResponse
-from django.core.exceptions import ObjectDoesNotExist
 from django.db.models import Avg
 from rest_framework import status
 from rest_framework.views import APIView
