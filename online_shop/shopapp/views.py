@@ -144,8 +144,10 @@ class ProductReviewApiView(APIView):
 class CategoriesApiView(APIView):
     def get(self, request):
         log.info("Загрузка категорий товара")
-        data_сategories = []
-        сategories = Category.objects.all()
+        # список всех каталогов товаров (категорий)
+        all_сategories = []
+        # выборка родительский каталогов
+        сategories = Category.objects.filter(subcategories__isnull=True)
         for сategory in сategories:
             data_сategory = CategoriesSchema(
                 id=сategory.id,
@@ -155,15 +157,28 @@ class CategoriesApiView(APIView):
                     "alt": сategory.slug,
                 },
             )
+            # Добавление подкаталогов товаров
             res_сategory = asdict(data_сategory)
             res_сategory["subcategories"] = list()
-            res_сategory["subcategories"].append(asdict(data_сategory))
-            data_сategories.append(res_сategory)
+
+            subcategories = Category.objects.filter(subcategories=сategory)
+            for subcategory in subcategories:
+                data_сategory = CategoriesSchema(
+                    id=subcategory.id,
+                    title=subcategory.title,
+                    image={
+                        "src": "".join(["/media/", str(subcategory.image)]),
+                        "alt": subcategory.slug,
+                    },
+                )
+                res_сategory["subcategories"].append(asdict(data_сategory))
+
+            all_сategories.append(res_сategory)
 
         # serializer = ProfileSerializerGet(data=asdict(res_profile))
 
         return Response(
-            data_сategories,
+            all_сategories,
             status=status.HTTP_200_OK,
         )
 
@@ -198,6 +213,9 @@ class CatalogApiView(APIView):
                 "tags", "images", "specifications", "reviews", "reviews__author"
             )[:limit]
         )
+
+        print("category", category)
+        print("Product", queryset)
 
         paginator = CustomPagination()
         result_page = paginator.paginate_queryset(queryset, request)
