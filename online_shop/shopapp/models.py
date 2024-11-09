@@ -10,6 +10,19 @@ from django.urls import reverse
 from services.utils import unique_slugify, validate_file_size
 
 
+def category_directory_path(instance: "Category", filename: str) -> str:
+    return "categories/category_{name}/{filename}".format(
+        name=instance.title, filename=filename
+    )
+
+
+def product_images_directory_path(instance: "ProductImage", filename: str) -> str:
+    return "products/product_{pk}/{filename}".format(
+        pk=instance.product.id,
+        filename=filename,
+    )
+
+
 # Create your models here.
 class Tag(models.Model):
     name = models.CharField(
@@ -37,19 +50,6 @@ class Tag(models.Model):
         return self.name
 
 
-def category_directory_path(instance: "Category", filename: str) -> str:
-    return "categories/category_{name}/{filename}".format(
-        name=instance.title, filename=filename
-    )
-
-
-def product_images_directory_path(instance: "ProductImage", filename: str) -> str:
-    return "products/product_{pk}/{filename}".format(
-        pk=instance.product.id,
-        filename=filename,
-    )
-
-
 class Category(models.Model):
     title = models.CharField(
         max_length=100,
@@ -65,6 +65,7 @@ class Category(models.Model):
             validate_file_size,
         ],
     )
+    tags = models.ManyToManyField(Tag, related_name="category")
     slug = models.SlugField(verbose_name="URL", max_length=255, blank=True, unique=True)
 
     class Meta:

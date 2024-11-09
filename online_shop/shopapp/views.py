@@ -43,16 +43,19 @@ class CustomPagination(PageNumberPagination):
 
 class TagApiView(APIView):
     def get(self, request):
-        tag_id = request.GET.get("category")
-        log.info("Запрос тега продукта по его номеру %s", tag_id)
-        if tag_id is None:
-            log.info("Не указан номер в запросе тега продукта")
+        category_id = request.GET.get("category")
+        log.info("Запрос тегов категории товаров по её номеру %s", category_id)
+        if category_id is None:
+            log.info("В запросе не указан номер категории товаров")
             return Response(
-                {"massage": "Не указан номер в запросе тега продукта"},
+                {"massage": "В запросе не указан номер категории товаров"},
                 status=status.HTTP_400_BAD_REQUEST,
             )
-        tag: Tag = get_object_or_404(Tag, pk=tag_id)
-        serializer = TagSerializer(tag)
+        tags: Tag = Tag.objects.filter(category__id=category_id)
+        log.info(
+            "Список тегов для категории товаров с номером %s подготовлен", category_id
+        )
+        serializer = TagSerializer(tags, many=True)
         return Response(
             serializer.data,
             status=status.HTTP_200_OK,
@@ -118,12 +121,12 @@ class ProductReviewApiView(APIView):
     def post(self, request, pk: int):
         log.info("Создание отзыва о товаре пользователя %s", request.user.username)
 
-        # Данные передаются в сериализатор как request.data
-        # text = request.data.get("text")
-        # rate = request.data.get("rate")
         user: User = self.request.user
         product: Product = get_object_or_404(Product, pk=pk)
 
+        # Данные передаются в сериализатор как request.data
+        # text = request.data.get("text")
+        # rate = request.data.get("rate")
         serializer = ReviewDBSerializer(data=request.data)
 
         if serializer.is_valid():
@@ -188,18 +191,15 @@ class CatalogApiView(APIView):
         print("tags", tags)
         print("limit", limit)
 
-        # category: Category = get_object_or_404(Category, category_id)
-        queryset = Product.objects.all()[:limit]
+        category: Category = get_object_or_404(Category, pk=category_id)
 
-        # print("category", category)
-
-        # queryset: Product = (
-        #     Product.objects.filter(category=category)
-        #     .select_related("category")
-        #     .prefetch_related(
-        #         "tags", "images", "specifications", "reviews", "reviews__author"
-        #     )[:limit]
-        # )
+        queryset: Product = (
+            Product.objects.filter(category=category)
+            .select_related("category")
+            .prefetch_related(
+                "tags", "images", "specifications", "reviews", "reviews__author"
+            )[:limit]
+        )
 
         paginator = CustomPagination()
         result_page = paginator.paginate_queryset(queryset, request)
