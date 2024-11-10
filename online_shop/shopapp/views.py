@@ -137,7 +137,6 @@ class ProductReviewApiView(APIView):
             )
         else:
             log.error("Данные в форме отзыва некорректны", serializer.errors)
-            print(serializer.errors)
             return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
 
@@ -175,8 +174,6 @@ class CategoriesApiView(APIView):
 
             all_сategories.append(res_сategory)
 
-        # serializer = ProfileSerializerGet(data=asdict(res_profile))
-
         return Response(
             all_сategories,
             status=status.HTTP_200_OK,
@@ -187,22 +184,26 @@ class CatalogApiView(APIView):
     def get(self, request):
 
         # ToDo Filter
-        filter = request.GET.get("filter")
+        name_filter = request.GET.get("filter[name]")
+        min_price = request.GET.get("filter[minPrice]")
+        max_price = request.GET.get("filter[maxPrice]")
+        free_delivery = request.GET.get("filter[freeDelivery]")
+        available = request.GET.get("filter[available]")
         sort = request.GET.get("sort")
-        sortType = request.GET.get("sortType")
-        tags = request.GET.get("tags")
+        sort_type = request.GET.get("sortType")
+        tags = request.GET.getlist("tags[]")
 
         category_id = int(request.GET.get("category"))
         currentPage = int(request.GET.get("currentPage"))
         limit = int(request.GET.get("limit"))
 
-        print("filter", filter)
-        print("currentPage", currentPage)
-        print("category", category_id)
+        print("min_price", min_price)
+        print("max_price", max_price)
+        print("free_delivery", free_delivery)
+        print("available", available)
         print("sort", sort)
-        print("sortType", sortType)
+        print("sortType", sort_type)
         print("tags", tags)
-        print("limit", limit)
 
         category: Category = get_object_or_404(Category, pk=category_id)
 
@@ -214,16 +215,12 @@ class CatalogApiView(APIView):
             )[:limit]
         )
 
-        print("category", category)
-        print("Product", queryset)
-
         paginator = CustomPagination()
         result_page = paginator.paginate_queryset(queryset, request)
 
         serializer = ProductShortSerializer(result_page, many=True)
         data = {
             "items": serializer.data,
-            # "currentPage": paginator.page.number,
             "currentPage": currentPage,
             "lastPage": paginator.page.paginator.count,
         }

@@ -25,10 +25,7 @@ def product_images_directory_path(instance: "ProductImage", filename: str) -> st
 
 # Create your models here.
 class Tag(models.Model):
-    name = models.CharField(
-        max_length=50,
-        null=False,
-    )
+    name = models.CharField(max_length=50, null=False, verbose_name="Наименование тэга")
 
     class Meta:
         """
