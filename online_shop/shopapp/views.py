@@ -1,10 +1,9 @@
 import logging
-import json
 from dataclasses import asdict
 
 from django.shortcuts import get_object_or_404
 from django.contrib.auth.models import User
-from django.db.models import Avg
+from django.db.models import Avg, Count, Q
 from rest_framework import status
 from rest_framework.views import APIView
 from rest_framework.response import Response
@@ -184,11 +183,18 @@ class CatalogApiView(APIView):
     def get(self, request):
 
         # ToDo Filter
-        name_filter = request.GET.get("filter[name]")
         min_price = request.GET.get("filter[minPrice]")
         max_price = request.GET.get("filter[maxPrice]")
-        free_delivery = request.GET.get("filter[freeDelivery]")
-        available = request.GET.get("filter[available]")
+        free_delivery = (
+            True
+            if request.GET.get("filter[freeDelivery]").capitalize() == "True"
+            else False
+        )
+        available = (
+            True
+            if request.GET.get("filter[available]").capitalize() == "True"
+            else False
+        )
         sort = request.GET.get("sort")
         sort_type = request.GET.get("sortType")
         tags = request.GET.getlist("tags[]")
@@ -206,9 +212,22 @@ class CatalogApiView(APIView):
         print("tags", tags)
 
         category: Category = get_object_or_404(Category, pk=category_id)
+        filters = Q()
+        filters &= Q(category=category)  # фильтр по категории
+        filters &= Q(price__range=(min_price, max_price))  # фильтр по цене
+
+        filters &= Q(
+            freeDelivery=free_delivery
+        )  # фильтр по доставке (бесплатная/платная)
+
+        if available:
+            filters &= Q(count__gt=0)  # фильтр по наличию товара
+
+        if tags:
+            filters &= Q(tags__in=tags)  # фильтр по тэгам
 
         queryset: Product = (
-            Product.objects.filter(category=category)
+            Product.objects.filter(filters)
             .select_related("category")
             .prefetch_related(
                 "tags", "images", "specifications", "reviews", "reviews__author"
