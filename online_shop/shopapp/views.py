@@ -121,9 +121,6 @@ class ProductReviewApiView(APIView):
         user: User = self.request.user
         product: Product = get_object_or_404(Product, pk=pk)
 
-        # Данные передаются в сериализатор как request.data
-        # text = request.data.get("text")
-        # rate = request.data.get("rate")
         serializer = ReviewDBSerializer(data=request.data)
 
         if serializer.is_valid():
@@ -181,19 +178,21 @@ class CategoriesApiView(APIView):
 
 class CatalogApiView(APIView):
     def get(self, request):
+        # cache_key = f"catalog_data_{self.request.user.username}"
+        # queryset = cache.get(cache_key)
+        #
+        # if queryset is None:
+        #     # получение отсортированного списка продуктов
+        #     queryset = sorted_products(request)
+        #     # сохранение данных кеша по ключу
+        #     cache.set(cache_key, queryset, 60)
+        #     log.info("Записываем данные в кеш %s", cache_key)
+        # else:
+        #     log.info("Получаем данные из кеша %s", cache_key)
+
         currentPage = int(request.GET.get("currentPage"))
 
-        cache_key = f"catalog_data_{self.request.user.username}"
-        queryset = cache.get(cache_key)
-
-        if queryset is None:
-            # получение отсортированного списка продуктов
-            queryset = sorted_products(request)
-            # сохранение данных кеша по ключу
-            cache.set("cache_key", queryset, 300)
-            log.info("Записываем данные в кеш %s", cache_key)
-        else:
-            log.info("Получаем данные из кеша %s", cache_key)
+        queryset = sorted_products(request)
 
         paginator = CustomPagination()
         result_page = paginator.paginate_queryset(queryset, request)

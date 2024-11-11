@@ -47,7 +47,11 @@ def sorted_products(request):
     filters &= Q(category=category)  # фильтр по категории
     filters &= Q(price__range=(min_price, max_price))  # фильтр по цене
 
-    filters &= Q(freeDelivery=free_delivery)  # фильтр по доставке (бесплатная/платная)
+    # если фильтр установлен, то сортируем иначе выводим все товары
+    if free_delivery:
+        filters &= Q(
+            freeDelivery=free_delivery
+        )  # фильтр по доставке (бесплатная/платная)
 
     if available:
         filters &= Q(count__gt=0)  # фильтр по наличию товара
@@ -55,7 +59,7 @@ def sorted_products(request):
     if tags:
         filters &= Q(tags__in=tags)  # фильтр по тэгам
 
-    # cортировка по (популярности, цене, отзывам, новизне)
+    # установка поля таблицы для cортировки по (популярности, цене, отзывам, новизне)
     sorted = get_order_field(sort, sort_type)
 
     queryset: Product = (

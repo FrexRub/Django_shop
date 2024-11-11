@@ -31,12 +31,18 @@ SECRET_KEY = getenv(
 # DEBUG = getenv("DJANGO_DEBUG", "0") == "1"
 DEBUG = True
 
+# ALLOWED_HOSTS = [
+#     "0.0.0.0",
+#     "127.0.0.1",
+# ] + getenv(
+#     "DJANGO_ALLOWED_HOSTS", ""
+# ).split(",")
+
+# для работы с DOCKER
 ALLOWED_HOSTS = [
     "0.0.0.0",
     "127.0.0.1",
-] + getenv(
-    "DJANGO_ALLOWED_HOSTS", ""
-).split(",")
+]
 
 
 # Application definition
@@ -51,11 +57,11 @@ INSTALLED_APPS = [
     "django_dump_load_utf8",
     "rest_framework",
     "drf_spectacular",
-    "debug_toolbar",
     "frontend",
     "myauth.apps.MyauthConfig",
     "api.apps.ApiConfig",
     "shopapp.apps.ShopappConfig",
+    "debug_toolbar",
 ]
 
 MIDDLEWARE = [
@@ -63,10 +69,10 @@ MIDDLEWARE = [
     "django.contrib.sessions.middleware.SessionMiddleware",
     "django.middleware.common.CommonMiddleware",
     "django.middleware.csrf.CsrfViewMiddleware",
-    "debug_toolbar.middleware.DebugToolbarMiddleware",
     "django.contrib.auth.middleware.AuthenticationMiddleware",
     "django.contrib.messages.middleware.MessageMiddleware",
     "django.middleware.clickjacking.XFrameOptionsMiddleware",
+    "debug_toolbar.middleware.DebugToolbarMiddleware",
 ]
 
 ROOT_URLCONF = "online_shop.urls"
@@ -93,6 +99,16 @@ INTERNAL_IPS = [
     "127.0.0.1",
 ]
 
+
+# настройки для работы с DEBUG TOOLS внутри DOCKER
+if DEBUG:
+    import socket
+
+    hostname, _, ips = socket.gethostbyname_ex(socket.gethostname())
+    INTERNAL_IPS.append("10.0.2.2")
+    INTERNAL_IPS += [".".join(ip.split(".")[:-1] + ["1"]) for ip in ips]
+
+
 # Database
 # https://docs.djangoproject.com/en/5.1/ref/settings/#databases
 
@@ -112,9 +128,7 @@ CACHES = {
     "default": {
         "BACKEND": "django_redis.cache.RedisCache",
         "LOCATION": "redis://127.0.0.1:6379/1",
-        "OPTIONS": {
-            "CLIENT_CLASS": "django_redis.client.DefaultClient",
-        },
+        "OPTIONS": {"CLIENT_CLASS": "django_redis.client.DefaultClient"},
         "KEY_PREFIX": "cache_shop",
     }
 }
