@@ -3,7 +3,6 @@ from dataclasses import asdict
 
 from django.shortcuts import get_object_or_404
 from django.contrib.auth.models import User
-from django.db.models import Avg, Count, Q
 from rest_framework import status
 from rest_framework.views import APIView
 from rest_framework.response import Response
@@ -18,7 +17,6 @@ from .models import (
     Category,
     Specification,
 )
-from myauth.models import Profile
 
 from .serializers import (
     TagSerializer,
@@ -28,6 +26,7 @@ from .serializers import (
 )
 
 from services.schemas import CategoriesSchema
+from .utils import sorted_products
 
 log = logging.getLogger(__name__)
 
@@ -64,7 +63,7 @@ class ProductApiView(APIView):
         log.info("Запрос информации по продукту с id %s", pk)
         product: Product = (
             Product.objects.filter(pk=pk)
-            .annotate(rating=Avg("reviews__rate"))
+            # .annotate(rating=Avg("reviews__rate"))
             .select_related("category")
             .prefetch_related(
                 "tags", "images", "specifications", "reviews", "reviews__author"
@@ -181,58 +180,10 @@ class CategoriesApiView(APIView):
 
 class CatalogApiView(APIView):
     def get(self, request):
+        # получение отсортированного списка продуктов
+        queryset = sorted_products(request)
 
-        # ToDo Filter
-        min_price = request.GET.get("filter[minPrice]")
-        max_price = request.GET.get("filter[maxPrice]")
-        free_delivery = (
-            True
-            if request.GET.get("filter[freeDelivery]").capitalize() == "True"
-            else False
-        )
-        available = (
-            True
-            if request.GET.get("filter[available]").capitalize() == "True"
-            else False
-        )
-        sort = request.GET.get("sort")
-        sort_type = request.GET.get("sortType")
-        tags = request.GET.getlist("tags[]")
-
-        category_id = int(request.GET.get("category"))
         currentPage = int(request.GET.get("currentPage"))
-        limit = int(request.GET.get("limit"))
-
-        print("min_price", min_price)
-        print("max_price", max_price)
-        print("free_delivery", free_delivery)
-        print("available", available)
-        print("sort", sort)
-        print("sortType", sort_type)
-        print("tags", tags)
-
-        category: Category = get_object_or_404(Category, pk=category_id)
-        filters = Q()
-        filters &= Q(category=category)  # фильтр по категории
-        filters &= Q(price__range=(min_price, max_price))  # фильтр по цене
-
-        filters &= Q(
-            freeDelivery=free_delivery
-        )  # фильтр по доставке (бесплатная/платная)
-
-        if available:
-            filters &= Q(count__gt=0)  # фильтр по наличию товара
-
-        if tags:
-            filters &= Q(tags__in=tags)  # фильтр по тэгам
-
-        queryset: Product = (
-            Product.objects.filter(filters)
-            .select_related("category")
-            .prefetch_related(
-                "tags", "images", "specifications", "reviews", "reviews__author"
-            )[:limit]
-        )
 
         paginator = CustomPagination()
         result_page = paginator.paginate_queryset(queryset, request)
