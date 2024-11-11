@@ -3,7 +3,7 @@ from decimal import Decimal
 from django.db import models
 from django.contrib.auth.models import User
 from django.core.validators import MaxValueValidator, MinValueValidator
-from django.contrib.postgres.indexes import HashIndex
+from django.contrib.postgres.indexes import HashIndex, BrinIndex
 from django.core.validators import FileExtensionValidator
 from django.urls import reverse
 
@@ -51,9 +51,10 @@ class Category(models.Model):
     title = models.CharField(
         max_length=100,
         null=False,
+        verbose_name="Наименование",
     )
     image = models.ImageField(
-        verbose_name="category",
+        verbose_name="Изображение",
         null=True,
         blank=True,
         upload_to=category_directory_path,
@@ -68,9 +69,11 @@ class Category(models.Model):
         null=True,
         blank=True,
         related_name="category",
-        verbose_name="subcategories",
+        verbose_name="Наименование родительской категории",
     )
-    tags = models.ManyToManyField(Tag, null=True, blank=True, related_name="category")
+    tags = models.ManyToManyField(
+        Tag, blank=True, verbose_name="Тэг", related_name="category"
+    )
     slug = models.SlugField(verbose_name="URL", max_length=255, blank=True, unique=True)
 
     class Meta:
@@ -78,7 +81,7 @@ class Category(models.Model):
         Сортировка, имена в административной панели, индексы
         """
 
-        ordering = ("title",)
+        ordering = ("id",)
         verbose_name = "Категория"
         verbose_name_plural = "Категории"
 
@@ -105,21 +108,36 @@ class Category(models.Model):
 
 class Product(models.Model):
     category = models.ForeignKey(
-        Category, on_delete=models.PROTECT, related_name="products"
+        Category,
+        on_delete=models.PROTECT,
+        verbose_name="Категория товара",
+        related_name="products",
     )
     price = models.DecimalField(
         default=0,
         max_digits=8,
         decimal_places=2,
         validators=[MinValueValidator(Decimal("0.01"))],
+        verbose_name="Цена",
+        db_index=True,
     )
-    count = models.PositiveSmallIntegerField(default=0)
+    count = models.PositiveSmallIntegerField(
+        default=0, verbose_name="Количество товара", db_index=True
+    )
     date = models.DateTimeField(auto_now_add=True)
-    title = models.CharField(max_length=150, null=False, blank=True)
-    description = models.CharField(max_length=250, null=False, blank=True)
-    fullDescription = models.TextField(null=False, blank=True)
-    freeDelivery = models.BooleanField(default=False)
-    tags = models.ManyToManyField(Tag, related_name="products")
+    title = models.CharField(
+        max_length=150, null=False, blank=True, verbose_name="Наименование"
+    )
+    description = models.CharField(
+        max_length=250, null=False, blank=True, verbose_name="Описание"
+    )
+    fullDescription = models.TextField(
+        null=False, blank=True, verbose_name="Полное описание"
+    )
+    freeDelivery = models.BooleanField(
+        default=False, verbose_name="Бесплатная доставка"
+    )
+    tags = models.ManyToManyField(Tag, related_name="products", verbose_name="Тэг")
 
     slug = models.SlugField(verbose_name="URL", max_length=255, blank=True, unique=True)
 
@@ -131,6 +149,10 @@ class Product(models.Model):
         ordering = ("price",)
         verbose_name = "Товар"
         verbose_name_plural = "Товары"
+
+        indexes = [
+            BrinIndex(fields=["date"], name="product_date_index"),
+        ]
 
     def save(self, *args, **kwargs):
         """
@@ -155,7 +177,7 @@ class Product(models.Model):
 
 class ProductImage(models.Model):
     product = models.ForeignKey(
-        Product, on_delete=models.CASCADE, related_name="images"
+        Product, on_delete=models.CASCADE, related_name="images", verbose_name="Товар"
     )
     src = models.ImageField(upload_to=product_images_directory_path)
     alt = models.CharField(max_length=200, null=False, blank=True)
@@ -177,13 +199,19 @@ class ProductImage(models.Model):
 
 
 class Review(models.Model):
-    author = models.ForeignKey(User, on_delete=models.CASCADE, related_name="reviews")
-    product = models.ForeignKey(
-        Product, on_delete=models.CASCADE, related_name="reviews"
+    author = models.ForeignKey(
+        User, on_delete=models.CASCADE, related_name="reviews", verbose_name="Автор"
     )
-    text = models.CharField(max_length=500, null=False, blank=True)
+    product = models.ForeignKey(
+        Product, on_delete=models.CASCADE, related_name="reviews", verbose_name="Товар"
+    )
+    text = models.CharField(
+        max_length=500, null=False, blank=True, verbose_name="Содержание"
+    )
     rate = models.PositiveSmallIntegerField(
-        default=1, validators=[MinValueValidator(1), MaxValueValidator(5)]
+        default=1,
+        validators=[MinValueValidator(1), MaxValueValidator(5)],
+        verbose_name="Оценка",
     )
     date = models.DateTimeField(auto_now_add=True)
 
@@ -196,6 +224,10 @@ class Review(models.Model):
         verbose_name = "Отзыв о товаре"
         verbose_name_plural = "Отзывы о товаре"
 
+        indexes = [
+            BrinIndex(fields=["date"], name="review_date_index"),
+        ]
+
     def __str__(self):
         """
         Возвращение строки
@@ -204,10 +236,17 @@ class Review(models.Model):
 
 
 class Specification(models.Model):
-    name = models.CharField(max_length=100, null=False, blank=True)
-    value = models.CharField(max_length=150, null=False, blank=True)
+    name = models.CharField(
+        max_length=100, null=False, blank=True, verbose_name="Наименование"
+    )
+    value = models.CharField(
+        max_length=150, null=False, blank=True, verbose_name="Значение"
+    )
     product = models.ForeignKey(
-        Product, on_delete=models.CASCADE, related_name="specifications"
+        Product,
+        on_delete=models.CASCADE,
+        related_name="specifications",
+        verbose_name="Товар",
     )
 
     class Meta:
