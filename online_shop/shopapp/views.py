@@ -2,6 +2,7 @@ import logging
 from dataclasses import asdict
 
 from django.shortcuts import get_object_or_404
+from django.core.cache import cache
 from django.contrib.auth.models import User
 from rest_framework import status
 from rest_framework.views import APIView
@@ -180,10 +181,19 @@ class CategoriesApiView(APIView):
 
 class CatalogApiView(APIView):
     def get(self, request):
-        # получение отсортированного списка продуктов
-        queryset = sorted_products(request)
-
         currentPage = int(request.GET.get("currentPage"))
+
+        cache_key = f"catalog_data_{self.request.user.username}"
+        queryset = cache.get(cache_key)
+
+        if queryset is None:
+            # получение отсортированного списка продуктов
+            queryset = sorted_products(request)
+            # сохранение данных кеша по ключу
+            cache.set("cache_key", queryset, 300)
+            log.info("Записываем данные в кеш %s", cache_key)
+        else:
+            log.info("Получаем данные из кеша %s", cache_key)
 
         paginator = CustomPagination()
         result_page = paginator.paginate_queryset(queryset, request)
