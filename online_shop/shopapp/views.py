@@ -236,3 +236,26 @@ class LimitListApiView(ListAPIView):
         res = super().get(*args, **kwargs)
         res.data = res.data["results"]
         return res
+
+
+class SearchListApiView(ListAPIView):
+    queryset = (
+        Product.objects.all()
+        .select_related("category")
+        .prefetch_related(
+            "tags", "images", "specifications", "reviews", "reviews__author"
+        )
+        .order_by("id")[:16]
+    )
+    serializer_class = ProductShortSerializer
+
+    def get(self, *args, **kwargs):
+        res = super().get(*args, **kwargs)
+        data = {
+            "items": res.data["results"],
+            "currentPage": 1,
+            "lastPage": 2,
+        }
+        res.data = data
+        print("DATA", data)
+        return res
