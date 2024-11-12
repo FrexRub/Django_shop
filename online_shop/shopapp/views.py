@@ -15,11 +15,9 @@ from rest_framework.pagination import PageNumberPagination
 
 from .models import (
     Product,
-    ProductImage,
     Tag,
-    Review,
+    Sales,
     Category,
-    Specification,
 )
 
 from .serializers import (
@@ -27,6 +25,7 @@ from .serializers import (
     ProductSerializer,
     ProductShortSerializer,
     ReviewDBSerializer,
+    SalesSerializer,
 )
 
 from services.schemas import CategoriesSchema
@@ -181,7 +180,7 @@ class CategoriesApiView(APIView):
 
 class CatalogApiView(APIView):
     def get(self, request):
-        currentPage = int(request.GET.get("currentPage"))
+        current_page = int(request.GET.get("currentPage"))
 
         queryset = sorted_products(request)
 
@@ -191,7 +190,7 @@ class CatalogApiView(APIView):
         serializer = ProductShortSerializer(result_page, many=True)
         data = {
             "items": serializer.data,
-            "currentPage": currentPage,
+            "currentPage": current_page,
             "lastPage": paginator.page.paginator.count,
         }
 
@@ -238,31 +237,6 @@ class LimitListApiView(ListAPIView):
         return res
 
 
-class BannersListApiView_1(ListAPIView):
-    serializer_class = ProductShortSerializer
-
-    def get_queryset(self):
-        category: Category = (
-            Category.objects.values("pk").exclude(subcategories__isnull=True).all()
-        )
-        log.info("category %s", category)
-        print("-" * 30)
-        queryset = (
-            Product.objects.all()
-            .select_related("category")
-            .prefetch_related(
-                "tags", "images", "specifications", "reviews", "reviews__author"
-            )
-            .order_by("id")[:8]
-        )
-
-    # @method_decorator(cache_page(5 * 60 * 60, key_prefix="banners"))
-    def get(self, *args, **kwargs):
-        res = super().get(*args, **kwargs)
-        res.data = res.data["results"]
-        return res
-
-
 class BannersListApiView(APIView):
     def get(self, request):
         cache_key = "catalog_banners"
@@ -303,5 +277,31 @@ class BannersListApiView(APIView):
 
         return Response(
             data_banners,
+            status=status.HTTP_200_OK,
+        )
+
+
+class SalesListApiView(APIView):
+    def get(self, request):
+        current_page = int(request.GET.get("currentPage"))
+        queryset = (
+            Sales.objects.select_related("product")
+            .prefetch_related("product__images")
+            .all()
+        )
+
+        paginator = CustomPagination()
+        result_page = paginator.paginate_queryset(queryset, request)
+
+        serializer = SalesSerializer(result_page, many=True)
+
+        data = {
+            "items": serializer.data,
+            "currentPage": current_page,
+            "lastPage": paginator.page.paginator.count,
+        }
+
+        return Response(
+            data,
             status=status.HTTP_200_OK,
         )

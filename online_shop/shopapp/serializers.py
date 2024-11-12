@@ -13,6 +13,7 @@ from .models import (
     Review,
     Category,
     Specification,
+    Sales,
 )
 
 log = logging.getLogger(__name__)
@@ -155,4 +156,40 @@ class ProductShortSerializer(serializers.ModelSerializer):
             "tags",
             "reviews",
             "rating",
+        )
+
+
+class SalesSerializer(serializers.ModelSerializer):
+    # images = ProductImageSerializer(many=True, read_only=True)
+    # # вывод только id из связанной модели Category
+    # category = serializers.SlugRelatedField(
+    #     queryset=Category.objects.all(), slug_field="id"
+    # )
+    price = serializers.SerializerMethodField()
+    id = serializers.SerializerMethodField()
+    title = serializers.SerializerMethodField()
+    dateFrom = serializers.DateTimeField(format="%m-%d")
+    dateTo = serializers.DateTimeField(format="%m-%d")
+
+    def get_id(self, obj):
+        return obj.product.id
+
+    def get_price(self, obj):
+        return obj.product.price
+
+    def get_title(self, obj):
+        return obj.product.title
+
+    class Meta:
+        model = Sales
+        # для вывода данных из связанных таблиц, а не только перечень id
+        # depth = 1
+        fields = (
+            "id",
+            "price",
+            "salePrice",
+            "dateFrom",
+            "dateTo",
+            "title",
+            # "images",
         )
