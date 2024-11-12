@@ -3,8 +3,11 @@ from dataclasses import asdict
 
 from django.shortcuts import get_object_or_404
 from django.core.cache import cache
+from django.utils.decorators import method_decorator
+from django.views.decorators.cache import cache_page
 from django.contrib.auth.models import User
 from rest_framework import status
+from rest_framework.generics import ListAPIView
 from rest_framework.views import APIView
 from rest_framework.response import Response
 from rest_framework.permissions import IsAuthenticated
@@ -208,3 +211,21 @@ class CatalogApiView(APIView):
             data,
             status=status.HTTP_200_OK,
         )
+
+
+class PopularListApiView(ListAPIView):
+    queryset = (
+        Product.objects.all()
+        .select_related("category")
+        .prefetch_related(
+            "tags", "images", "specifications", "reviews", "reviews__author"
+        )
+        .order_by("id")[:10]
+    )
+    serializer_class = ProductShortSerializer
+
+    @method_decorator(cache_page(5 * 60 * 60, key_prefix="popular"))
+    def get(self, *args, **kwargs):
+        res = super().get(*args, **kwargs)
+        res.data = res.data["results"]
+        return res

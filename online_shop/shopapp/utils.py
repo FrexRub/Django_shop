@@ -47,11 +47,12 @@ def sorted_products(request):
     filters &= Q(category=category)  # фильтр по категории
     filters &= Q(price__range=(min_price, max_price))  # фильтр по цене
 
-    # если фильтр установлен, то сортируем иначе выводим все товары
+    # фильтр по доставке (бесплатная/платная)
+    # если фильтр установлен, то сортируем - иначе выводим все товары
     if free_delivery:
         filters &= Q(
             freeDelivery=free_delivery
-        )  # фильтр по доставке (бесплатная/платная)
+        )
 
     if available:
         filters &= Q(count__gt=0)  # фильтр по наличию товара
