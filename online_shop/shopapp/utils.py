@@ -39,7 +39,15 @@ def sorted_products(request):
     sort_type = request.GET.get("sortType")
     tags = request.GET.getlist("tags[]")
 
-    category_id = int(request.GET.get("category"))
+    # категория в запросе не определена
+    if isinstance(request.GET.get("category"), str):
+        category_id = int(request.GET.get("category"))
+    else:
+        category: Category = Category.objects.exclude(
+            subcategories__isnull=True
+        ).first()
+        category_id = category.pk
+
     limit = int(request.GET.get("limit"))
 
     category: Category = get_object_or_404(Category, pk=category_id)
@@ -50,9 +58,7 @@ def sorted_products(request):
     # фильтр по доставке (бесплатная/платная)
     # если фильтр установлен, то сортируем - иначе выводим все товары
     if free_delivery:
-        filters &= Q(
-            freeDelivery=free_delivery
-        )
+        filters &= Q(freeDelivery=free_delivery)
 
     if available:
         filters &= Q(count__gt=0)  # фильтр по наличию товара
