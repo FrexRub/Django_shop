@@ -26,7 +26,6 @@ from drf_spectacular.views import (
     SpectacularSwaggerView,
 )
 
-from shopapp.views import SearchListApiView
 
 router = DefaultRouter()
 # router.register("profile", ProfileView)
@@ -34,7 +33,6 @@ router = DefaultRouter()
 urlpatterns = [
     path("admin/", admin.site.urls),
     path("", include("frontend.urls")),
-    path("catalog/", SearchListApiView.as_view(), name="search_product"),
     path("api/schema/", SpectacularAPIView.as_view(), name="schema"),
     path("api/docs/", SpectacularSwaggerView.as_view(url_name="schema"), name="docs"),
     path("api/redoc/", SpectacularRedocView.as_view(url_name="schema"), name="redoc"),

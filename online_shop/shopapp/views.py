@@ -238,24 +238,70 @@ class LimitListApiView(ListAPIView):
         return res
 
 
-class SearchListApiView(ListAPIView):
-    queryset = (
-        Product.objects.all()
-        .select_related("category")
-        .prefetch_related(
-            "tags", "images", "specifications", "reviews", "reviews__author"
-        )
-        .order_by("id")[:16]
-    )
+class BannersListApiView_1(ListAPIView):
     serializer_class = ProductShortSerializer
 
+    def get_queryset(self):
+        category: Category = (
+            Category.objects.values("pk").exclude(subcategories__isnull=True).all()
+        )
+        log.info("category %s", category)
+        print("-" * 30)
+        queryset = (
+            Product.objects.all()
+            .select_related("category")
+            .prefetch_related(
+                "tags", "images", "specifications", "reviews", "reviews__author"
+            )
+            .order_by("id")[:8]
+        )
+
+    # @method_decorator(cache_page(5 * 60 * 60, key_prefix="banners"))
     def get(self, *args, **kwargs):
         res = super().get(*args, **kwargs)
-        data = {
-            "items": res.data["results"],
-            "currentPage": 1,
-            "lastPage": 2,
-        }
-        res.data = data
-        print("DATA", data)
+        res.data = res.data["results"]
         return res
+
+
+class BannersListApiView(APIView):
+    def get(self, request):
+        cache_key = "catalog_banners"
+        data_banners = cache.get(cache_key)
+
+        if data_banners is None:
+            log.info("Create banners list")
+
+            category: Category = (
+                Category.objects.values("pk").exclude(subcategories__isnull=True).all()
+            )
+
+            data_banners = list()
+            list_pk_category = [i_category["pk"] for i_category in category]
+
+            for id_category in list_pk_category:
+                queryset = (
+                    Product.objects.filter(category__pk=id_category)
+                    .select_related("category")
+                    .prefetch_related(
+                        "tags", "images", "specifications", "reviews", "reviews__author"
+                    )
+                    .first()
+                )
+
+                if queryset:
+                    log.info("Category %s add in banners list", id_category)
+                    serializer = ProductShortSerializer(queryset)
+                    data_banners.append(serializer.data)
+                else:
+                    log.info("Category %s not product for banners list", id_category)
+
+            # сохранение данных кеша по ключу
+            cache.set(cache_key, data_banners, 30 * 60 * 60)
+            log.info("Записываем данные в кеш %s", cache_key)
+        else:
+            log.info("Получаем данные из кеша %s", cache_key)
+
+        return Response(
+            data_banners,
+            status=status.HTTP_200_OK,
+        )
