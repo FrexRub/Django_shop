@@ -262,3 +262,33 @@ class Specification(models.Model):
         Возвращение строки
         """
         return f"{self.product.title}_{self.name}"
+
+
+class Sales(models.Model):
+    product = models.OneToOneField(
+        Product,
+        on_delete=models.CASCADE,
+        related_name="sales",
+        verbose_name="Товар",
+    )
+    salePrice = models.DecimalField(
+        default=0,
+        max_digits=8,
+        decimal_places=2,
+        validators=[MinValueValidator(Decimal("0.01"))],
+        verbose_name="Цена со скидкой",
+    )
+
+    dateFrom = models.DateTimeField(blank=True, verbose_name="Дата начала скидки")
+    dateTo = models.DateTimeField(blank=True, verbose_name="Дата окончания скидки")
+
+    class Meta:
+        ordering = ("id",)
+        verbose_name = "Скидка"
+        verbose_name_plural = "Скидки"
+
+    def __str__(self):
+        """
+        Возвращение строки
+        """
+        return f"Sale_{self.product.title}"

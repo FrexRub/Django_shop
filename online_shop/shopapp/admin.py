@@ -7,6 +7,7 @@ from .models import (
     ProductImage,
     Review,
     Specification,
+    Sales,
 )
 
 
@@ -36,5 +37,10 @@ class CategoryAdmin(admin.ModelAdmin):
 
 
 @admin.register(Specification)
+class CategoryAdmin(admin.ModelAdmin):
+    pass
+
+
+@admin.register(Sales)
 class CategoryAdmin(admin.ModelAdmin):
     pass
