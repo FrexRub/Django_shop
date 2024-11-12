@@ -17,6 +17,7 @@ from shopapp.views import (
     CatalogApiView,
     GetUserForReviewApiView,
     PopularListApiView,
+    LimitListApiView,
 )
 
 app_name = "api"
@@ -32,6 +33,7 @@ urlpatterns = [
     path("categories/", CategoriesApiView.as_view(), name="categories"),
     path("catalog/", CatalogApiView.as_view(), name="catalog"),
     path("products/popular/", PopularListApiView.as_view(), name="popular"),
+    path("products/limited/", LimitListApiView.as_view(), name="limited"),
     path("product/reviews/", GetUserForReviewApiView.as_view(), name="get_review"),
     path("product/<int:pk>/", ProductApiView.as_view(), name="product_details"),
     path(

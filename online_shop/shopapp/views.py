@@ -181,18 +181,6 @@ class CategoriesApiView(APIView):
 
 class CatalogApiView(APIView):
     def get(self, request):
-        # cache_key = f"catalog_data_{self.request.user.username}"
-        # queryset = cache.get(cache_key)
-        #
-        # if queryset is None:
-        #     # получение отсортированного списка продуктов
-        #     queryset = sorted_products(request)
-        #     # сохранение данных кеша по ключу
-        #     cache.set(cache_key, queryset, 60)
-        #     log.info("Записываем данные в кеш %s", cache_key)
-        # else:
-        #     log.info("Получаем данные из кеша %s", cache_key)
-
         currentPage = int(request.GET.get("currentPage"))
 
         queryset = sorted_products(request)
@@ -214,17 +202,36 @@ class CatalogApiView(APIView):
 
 
 class PopularListApiView(ListAPIView):
+    # ToDo фильтрация по количеству покупок
     queryset = (
         Product.objects.all()
         .select_related("category")
         .prefetch_related(
             "tags", "images", "specifications", "reviews", "reviews__author"
         )
-        .order_by("id")[:10]
+        .order_by("id")[:8]
     )
     serializer_class = ProductShortSerializer
 
     @method_decorator(cache_page(5 * 60 * 60, key_prefix="popular"))
+    def get(self, *args, **kwargs):
+        res = super().get(*args, **kwargs)
+        res.data = res.data["results"]
+        return res
+
+
+class LimitListApiView(ListAPIView):
+    queryset = (
+        Product.objects.filter(count__range=(1, 10))
+        .select_related("category")
+        .prefetch_related(
+            "tags", "images", "specifications", "reviews", "reviews__author"
+        )
+        .order_by("id")[:16]
+    )
+    serializer_class = ProductShortSerializer
+
+    @method_decorator(cache_page(2 * 60 * 60, key_prefix="limited"))
     def get(self, *args, **kwargs):
         res = super().get(*args, **kwargs)
         res.data = res.data["results"]
