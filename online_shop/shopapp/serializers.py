@@ -160,11 +160,7 @@ class ProductShortSerializer(serializers.ModelSerializer):
 
 
 class SalesSerializer(serializers.ModelSerializer):
-    # images = ProductImageSerializer(many=True, read_only=True)
-    # # вывод только id из связанной модели Category
-    # category = serializers.SlugRelatedField(
-    #     queryset=Category.objects.all(), slug_field="id"
-    # )
+    images = ProductImageSerializer(source="product.images", many=True)
     price = serializers.SerializerMethodField()
     id = serializers.SerializerMethodField()
     title = serializers.SerializerMethodField()
@@ -182,8 +178,6 @@ class SalesSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Sales
-        # для вывода данных из связанных таблиц, а не только перечень id
-        # depth = 1
         fields = (
             "id",
             "price",
@@ -191,5 +185,5 @@ class SalesSerializer(serializers.ModelSerializer):
             "dateFrom",
             "dateTo",
             "title",
-            # "images",
+            "images",
         )
