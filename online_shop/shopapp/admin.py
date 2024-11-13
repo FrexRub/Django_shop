@@ -22,25 +22,31 @@ class CategoryAdmin(admin.ModelAdmin):
 
 
 @admin.register(Product)
-class CategoryAdmin(admin.ModelAdmin):
-    pass
+class ProductAdmin(admin.ModelAdmin):
+    list_display = (
+        "title",
+        "price",
+        "count",
+    )
+    list_display_links = ("title",)
+    search_fields = "title", "price"
 
 
 @admin.register(ProductImage)
-class CategoryAdmin(admin.ModelAdmin):
+class ProductImageAdmin(admin.ModelAdmin):
     pass
 
 
 @admin.register(Review)
-class CategoryAdmin(admin.ModelAdmin):
+class ReviewAdmin(admin.ModelAdmin):
     pass
 
 
 @admin.register(Specification)
-class CategoryAdmin(admin.ModelAdmin):
+class SpecificationAdmin(admin.ModelAdmin):
     pass
 
 
 @admin.register(Sales)
-class CategoryAdmin(admin.ModelAdmin):
+class SalesAdmin(admin.ModelAdmin):
     pass
