@@ -14,9 +14,9 @@ class ProductTestCase(TestCase):
         """
         Тестирование выгрузки тэгов
         """
-        data = {"category": 1}
+        data = {"category": 3}
         response = self.client.get(reverse("api:tags"), data)
-        find_data = {"id": 2, "name": "ноутбук"}
+        find_data = {"id": 1, "name": "ноутбук"}
         received_data = json.loads(response.content)
         self.assertEqual(response.status_code, 200)
         self.assertIn(find_data, received_data)
@@ -26,7 +26,6 @@ class ProductTestCase(TestCase):
         Тестирование выгрузки категорий
         """
         response = self.client.get(reverse("api:categories"))
-        find_data = {"id": 2, "name": "ноутбук"}
         received_data = json.loads(response.content)
         self.assertEqual(response.status_code, 200)
         self.assertEqual(received_data[0]["title"], "Компьютеры и ноутбуки")
@@ -44,7 +43,7 @@ class ProductTestCase(TestCase):
             "filter[maxPrice]": 100000,
             "filter[freeDelivery]": "false",
             "filter[available]": "false",
-            "category": 2,
+            "category": 4,
             "sort": "price",
             "sortType": "inc",
             "limit": 20,
