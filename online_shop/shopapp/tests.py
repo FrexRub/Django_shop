@@ -112,30 +112,6 @@ class ProductSortedTestCase(TestCase):
 
     def test_get_catalog_rating_to_up(self):
         """
-        Тестирование выгрузка товаров и сортировка по возрастанию рейтинга
-        """
-        data = {
-            "currentPage": 1,
-            "filter[name]": 0,
-            "filter[minPrice]": 0,
-            "filter[maxPrice]": 500000,
-            "filter[freeDelivery]": "false",
-            "filter[available]": "false",
-            "category": 4,
-            "sort": "price",
-            "sortType": "dec",
-            "limit": 20,
-        }
-
-        response = self.client.get(reverse("api:catalog"), data)
-        received_data = json.loads(response.content)
-
-        self.assertEqual(response.status_code, 200)
-        self.assertEqual(received_data["items"][0]["rating"], None)
-        self.assertEqual(received_data["items"][1]["rating"], 3.0)
-
-    def test_get_catalog_rating_to_down(self):
-        """
         Тестирование выгрузка товаров и сортировка по убыванию рейтинга
         """
         data = {
@@ -146,7 +122,32 @@ class ProductSortedTestCase(TestCase):
             "filter[freeDelivery]": "false",
             "filter[available]": "false",
             "category": 4,
-            "sort": "price",
+            "sort": "rating",
+            "sortType": "dec",
+            "limit": 20,
+        }
+
+        response = self.client.get(reverse("api:catalog"), data)
+        received_data = json.loads(response.content)
+
+        self.assertEqual(response.status_code, 200)
+        self.assertEqual(received_data["items"][0]["rating"], 3.0)
+        self.assertEqual(received_data["items"][1]["rating"], None)
+
+    def test_get_catalog_rating_to_down(self):
+        """
+        Тестирование выгрузка товаров и сортировка по убыванию рейтинга
+        """
+        # ToDo перепроверить
+        data = {
+            "currentPage": 1,
+            "filter[name]": 0,
+            "filter[minPrice]": 0,
+            "filter[maxPrice]": 500000,
+            "filter[freeDelivery]": "false",
+            "filter[available]": "false",
+            "category": 4,
+            "sort": "rating",
             "sortType": "inc",
             "limit": 20,
         }
@@ -154,8 +155,57 @@ class ProductSortedTestCase(TestCase):
         response = self.client.get(reverse("api:catalog"), data)
 
         received_data = json.loads(response.content)
-        print(received_data)
         print(received_data["items"])
         self.assertEqual(response.status_code, 200)
-        self.assertEqual(received_data["items"][0]["rating"], 3.0)
-        self.assertEqual(received_data["items"][1]["rating"], None)
+        self.assertEqual(received_data["items"][0]["rating"], None)
+        self.assertEqual(received_data["items"][1]["rating"], 3.0)
+
+    def test_get_catalog_reviews_to_down(self):
+        """
+        Тестирование выгрузка товаров и сортировка по убыванию количества отзывов
+        """
+        data = {
+            "currentPage": 1,
+            "filter[name]": 0,
+            "filter[minPrice]": 0,
+            "filter[maxPrice]": 500000,
+            "filter[freeDelivery]": "false",
+            "filter[available]": "false",
+            "category": 4,
+            "sort": "reviews",
+            "sortType": "inc",
+            "limit": 20,
+        }
+
+        response = self.client.get(reverse("api:catalog"), data)
+
+        received_data = json.loads(response.content)
+
+        print(received_data["items"])
+        self.assertEqual(response.status_code, 200)
+        self.assertEqual(received_data["items"][0]["reviews"], 1)
+        self.assertEqual(received_data["items"][1]["reviews"], 0)
+
+    def test_get_catalog_reviews_to_up(self):
+        """
+        Тестирование выгрузка товаров и сортировка по возрастанию количества отзывов
+        """
+        data = {
+            "currentPage": 1,
+            "filter[name]": 0,
+            "filter[minPrice]": 0,
+            "filter[maxPrice]": 500000,
+            "filter[freeDelivery]": "false",
+            "filter[available]": "false",
+            "category": 4,
+            "sort": "reviews",
+            "sortType": "dec",
+            "limit": 20,
+        }
+
+        response = self.client.get(reverse("api:catalog"), data)
+        received_data = json.loads(response.content)
+
+        self.assertEqual(response.status_code, 200)
+        self.assertEqual(received_data["items"][0]["reviews"], 0)
+        self.assertEqual(received_data["items"][1]["reviews"], 1)
