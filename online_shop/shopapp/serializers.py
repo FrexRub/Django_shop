@@ -99,7 +99,9 @@ class ProductSerializer(serializers.ModelSerializer):
     rating = serializers.SerializerMethodField()
 
     def get_rating(self, obj):
-        return Product.objects.aggregate(rating=Avg("reviews__rate"))["rating"]
+        return Product.objects.filter(pk=obj.pk).aggregate(rating=Avg("reviews__rate"))[
+            "rating"
+        ]
 
     class Meta:
         model = Product
@@ -134,10 +136,14 @@ class ProductShortSerializer(serializers.ModelSerializer):
     rating = serializers.SerializerMethodField()
 
     def get_rating(self, obj):
-        return Product.objects.aggregate(rating=Avg("reviews__rate"))["rating"]
+        return Product.objects.filter(pk=obj.pk).aggregate(rating=Avg("reviews__rate"))[
+            "rating"
+        ]
 
     def get_reviews(self, obj):
-        return Product.objects.aggregate(reviews=Count("reviews__id"))["reviews"]
+        return Product.objects.filter(pk=obj.pk).aggregate(
+            reviews=Count("reviews__id")
+        )["reviews"]
 
     class Meta:
         model = Product
