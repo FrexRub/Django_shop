@@ -1,0 +1,972 @@
+[
+{
+    "model": "auth.user",
+    "fields": {
+        "password": "pbkdf2_sha256$870000$ptmK4FoBuIH7k2DeuwP16x$DKuNJRrYX94J7KrbU8bxGDOlw/A1gQBImnzyWxQ0zPY=",
+        "last_login": "2024-11-14T08:35:41.797Z",
+        "is_superuser": true,
+        "username": "admin",
+        "first_name": "",
+        "last_name": "",
+        "email": "admin@shop.com",
+        "is_staff": true,
+        "is_active": true,
+        "date_joined": "2024-11-05T09:50:16.713Z",
+        "groups": [],
+        "user_permissions": []
+    }
+},
+{
+    "model": "auth.user",
+    "fields": {
+        "password": "pbkdf2_sha256$870000$2Wxmmu1H9NbTexl1LYMc9Z$nOc2iH1trxrPUX8P92ihYer8JaK7t2A+ZT8VfnkJV7M=",
+        "last_login": "2024-11-07T09:59:13.113Z",
+        "is_superuser": false,
+        "username": "Sem",
+        "first_name": "Sem Lee",
+        "last_name": "",
+        "email": "semlee@shop.com",
+        "is_staff": false,
+        "is_active": true,
+        "date_joined": "2024-11-07T04:06:25.775Z",
+        "groups": [],
+        "user_permissions": []
+    }
+},
+{
+    "model": "sessions.session",
+    "pk": "528kr70lwbfep8uscpmqienm2h57bj7p",
+    "fields": {
+        "session_data": ".eJxVjEEOwiAQRe_C2hAYhDIu3fcMZGBAqoYmpV0Z765NutDtf-_9lwi0rTVsPS9hYnERIE6_W6T0yG0HfKd2m2Wa27pMUe6KPGiX48z5eT3cv4NKvX5rUlqfS7YualfA-qFgBMraObRAxJS8ZUhRl2SKcYhg1OAZPRpWNifx_gDjXjfc:1t8yBj:Om2dMS_9l-1f3biueDv3W5s4p5ZHH_wItua1ksGBw3I",
+        "expire_date": "2024-11-21T08:48:23.737Z"
+    }
+},
+{
+    "model": "sessions.session",
+    "pk": "7ix7th4umrvt7dxm6fb4s1ei42v0r7ox",
+    "fields": {
+        "session_data": ".eJxVjDsOwjAUBO_iGlmJ_fziUNJzBmv9IwFkS3FSIe4OkVJAuzOzL-GwrZPbWlrcHMVZ9OL0u3mERyo7iHeUW5WhlnWZvdwVedAmrzWm5-Vw_w4mtOlbj6wNwQbOig31yNQZSkPsvMljACUFA_CQeSRoeDJR25RZw6qsFYv3B9rkN9g:1tBVKI:-wEwmwnwJNM3U8c_R9uXCbeVknSdeKys6EsDEgc2Icw",
+        "expire_date": "2024-11-28T08:35:42.172Z"
+    }
+},
+{
+    "model": "sessions.session",
+    "pk": "da8qnxfiua98wttlmm3g4dfmsrugtx2a",
+    "fields": {
+        "session_data": ".eJxVjDsOwjAUBO_iGlmJ_fziUNJzBmv9IwFkS3FSIe4OkVJAuzOzL-GwrZPbWlrcHMVZ9OL0u3mERyo7iHeUW5WhlnWZvdwVedAmrzWm5-Vw_w4mtOlbj6wNwQbOig31yNQZSkPsvMljACUFA_CQeSRoeDJR25RZw6qsFYv3B9rkN9g:1t9FKm:6marhdClS9dmcDSANYlDZyYkxpA9SobbajWpBAnL44Y",
+        "expire_date": "2024-11-22T03:06:52.164Z"
+    }
+},
+{
+    "model": "sessions.session",
+    "pk": "olc20egj9a0vwjae54rcbc2zqpdc1ke2",
+    "fields": {
+        "session_data": ".eJxVjDsOwjAQBe_iGlleb-IPJT1nsOzdNQmgRIqTCnF3iJQC2jcz76VS3tYhbU2WNLI6K1Cn361kesi0A77n6TZrmqd1GYveFX3Qpq8zy_NyuH8HQ27DtybqOvFk0EQrAjUDlC4K94EZEXxFGwNGcAYDV-qrBBJbvXUOrISi3h_mJzfd:1tBTRm:9Y68PiaI5HAr6tAEBiFNGj_lN4BbUPOKpemssP3RWuM",
+        "expire_date": "2024-11-28T06:35:18.057Z"
+    }
+},
+{
+    "model": "sessions.session",
+    "pk": "uamynafkjhy8oodiwyofse4kds0hun0g",
+    "fields": {
+        "session_data": ".eJxVjDsOwjAUBO_iGlmJ_fziUNJzBmv9IwFkS3FSIe4OkVJAuzOzL-GwrZPbWlrcHMVZ9OL0u3mERyo7iHeUW5WhlnWZvdwVedAmrzWm5-Vw_w4mtOlbj6wNwQbOig31yNQZSkPsvMljACUFA_CQeSRoeDJR25RZw6qsFYv3B9rkN9g:1tAQgh:WEX3m9v7-0--SmGZWIyvbdhlPMGnWxDIQNoqg6oIUVk",
+        "expire_date": "2024-11-25T09:26:23.719Z"
+    }
+},
+{
+    "model": "myauth.profile",
+    "pk": 1,
+    "fields": {
+        "user": [
+            "Sem"
+        ],
+        "phone_number": "+79152345678",
+        "avatar": "",
+        "slug": "sem"
+    }
+},
+{
+    "model": "shopapp.tag",
+    "pk": 2,
+    "fields": {
+        "name": "ноутбук"
+    }
+},
+{
+    "model": "shopapp.tag",
+    "pk": 3,
+    "fields": {
+        "name": "ультрабук"
+    }
+},
+{
+    "model": "shopapp.tag",
+    "pk": 4,
+    "fields": {
+        "name": "ноутбук-трансформер"
+    }
+},
+{
+    "model": "shopapp.tag",
+    "pk": 5,
+    "fields": {
+        "name": "Windows 10"
+    }
+},
+{
+    "model": "shopapp.tag",
+    "pk": 6,
+    "fields": {
+        "name": "Windows 11"
+    }
+},
+{
+    "model": "shopapp.tag",
+    "pk": 7,
+    "fields": {
+        "name": "без ОС"
+    }
+},
+{
+    "model": "shopapp.tag",
+    "pk": 8,
+    "fields": {
+        "name": "Mac OS"
+    }
+},
+{
+    "model": "shopapp.tag",
+    "pk": 9,
+    "fields": {
+        "name": "AMOLED"
+    }
+},
+{
+    "model": "shopapp.tag",
+    "pk": 10,
+    "fields": {
+        "name": "IPS"
+    }
+},
+{
+    "model": "shopapp.tag",
+    "pk": 11,
+    "fields": {
+        "name": "OLED"
+    }
+},
+{
+    "model": "shopapp.tag",
+    "pk": 12,
+    "fields": {
+        "name": "Apple"
+    }
+},
+{
+    "model": "shopapp.tag",
+    "pk": 13,
+    "fields": {
+        "name": "Huawei"
+    }
+},
+{
+    "model": "shopapp.tag",
+    "pk": 14,
+    "fields": {
+        "name": "Samsung"
+    }
+},
+{
+    "model": "shopapp.tag",
+    "pk": 15,
+    "fields": {
+        "name": "Android"
+    }
+},
+{
+    "model": "shopapp.tag",
+    "pk": 16,
+    "fields": {
+        "name": "iOS"
+    }
+},
+{
+    "model": "shopapp.category",
+    "pk": 1,
+    "fields": {
+        "title": "Ноутбуки",
+        "image": "categories/category_Ноутбуки/Ноутбук_DTNw93f.jpg",
+        "subcategories": 3,
+        "slug": "noutbuki",
+        "tags": [
+            13,
+            14,
+            5,
+            6,
+            7,
+            2,
+            4,
+            3
+        ]
+    }
+},
+{
+    "model": "shopapp.category",
+    "pk": 2,
+    "fields": {
+        "title": "Смартфоны",
+        "image": "categories/category_Смартфоны/smartfon-apple-iphone-14_UBox6OP.jpg",
+        "subcategories": 6,
+        "slug": "smartfonyi",
+        "tags": [
+            9,
+            15,
+            13,
+            10,
+            11,
+            14
+        ]
+    }
+},
+{
+    "model": "shopapp.category",
+    "pk": 3,
+    "fields": {
+        "title": "Компьютеры и ноутбуки",
+        "image": "categories/category_Компьютеры и ноутбуки/компьютеры_и_ноутбуки_l2bi6Cv.jpeg",
+        "subcategories": null,
+        "slug": "kompyuteryi-i-noutbuki",
+        "tags": []
+    }
+},
+{
+    "model": "shopapp.category",
+    "pk": 4,
+    "fields": {
+        "title": "Ноутбуки Apple",
+        "image": "categories/category_Ноутбуки Apple/MacBook_1AODR0P.jpeg",
+        "subcategories": 3,
+        "slug": "noutbuki-apple",
+        "tags": [
+            12,
+            8,
+            2,
+            4,
+            3
+        ]
+    }
+},
+{
+    "model": "shopapp.category",
+    "pk": 5,
+    "fields": {
+        "title": "Комплектующие для ПК",
+        "image": "categories/category_Комплектующие для ПК/Комплектующие_для_ПК_Ml2Qyqg.jpeg",
+        "subcategories": 3,
+        "slug": "komplektuyuschie-dlya-pk",
+        "tags": []
+    }
+},
+{
+    "model": "shopapp.category",
+    "pk": 6,
+    "fields": {
+        "title": "Смартфоны и гаджеты",
+        "image": "categories/category_Смартфоны и гаджеты/iPhone.jpeg",
+        "subcategories": null,
+        "slug": "smartfonyi-i-gadzhetyi",
+        "tags": []
+    }
+},
+{
+    "model": "shopapp.category",
+    "pk": 7,
+    "fields": {
+        "title": "Apple",
+        "image": "categories/category_Apple/iPhone_5K8kV8n.jpeg",
+        "subcategories": 6,
+        "slug": "apple",
+        "tags": [
+            9,
+            12,
+            16
+        ]
+    }
+},
+{
+    "model": "shopapp.category",
+    "pk": 8,
+    "fields": {
+        "title": "Планшеты",
+        "image": "categories/category_Планшеты/Планшеты_4JsuHzp.jpeg",
+        "subcategories": 6,
+        "slug": "planshetyi",
+        "tags": [
+            9,
+            15,
+            13,
+            10,
+            11,
+            14
+        ]
+    }
+},
+{
+    "model": "shopapp.product",
+    "pk": 1,
+    "fields": {
+        "category": 2,
+        "price": "67399.00",
+        "count": 12,
+        "date": "2024-11-05T11:22:54.958Z",
+        "title": "Смартфон Apple IPhone 13 128Gb зеленый",
+        "description": "Данная модель могла быть предварительно активирована. Является абсолютно новой, не проходила процедуру привязки аккаунта Apple ID. Обращаем ваше внимание, указанная выше информация не влияет на потребительские характеристики, функциональность и гаран",
+        "fullDescription": "Смартфон Apple IPhone 13 128Gb оснащен мощным шестиядерным процессором A15 Bionic, способным быстро обработать большое количество данных. За счет этого обеспечивается стабильно высокая производительность устройства, что необходимо для запуска ресурсоемких программ. Благодаря 4 Гб оперативной памяти модель характеризуется оптимальным уровнем быстродействия системы. Это поможет предотвратить возможное зависание устройства в режиме многозадачности. Модель способна продолжительное время автономно функционировать от встроенного аккумулятора с большим рабочим резервом.\r\nСмартфон оснащен 6,1-дюймовым дисплеем Super Retina XDR с матрицей типа OLED, к достоинствам которого относятся высокая яркость, точная передача цветов и широкий угол обзора. Разрешение экрана составляет 2532×1179 пикселей, что способствует созданию максимально комфортных условий для просмотра фотографий и видео. Устройство имеет систему, состоящую из двух основных камер и технологию стабилизации изображения. За счет этого пользователь может делать качественные снимки, находясь в движении и при слабом освещении. Фронтальная камера с разрешением 12 Мп обеспечивает стабильную работу сканера Face ID и комфорт при общении в видеочате.\r\nДля восполнения ресурса АКБ смартфона можно использовать как разъем Lightning, так и беспроводную зарядку, соответствующую стандарту Qi. Корпус модели произведен с использованием алюминия и относится к классу пылевлагозащиты IP68. Благодаря этому значительно снижается риск поломки устройства при погружении под воду на глубину до 6 м. Дисплей имеет олеофобное покрытие, устойчивое к появлению следов от пальцев. Для соединения с компьютером смартфон комплектуется кабелем USB Type-C/Lightning.",
+        "freeDelivery": false,
+        "slug": "smartfon-apple-iphone-13-128gb-zelenyij",
+        "tags": [
+            12,
+            11
+        ]
+    }
+},
+{
+    "model": "shopapp.productimage",
+    "pk": 1,
+    "fields": {
+        "product": 1,
+        "src": "products/product_1/1_YgggNLV.jpg",
+        "alt": "Смартфон Apple IPhone 13 128Gb зеленый_1"
+    }
+},
+{
+    "model": "shopapp.productimage",
+    "pk": 2,
+    "fields": {
+        "product": 1,
+        "src": "products/product_1/2_CTiERka.jpg",
+        "alt": "Смартфон Apple IPhone 13 128Gb зеленый_2"
+    }
+},
+{
+    "model": "shopapp.productimage",
+    "pk": 3,
+    "fields": {
+        "product": 1,
+        "src": "products/product_1/3_b8YeNr8.jpg",
+        "alt": "Смартфон Apple IPhone 13 128Gb зеленый_3"
+    }
+},
+{
+    "model": "shopapp.productimage",
+    "pk": 4,
+    "fields": {
+        "product": 1,
+        "src": "products/product_1/4_3FJNZfg.jpg",
+        "alt": "Смартфон Apple IPhone 13 128Gb зеленый_4"
+    }
+},
+{
+    "model": "shopapp.review",
+    "pk": 1,
+    "fields": {
+        "author": [
+            "admin"
+        ],
+        "product": 1,
+        "text": "Ther good",
+        "rate": 5,
+        "date": "2024-11-05T11:29:21.848Z"
+    }
+},
+{
+    "model": "shopapp.review",
+    "pk": 2,
+    "fields": {
+        "author": [
+            "Sem"
+        ],
+        "product": 1,
+        "text": "Неплохой товар",
+        "rate": 4,
+        "date": "2024-11-07T11:10:09.554Z"
+    }
+},
+{
+    "model": "shopapp.specification",
+    "pk": 1,
+    "fields": {
+        "name": "Тип экрана",
+        "value": "OLED, сенсорный",
+        "product": 1
+    }
+},
+{
+    "model": "shopapp.specification",
+    "pk": 2,
+    "fields": {
+        "name": "Диагональ",
+        "value": "6.1\"",
+        "product": 1
+    }
+},
+{
+    "model": "shopapp.specification",
+    "pk": 3,
+    "fields": {
+        "name": "Объем встроенной памяти",
+        "value": "128 ГБ",
+        "product": 1
+    }
+},
+{
+    "model": "shopapp.sales",
+    "pk": 1,
+    "fields": {
+        "product": 1,
+        "salePrice": "57290.99",
+        "dateFrom": "2024-11-13T02:48:16Z",
+        "dateTo": "2024-11-19T21:00:00Z"
+    }
+},
+{
+    "model": "admin.logentry",
+    "pk": 1,
+    "fields": {
+        "action_time": "2024-11-05T09:53:24.915Z",
+        "user": [
+            "admin"
+        ],
+        "content_type": [
+            "shopapp",
+            "tag"
+        ],
+        "object_id": "1",
+        "object_repr": "ноутбук",
+        "action_flag": 1,
+        "change_message": "[{\"added\": {}}]"
+    }
+},
+{
+    "model": "admin.logentry",
+    "pk": 2,
+    "fields": {
+        "action_time": "2024-11-05T09:54:03.157Z",
+        "user": [
+            "admin"
+        ],
+        "content_type": [
+            "shopapp",
+            "tag"
+        ],
+        "object_id": "1",
+        "object_repr": "ноутбук",
+        "action_flag": 3,
+        "change_message": ""
+    }
+},
+{
+    "model": "admin.logentry",
+    "pk": 3,
+    "fields": {
+        "action_time": "2024-11-05T11:19:02.388Z",
+        "user": [
+            "admin"
+        ],
+        "content_type": [
+            "shopapp",
+            "category"
+        ],
+        "object_id": "1",
+        "object_repr": "Ноутбуки",
+        "action_flag": 1,
+        "change_message": "[{\"added\": {}}]"
+    }
+},
+{
+    "model": "admin.logentry",
+    "pk": 4,
+    "fields": {
+        "action_time": "2024-11-05T11:19:50.276Z",
+        "user": [
+            "admin"
+        ],
+        "content_type": [
+            "shopapp",
+            "category"
+        ],
+        "object_id": "2",
+        "object_repr": "Смартфоны",
+        "action_flag": 1,
+        "change_message": "[{\"added\": {}}]"
+    }
+},
+{
+    "model": "admin.logentry",
+    "pk": 5,
+    "fields": {
+        "action_time": "2024-11-05T11:22:55.039Z",
+        "user": [
+            "admin"
+        ],
+        "content_type": [
+            "shopapp",
+            "product"
+        ],
+        "object_id": "1",
+        "object_repr": "Смартфон Apple IPhone 13 128Gb зеленый",
+        "action_flag": 1,
+        "change_message": "[{\"added\": {}}]"
+    }
+},
+{
+    "model": "admin.logentry",
+    "pk": 6,
+    "fields": {
+        "action_time": "2024-11-05T11:23:55.891Z",
+        "user": [
+            "admin"
+        ],
+        "content_type": [
+            "shopapp",
+            "productimage"
+        ],
+        "object_id": "1",
+        "object_repr": "Смартфон Apple IPhone 13 128Gb зеленый_1",
+        "action_flag": 1,
+        "change_message": "[{\"added\": {}}]"
+    }
+},
+{
+    "model": "admin.logentry",
+    "pk": 7,
+    "fields": {
+        "action_time": "2024-11-05T11:24:33.145Z",
+        "user": [
+            "admin"
+        ],
+        "content_type": [
+            "shopapp",
+            "productimage"
+        ],
+        "object_id": "2",
+        "object_repr": "Смартфон Apple IPhone 13 128Gb зеленый_2",
+        "action_flag": 1,
+        "change_message": "[{\"added\": {}}]"
+    }
+},
+{
+    "model": "admin.logentry",
+    "pk": 8,
+    "fields": {
+        "action_time": "2024-11-05T11:25:00.272Z",
+        "user": [
+            "admin"
+        ],
+        "content_type": [
+            "shopapp",
+            "productimage"
+        ],
+        "object_id": "3",
+        "object_repr": "Смартфон Apple IPhone 13 128Gb зеленый_3",
+        "action_flag": 1,
+        "change_message": "[{\"added\": {}}]"
+    }
+},
+{
+    "model": "admin.logentry",
+    "pk": 9,
+    "fields": {
+        "action_time": "2024-11-05T11:25:28.832Z",
+        "user": [
+            "admin"
+        ],
+        "content_type": [
+            "shopapp",
+            "productimage"
+        ],
+        "object_id": "4",
+        "object_repr": "Смартфон Apple IPhone 13 128Gb зеленый_4",
+        "action_flag": 1,
+        "change_message": "[{\"added\": {}}]"
+    }
+},
+{
+    "model": "admin.logentry",
+    "pk": 10,
+    "fields": {
+        "action_time": "2024-11-05T11:27:10.130Z",
+        "user": [
+            "admin"
+        ],
+        "content_type": [
+            "shopapp",
+            "specification"
+        ],
+        "object_id": "1",
+        "object_repr": "Смартфон Apple IPhone 13 128Gb зеленый_Тип экрана",
+        "action_flag": 1,
+        "change_message": "[{\"added\": {}}]"
+    }
+},
+{
+    "model": "admin.logentry",
+    "pk": 11,
+    "fields": {
+        "action_time": "2024-11-05T11:27:35.055Z",
+        "user": [
+            "admin"
+        ],
+        "content_type": [
+            "shopapp",
+            "specification"
+        ],
+        "object_id": "2",
+        "object_repr": "Смартфон Apple IPhone 13 128Gb зеленый_Диагональ",
+        "action_flag": 1,
+        "change_message": "[{\"added\": {}}]"
+    }
+},
+{
+    "model": "admin.logentry",
+    "pk": 12,
+    "fields": {
+        "action_time": "2024-11-05T11:28:02.137Z",
+        "user": [
+            "admin"
+        ],
+        "content_type": [
+            "shopapp",
+            "specification"
+        ],
+        "object_id": "3",
+        "object_repr": "Смартфон Apple IPhone 13 128Gb зеленый_Объем встроенной памяти",
+        "action_flag": 1,
+        "change_message": "[{\"added\": {}}]"
+    }
+},
+{
+    "model": "admin.logentry",
+    "pk": 13,
+    "fields": {
+        "action_time": "2024-11-05T11:29:21.868Z",
+        "user": [
+            "admin"
+        ],
+        "content_type": [
+            "shopapp",
+            "review"
+        ],
+        "object_id": "1",
+        "object_repr": "admin_Смартфон Apple IPhone 13 128Gb зеленый",
+        "action_flag": 1,
+        "change_message": "[{\"added\": {}}]"
+    }
+},
+{
+    "model": "admin.logentry",
+    "pk": 14,
+    "fields": {
+        "action_time": "2024-11-08T03:07:28.467Z",
+        "user": [
+            "admin"
+        ],
+        "content_type": [
+            "shopapp",
+            "product"
+        ],
+        "object_id": "1",
+        "object_repr": "Смартфон Apple IPhone 13 128Gb зеленый",
+        "action_flag": 2,
+        "change_message": "[{\"changed\": {\"fields\": [\"Tags\"]}}]"
+    }
+},
+{
+    "model": "admin.logentry",
+    "pk": 15,
+    "fields": {
+        "action_time": "2024-11-11T02:54:25.807Z",
+        "user": [
+            "admin"
+        ],
+        "content_type": [
+            "shopapp",
+            "category"
+        ],
+        "object_id": "3",
+        "object_repr": "Компьютеры и ноутбуки",
+        "action_flag": 1,
+        "change_message": "[{\"added\": {}}]"
+    }
+},
+{
+    "model": "admin.logentry",
+    "pk": 16,
+    "fields": {
+        "action_time": "2024-11-11T02:55:18.040Z",
+        "user": [
+            "admin"
+        ],
+        "content_type": [
+            "shopapp",
+            "category"
+        ],
+        "object_id": "1",
+        "object_repr": "Ноутбуки",
+        "action_flag": 2,
+        "change_message": "[{\"changed\": {\"fields\": [\"Subcategories\", \"Tags\"]}}]"
+    }
+},
+{
+    "model": "admin.logentry",
+    "pk": 17,
+    "fields": {
+        "action_time": "2024-11-11T02:56:17.696Z",
+        "user": [
+            "admin"
+        ],
+        "content_type": [
+            "shopapp",
+            "category"
+        ],
+        "object_id": "4",
+        "object_repr": "Ноутбуки Apple",
+        "action_flag": 1,
+        "change_message": "[{\"added\": {}}]"
+    }
+},
+{
+    "model": "admin.logentry",
+    "pk": 18,
+    "fields": {
+        "action_time": "2024-11-11T02:56:55.137Z",
+        "user": [
+            "admin"
+        ],
+        "content_type": [
+            "shopapp",
+            "category"
+        ],
+        "object_id": "5",
+        "object_repr": "Комплектующие для ПК",
+        "action_flag": 1,
+        "change_message": "[{\"added\": {}}]"
+    }
+},
+{
+    "model": "admin.logentry",
+    "pk": 19,
+    "fields": {
+        "action_time": "2024-11-11T02:57:49.472Z",
+        "user": [
+            "admin"
+        ],
+        "content_type": [
+            "shopapp",
+            "category"
+        ],
+        "object_id": "6",
+        "object_repr": "Смартфоны и гаджеты",
+        "action_flag": 1,
+        "change_message": "[{\"added\": {}}]"
+    }
+},
+{
+    "model": "admin.logentry",
+    "pk": 20,
+    "fields": {
+        "action_time": "2024-11-11T02:58:33.245Z",
+        "user": [
+            "admin"
+        ],
+        "content_type": [
+            "shopapp",
+            "category"
+        ],
+        "object_id": "2",
+        "object_repr": "Смартфоны",
+        "action_flag": 2,
+        "change_message": "[{\"changed\": {\"fields\": [\"Subcategories\", \"Tags\"]}}]"
+    }
+},
+{
+    "model": "admin.logentry",
+    "pk": 21,
+    "fields": {
+        "action_time": "2024-11-11T03:00:01.168Z",
+        "user": [
+            "admin"
+        ],
+        "content_type": [
+            "shopapp",
+            "category"
+        ],
+        "object_id": "7",
+        "object_repr": "Apple",
+        "action_flag": 1,
+        "change_message": "[{\"added\": {}}]"
+    }
+},
+{
+    "model": "admin.logentry",
+    "pk": 22,
+    "fields": {
+        "action_time": "2024-11-11T03:00:50.803Z",
+        "user": [
+            "admin"
+        ],
+        "content_type": [
+            "shopapp",
+            "category"
+        ],
+        "object_id": "8",
+        "object_repr": "Планшеты",
+        "action_flag": 1,
+        "change_message": "[{\"added\": {}}]"
+    }
+},
+{
+    "model": "admin.logentry",
+    "pk": 23,
+    "fields": {
+        "action_time": "2024-11-11T04:24:28.215Z",
+        "user": [
+            "admin"
+        ],
+        "content_type": [
+            "shopapp",
+            "product"
+        ],
+        "object_id": "1",
+        "object_repr": "Смартфон Apple IPhone 13 128Gb зеленый",
+        "action_flag": 2,
+        "change_message": "[{\"changed\": {\"fields\": [\"Count\"]}}]"
+    }
+},
+{
+    "model": "admin.logentry",
+    "pk": 24,
+    "fields": {
+        "action_time": "2024-11-11T04:24:57.839Z",
+        "user": [
+            "admin"
+        ],
+        "content_type": [
+            "shopapp",
+            "product"
+        ],
+        "object_id": "1",
+        "object_repr": "Смартфон Apple IPhone 13 128Gb зеленый",
+        "action_flag": 2,
+        "change_message": "[{\"changed\": {\"fields\": [\"Count\"]}}]"
+    }
+},
+{
+    "model": "admin.logentry",
+    "pk": 25,
+    "fields": {
+        "action_time": "2024-11-11T09:20:45.729Z",
+        "user": [
+            "admin"
+        ],
+        "content_type": [
+            "shopapp",
+            "category"
+        ],
+        "object_id": "3",
+        "object_repr": "Компьютеры и ноутбуки",
+        "action_flag": 2,
+        "change_message": "[]"
+    }
+},
+{
+    "model": "admin.logentry",
+    "pk": 26,
+    "fields": {
+        "action_time": "2024-11-11T09:26:52.497Z",
+        "user": [
+            "admin"
+        ],
+        "content_type": [
+            "shopapp",
+            "category"
+        ],
+        "object_id": "8",
+        "object_repr": "Планшеты",
+        "action_flag": 2,
+        "change_message": "[{\"changed\": {\"fields\": [\"\\u0418\\u0437\\u043e\\u0431\\u0440\\u0430\\u0436\\u0435\\u043d\\u0438\\u0435\"]}}]"
+    }
+},
+{
+    "model": "admin.logentry",
+    "pk": 27,
+    "fields": {
+        "action_time": "2024-11-12T05:46:38.259Z",
+        "user": [
+            "admin"
+        ],
+        "content_type": [
+            "shopapp",
+            "product"
+        ],
+        "object_id": "1",
+        "object_repr": "Смартфон Apple IPhone 13 128Gb зеленый",
+        "action_flag": 2,
+        "change_message": "[{\"changed\": {\"fields\": [\"\\u041a\\u043e\\u043b\\u0438\\u0447\\u0435\\u0441\\u0442\\u0432\\u043e \\u0442\\u043e\\u0432\\u0430\\u0440\\u0430\"]}}]"
+    }
+},
+{
+    "model": "admin.logentry",
+    "pk": 28,
+    "fields": {
+        "action_time": "2024-11-13T02:48:30.847Z",
+        "user": [
+            "admin"
+        ],
+        "content_type": [
+            "shopapp",
+            "sales"
+        ],
+        "object_id": "1",
+        "object_repr": "Sale_Смартфон Apple IPhone 13 128Gb зеленый",
+        "action_flag": 1,
+        "change_message": "[{\"added\": {}}]"
+    }
+},
+{
+    "model": "admin.logentry",
+    "pk": 29,
+    "fields": {
+        "action_time": "2024-11-13T10:56:14.503Z",
+        "user": [
+            "admin"
+        ],
+        "content_type": [
+            "shopapp",
+            "product"
+        ],
+        "object_id": "1",
+        "object_repr": "Смартфон Apple IPhone 13 128Gb зеленый",
+        "action_flag": 2,
+        "change_message": "[{\"changed\": {\"fields\": [\"\\u0422\\u044d\\u0433\"]}}]"
+    }
+},
+{
+    "model": "admin.logentry",
+    "pk": 30,
+    "fields": {
+        "action_time": "2024-11-13T11:12:53.521Z",
+        "user": [
+            "admin"
+        ],
+        "content_type": [
+            "shopapp",
+            "product"
+        ],
+        "object_id": "1",
+        "object_repr": "Смартфон Apple IPhone 13 128Gb зеленый",
+        "action_flag": 2,
+        "change_message": "[{\"changed\": {\"fields\": [\"\\u0422\\u044d\\u0433\"]}}]"
+    }
+}
+]
