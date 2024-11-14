@@ -11,38 +11,46 @@ https://docs.djangoproject.com/en/5.1/ref/settings/
 """
 
 from pathlib import Path
-from os import getenv
-import logging.config
+import environ
+
+env = environ.Env(
+    # set casting, default value
+    DJANGO_DEBUG=(bool, False),
+    DJANGO_LOGLEVEL=(str, "info"),
+    DJANGO_ALLOWED_HOSTS=(str, ""),
+)
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
 
+# Take environment variables from .env file
+DIR_ENV = BASE_DIR.parent / ".env"
+
+environ.Env.read_env(DIR_ENV)
 
 # Quick-start development settings - unsuitable for production
 # See https://docs.djangoproject.com/en/5.1/howto/deployment/checklist/
 
 # SECURITY WARNING: keep the secret key used in production secret!
-SECRET_KEY = getenv(
-    "DJANGO_SECRET_KEY",
-    "django-insecure-hvxn%qq=gyw^4*o2lo1#bw0=wh#ux9s8h!=@c608arf_gz3+^7",
-)
+# exception if SECRET_KEY not in os.environ
+SECRET_KEY = env("DJANGO_SECRET_KEY")
 
-# SECURITY WARNING: don't run with debug turned on in production!
-# DEBUG = getenv("DJANGO_DEBUG", "0") == "1"
-DEBUG = True
+# False if not in os.environ because of casting above
+DEBUG = env("DJANGO_DEBUG")
 
-# ALLOWED_HOSTS = [
-#     "0.0.0.0",
-#     "127.0.0.1",
-# ] + getenv(
-#     "DJANGO_ALLOWED_HOSTS", ""
-# ).split(",")
 
-# для работы с DOCKER
 ALLOWED_HOSTS = [
     "0.0.0.0",
     "127.0.0.1",
-]
+] + env(
+    "DJANGO_ALLOWED_HOSTS"
+).split(",")
+
+# для работы с DOCKER
+# ALLOWED_HOSTS = [
+#     "0.0.0.0",
+#     "127.0.0.1",
+# ]
 
 
 # Application definition
@@ -116,13 +124,14 @@ if DEBUG:
 DATABASES = {
     "default": {
         "ENGINE": "django.db.backends.postgresql",
-        "NAME": "shop_db",
-        "USER": "postgres",
-        "PASSWORD": "admin",
+        "NAME": env("POSTGRES_DB"),
+        "USER": env("POSTGRES_USER"),
+        "PASSWORD": env("POSTGRES_PASSWORD"),
         "HOST": "localhost",
-        "PORT": 5432,
+        "PORT": env("POSTGRES_PORT"),
     }
 }
+
 
 CACHES = {
     "default": {
@@ -197,7 +206,7 @@ SPECTACULAR_SETTINGS = {
     "SERVE_INCLUDE_SCHEMA": False,
 }
 
-LOGLEVEL = getenv("DJANGO_LOGLEVEL", "info").upper()
+LOGLEVEL = env("DJANGO_LOGLEVEL").upper()
 
 LOGGING = {
     "version": 1,
