@@ -30,6 +30,27 @@ class ProductTestCase(TestCase):
         self.assertEqual(response.status_code, 200)
         self.assertEqual(received_data[0]["title"], "Компьютеры и ноутбуки")
 
+    def test_get_sales(self):
+        """
+        Тестирование выгрузки скидок
+        """
+        data = {
+            "currentPage": 1,
+        }
+        response = self.client.get(reverse("api:sales"), data)
+        received_data = json.loads(response.content)
+        self.assertEqual(response.status_code, 200)
+        self.assertEqual(len(received_data["items"]), 2)
+
+    def test_get_banners(self):
+        """
+        Тестирование выгрузки товаров на банер (количество подкатегорий с товарами)
+        """
+        response = self.client.get(reverse("api:banners"))
+        received_data = json.loads(response.content)
+        self.assertEqual(response.status_code, 200)
+        self.assertEqual(len(received_data), 6)
+
 
 class ProductSortedTestCase(TestCase):
     fixtures = ["data.json"]
