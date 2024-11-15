@@ -258,3 +258,27 @@ class ProductSortedTestCase(TestCase):
         self.assertTrue(
             received_data["items"][0]["date"] > received_data["items"][1]["date"]
         )
+
+    def test_get_catalog_available(self):
+        """
+        Тестирование выгрузка товаров по наличию
+        """
+        data = {
+            "currentPage": 1,
+            "filter[name]": 0,
+            "filter[minPrice]": 0,
+            "filter[maxPrice]": 500000,
+            "filter[freeDelivery]": "false",
+            "filter[available]": "true",
+            "category": 9,
+            "sort": "price",
+            "sortType": "inc",
+            "limit": 20,
+        }
+
+        response = self.client.get(reverse("api:catalog"), data)
+        received_data = json.loads(response.content)
+
+        self.assertEqual(response.status_code, 200)
+        self.assertEqual(len(received_data["items"]), 1)
+        self.assertEqual(received_data["items"][0]["price"], "67399.00")
