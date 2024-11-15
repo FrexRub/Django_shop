@@ -1,4 +1,5 @@
-from django.db.models import Avg, Count, Q
+from django.db.models import Avg, Count, Q, Value, FloatField
+from django.db.models.functions import Coalesce
 from django.shortcuts import get_object_or_404
 
 from shopapp.models import (
@@ -71,7 +72,10 @@ def sorted_products(request):
 
     queryset: Product = (
         Product.objects.filter(filters)
-        .annotate(rating=Avg("reviews__rate"))
+        .annotate(
+            rating=Coalesce(Avg("reviews__rate", output_field=FloatField()), Value(0.0))
+        )
+        # .annotate(rating=Avg("reviews__rate"))
         .annotate(count_reviews=Count("reviews__id"))
         .select_related("category")
         .prefetch_related(

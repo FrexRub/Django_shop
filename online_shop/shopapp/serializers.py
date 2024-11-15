@@ -3,7 +3,8 @@ import logging
 import locale
 
 from rest_framework import serializers
-from django.db.models import Avg, Count
+from django.db.models import Avg, Count, Value, FloatField
+from django.db.models.functions import Coalesce
 from django.contrib.auth.models import User
 
 from .models import (
@@ -99,9 +100,13 @@ class ProductSerializer(serializers.ModelSerializer):
     rating = serializers.SerializerMethodField()
 
     def get_rating(self, obj):
-        return Product.objects.filter(pk=obj.pk).aggregate(rating=Avg("reviews__rate"))[
-            "rating"
-        ]
+        # return Product.objects.filter(pk=obj.pk).aggregate(rating=Avg("reviews__rate"))[
+        #     "rating"
+        # ]
+
+        return Product.objects.filter(pk=obj.pk).aggregate(
+            rating=Coalesce(Avg("reviews__rate", output_field=FloatField()), Value(0.0))
+        )["rating"]
 
     class Meta:
         model = Product
@@ -136,9 +141,13 @@ class ProductShortSerializer(serializers.ModelSerializer):
     rating = serializers.SerializerMethodField()
 
     def get_rating(self, obj):
-        return Product.objects.filter(pk=obj.pk).aggregate(rating=Avg("reviews__rate"))[
-            "rating"
-        ]
+        # return Product.objects.filter(pk=obj.pk).aggregate(rating=Avg("reviews__rate"))[
+        #     "rating"
+        # ]
+
+        return Product.objects.filter(pk=obj.pk).aggregate(
+            rating=Coalesce(Avg("reviews__rate", output_field=FloatField()), Value(0.0))
+        )["rating"]
 
     def get_reviews(self, obj):
         return Product.objects.filter(pk=obj.pk).aggregate(

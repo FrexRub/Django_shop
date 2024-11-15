@@ -112,7 +112,7 @@ class ProductSortedTestCase(TestCase):
 
     def test_get_catalog_rating_to_up(self):
         """
-        Тестирование выгрузка товаров и сортировка по убыванию рейтинга
+        Тестирование выгрузка товаров и сортировка по возрастанию рейтинга
         """
         data = {
             "currentPage": 1,
@@ -131,8 +131,8 @@ class ProductSortedTestCase(TestCase):
         received_data = json.loads(response.content)
 
         self.assertEqual(response.status_code, 200)
-        self.assertEqual(received_data["items"][0]["rating"], 3.0)
-        self.assertEqual(received_data["items"][1]["rating"], None)
+        self.assertEqual(received_data["items"][0]["rating"], 0)
+        self.assertEqual(received_data["items"][1]["rating"], 3.0)
 
     def test_get_catalog_rating_to_down(self):
         """
@@ -155,10 +155,10 @@ class ProductSortedTestCase(TestCase):
         response = self.client.get(reverse("api:catalog"), data)
 
         received_data = json.loads(response.content)
-        print(received_data["items"])
+
         self.assertEqual(response.status_code, 200)
-        self.assertEqual(received_data["items"][0]["rating"], None)
-        self.assertEqual(received_data["items"][1]["rating"], 3.0)
+        self.assertEqual(received_data["items"][0]["rating"], 3.0)
+        self.assertEqual(received_data["items"][1]["rating"], 0)
 
     def test_get_catalog_reviews_to_down(self):
         """
@@ -181,7 +181,6 @@ class ProductSortedTestCase(TestCase):
 
         received_data = json.loads(response.content)
 
-        print(received_data["items"])
         self.assertEqual(response.status_code, 200)
         self.assertEqual(received_data["items"][0]["reviews"], 1)
         self.assertEqual(received_data["items"][1]["reviews"], 0)
