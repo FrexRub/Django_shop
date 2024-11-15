@@ -12,6 +12,12 @@ from rest_framework.views import APIView
 from rest_framework.response import Response
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.pagination import PageNumberPagination
+from drf_spectacular.utils import (
+    extend_schema,
+    OpenApiResponse,
+    OpenApiParameter,
+    OpenApiExample,
+)
 
 from .models import (
     Product,
@@ -41,6 +47,30 @@ class CustomPagination(PageNumberPagination):
 
 
 class TagApiView(APIView):
+    @extend_schema(
+        tags=["tags"],
+        summary="Вывод списка тегов по номеру категории товара",
+        responses={
+            status.HTTP_200_OK: TagSerializer,
+            status.HTTP_400_BAD_REQUEST: OpenApiResponse(
+                response=None,
+                description="В запросе не указан номер категории товаров",
+            ),
+            status.HTTP_500_INTERNAL_SERVER_ERROR: OpenApiResponse(
+                response=None,
+                description="Что-то пошло не так",
+            ),
+        },
+        parameters=[
+            OpenApiParameter(
+                name="category",
+                location=OpenApiParameter.QUERY,
+                description="номер категории товаров",
+                required=False,
+                type=int,
+            ),
+        ],
+    )
     def get(self, request):
         category_id = request.GET.get("category")
         log.info("Запрос тегов категории товаров по её номеру %s", category_id)
