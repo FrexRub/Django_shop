@@ -2,12 +2,10 @@ import logging
 import json
 from dataclasses import asdict
 
-import django.http
 from django.contrib.auth.models import User
 from django.contrib.auth import logout
 from django.contrib.auth import authenticate, login
 from django.urls import reverse_lazy
-from django.shortcuts import redirect
 from rest_framework import status
 from rest_framework.response import Response
 from rest_framework.views import APIView
@@ -15,7 +13,6 @@ from rest_framework import exceptions
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.parsers import MultiPartParser, FormParser
 from drf_spectacular.utils import (
-    extend_schema_view,
     extend_schema,
     OpenApiResponse,
     OpenApiExample,
@@ -60,7 +57,7 @@ class UserLoginView(APIView):
             status.HTTP_500_INTERNAL_SERVER_ERROR: OpenApiResponse(
                 response=None,
                 description="Что-то пошло не так",
-            )
+            ),
         },
         examples=[
             OpenApiExample(
@@ -70,7 +67,7 @@ class UserLoginView(APIView):
                     "username": "User1",
                     "password": "qwertY&01",
                 },
-                status_codes=[str(status.HTTP_200_OK)]
+                status_codes=[str(status.HTTP_200_OK)],
             )
         ],
     )
@@ -133,7 +130,7 @@ class UserRegistrationView(APIView):
             status.HTTP_500_INTERNAL_SERVER_ERROR: OpenApiResponse(
                 response=None,
                 description="Что-то пошло не так",
-            )
+            ),
         },
         examples=[
             OpenApiExample(
@@ -143,7 +140,7 @@ class UserRegistrationView(APIView):
                     "username": "User1",
                     "password": "qwertY&01",
                 },
-                status_codes=[str(status.HTTP_201_CREATED)]
+                status_codes=[str(status.HTTP_201_CREATED)],
             )
         ],
     )
@@ -205,7 +202,7 @@ class LogoutAPIView(APIView):
             status.HTTP_500_INTERNAL_SERVER_ERROR: OpenApiResponse(
                 response=None,
                 description="Что-то пошло не так",
-            )
+            ),
         },
         examples=[
             OpenApiExample(
@@ -215,7 +212,7 @@ class LogoutAPIView(APIView):
                     "username": "User1",
                     "password": "qwertY&01",
                 },
-                status_codes=[str(status.HTTP_201_CREATED)]
+                status_codes=[str(status.HTTP_201_CREATED)],
             )
         ],
     )
@@ -238,7 +235,7 @@ class ProfileView(APIView):
             status.HTTP_500_INTERNAL_SERVER_ERROR: OpenApiResponse(
                 response=None,
                 description="Что-то пошло не так",
-            )
+            ),
         },
         examples=[
             OpenApiExample(
@@ -249,7 +246,7 @@ class ProfileView(APIView):
                     "phone": "+79151232358",
                     "email": "alex@shop.com",
                 },
-                status_codes=[str(status.HTTP_200_OK)]
+                status_codes=[str(status.HTTP_200_OK)],
             )
         ],
     )
@@ -263,9 +260,9 @@ class ProfileView(APIView):
             user.first_name = request.data.get("fullName")
 
             if (
-                    User.objects.filter(email=request.data.get("email"))
-                            .exclude(username=user.username)
-                            .exists()
+                User.objects.filter(email=request.data.get("email"))
+                .exclude(username=user.username)
+                .exists()
             ):
                 log.info("Пользователь с данным email уже зарегистрирован")
                 return Response(
@@ -276,10 +273,10 @@ class ProfileView(APIView):
 
             # Запись данных в модель профиля пользователя
             if (
-                    Profile.objects.select_related("user")
-                            .filter(phone_number=request.data.get("phone"))
-                            .exclude(user__username=user.username)
-                            .exists()
+                Profile.objects.select_related("user")
+                .filter(phone_number=request.data.get("phone"))
+                .exclude(user__username=user.username)
+                .exists()
             ):
                 log.info("Пользователь с данным телефонов уже зарегистрирован")
                 return Response(
@@ -307,7 +304,7 @@ class ProfileView(APIView):
             status.HTTP_500_INTERNAL_SERVER_ERROR: OpenApiResponse(
                 response=None,
                 description="Что-то пошло не так",
-            )
+            ),
         },
         examples=[
             OpenApiExample(
@@ -317,12 +314,9 @@ class ProfileView(APIView):
                     "fullName": "Annoying Orange",
                     "email": "no-reply@mail.ru",
                     "phone": "88002000600",
-                    "avatar": {
-                        "src": "/3.png",
-                        "alt": "Image alt string"
-                    }
+                    "avatar": {"src": "/3.png", "alt": "Image alt string"},
                 },
-                status_codes=[str(status.HTTP_200_OK)]
+                status_codes=[str(status.HTTP_200_OK)],
             )
         ],
     )
@@ -367,7 +361,7 @@ class UserAvatarUpload(APIView):
             status.HTTP_500_INTERNAL_SERVER_ERROR: OpenApiResponse(
                 response=None,
                 description="Что-то пошло не так",
-            )
+            ),
         },
     )
     def post(self, request, format=None):
@@ -394,7 +388,7 @@ class ChangePasswordView(APIView):
             status.HTTP_500_INTERNAL_SERVER_ERROR: OpenApiResponse(
                 response=None,
                 description="Что-то пошло не так",
-            )
+            ),
         },
         examples=[
             OpenApiExample(
@@ -405,7 +399,7 @@ class ChangePasswordView(APIView):
                     "password": "new password",
                     "passwordReply": "reply new password",
                 },
-                status_codes=[str(status.HTTP_200_OK)]
+                status_codes=[str(status.HTTP_200_OK)],
             )
         ],
     )
