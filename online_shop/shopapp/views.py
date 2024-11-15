@@ -92,11 +92,25 @@ class TagApiView(APIView):
 
 
 class ProductApiView(APIView):
+    @extend_schema(
+        tags=["product"],
+        summary="Вывод информации по продукту с id",
+        responses={
+            status.HTTP_200_OK: ProductSerializer,
+            status.HTTP_400_BAD_REQUEST: OpenApiResponse(
+                response=None,
+                description="Product not found",
+            ),
+            status.HTTP_500_INTERNAL_SERVER_ERROR: OpenApiResponse(
+                response=None,
+                description="Что-то пошло не так",
+            ),
+        },
+    )
     def get(self, request, pk: int):
         log.info("Запрос информации по продукту с id %s", pk)
         product: Product = (
             Product.objects.filter(pk=pk)
-            # .annotate(rating=Avg("reviews__rate"))
             .select_related("category")
             .prefetch_related(
                 "tags", "images", "specifications", "reviews", "reviews__author"
