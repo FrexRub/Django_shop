@@ -208,3 +208,53 @@ class ProductSortedTestCase(TestCase):
         self.assertEqual(response.status_code, 200)
         self.assertEqual(received_data["items"][0]["reviews"], 0)
         self.assertEqual(received_data["items"][1]["reviews"], 1)
+
+    def test_get_catalog_date_to_up(self):
+        """
+        Тестирование выгрузка товаров и сортировка по новизне товара (возрастанию)
+        """
+        data = {
+            "currentPage": 1,
+            "filter[name]": 0,
+            "filter[minPrice]": 0,
+            "filter[maxPrice]": 500000,
+            "filter[freeDelivery]": "false",
+            "filter[available]": "false",
+            "category": 4,
+            "sort": "date",
+            "sortType": "dec",
+            "limit": 20,
+        }
+
+        response = self.client.get(reverse("api:catalog"), data)
+        received_data = json.loads(response.content)
+
+        self.assertEqual(response.status_code, 200)
+        self.assertTrue(
+            received_data["items"][0]["date"] < received_data["items"][1]["date"]
+        )
+
+    def test_get_catalog_date_to_down(self):
+        """
+        Тестирование выгрузка товаров и сортировка по новизне товара (убыванию)
+        """
+        data = {
+            "currentPage": 1,
+            "filter[name]": 0,
+            "filter[minPrice]": 0,
+            "filter[maxPrice]": 500000,
+            "filter[freeDelivery]": "false",
+            "filter[available]": "false",
+            "category": 4,
+            "sort": "date",
+            "sortType": "inc",
+            "limit": 20,
+        }
+
+        response = self.client.get(reverse("api:catalog"), data)
+        received_data = json.loads(response.content)
+
+        self.assertEqual(response.status_code, 200)
+        self.assertTrue(
+            received_data["items"][0]["date"] > received_data["items"][1]["date"]
+        )
