@@ -137,6 +137,20 @@ class GetUserForReviewApiView(APIView):
     permission_classes = [IsAuthenticated]
     serializer_class = None
 
+    @extend_schema(
+        tags=["product"],
+        summary="получение данный пользователя для отзыва",
+        responses={
+            status.HTTP_403_FORBIDDEN: OpenApiResponse(
+                response=None,
+                description="Учетные данные не были предоставлены",
+            ),
+            status.HTTP_500_INTERNAL_SERVER_ERROR: OpenApiResponse(
+                response=None,
+                description="Что-то пошло не так",
+            ),
+        },
+    )
     def get(self, request):
         """
         Для заполнения данных пользователя в форме отзыва (изменения в исходный код фронтенда)
@@ -225,6 +239,16 @@ class ProductReviewApiView(APIView):
 class CategoriesApiView(APIView):
     serializer_class = None
 
+    @extend_schema(
+        tags=["catalog"],
+        summary="Вывод всех категорий товаров",
+        responses={
+            status.HTTP_500_INTERNAL_SERVER_ERROR: OpenApiResponse(
+                response=None,
+                description="Что-то пошло не так",
+            ),
+        },
+    )
     def get(self, request):
         log.info("Загрузка категорий товара")
         # список всех каталогов товаров (категорий)
