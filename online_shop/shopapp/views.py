@@ -453,6 +453,17 @@ class LimitListApiView(ListAPIView):
 class BannersListApiView(APIView):
     serializer_class = ProductShortSerializer
 
+    @extend_schema(
+        tags=["catalog"],
+        summary="Вывод товаров для каждой категории",
+        responses={
+            status.HTTP_200_OK: ProductShortSerializer(many=True),
+            status.HTTP_500_INTERNAL_SERVER_ERROR: OpenApiResponse(
+                response=None,
+                description="Что-то пошло не так",
+            ),
+        },
+    )
     def get(self, request):
         cache_key = "catalog_banners"
         data_banners = cache.get(cache_key)
