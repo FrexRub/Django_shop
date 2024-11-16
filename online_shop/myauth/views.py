@@ -54,6 +54,10 @@ class UserLoginView(APIView):
         responses={
             status.HTTP_200_OK: ResultSerializer,
             status.HTTP_400_BAD_REQUEST: ResultSerializer,
+            status.HTTP_403_FORBIDDEN: OpenApiResponse(
+                response=None,
+                description="Invalid password",
+            ),
             status.HTTP_500_INTERNAL_SERVER_ERROR: OpenApiResponse(
                 response=None,
                 description="Что-то пошло не так",

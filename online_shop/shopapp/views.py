@@ -161,6 +161,44 @@ class GetUserForReviewApiView(APIView):
 class ProductReviewApiView(APIView):
     permission_classes = [IsAuthenticated]
 
+    @extend_schema(
+        tags=["product"],
+        summary="Создание отзыва о товаре авторизованного пользователя",
+        request=ReviewDBSerializer,
+        responses={
+            status.HTTP_201_CREATED: OpenApiResponse(
+                response=None,
+                description="The review has been created",
+            ),
+            status.HTTP_400_BAD_REQUEST: OpenApiResponse(
+                response=None,
+                description="Данные в форме отзыва некорректны",
+            ),
+            status.HTTP_404_NOT_FOUND: OpenApiResponse(
+                response=None,
+                description="No Product matches the given query",
+            ),
+            status.HTTP_403_FORBIDDEN: OpenApiResponse(
+                response=None,
+                description="Учетные данные не были предоставлены",
+            ),
+            status.HTTP_500_INTERNAL_SERVER_ERROR: OpenApiResponse(
+                response=None,
+                description="Что-то пошло не так",
+            ),
+        },
+        examples=[
+            OpenApiExample(
+                "Review example",
+                description="Пример заполнения полей для создания отзыва",
+                value={
+                    "text": "Отличный телефон с прекрасными характеристиками",
+                    "rate": 5,
+                },
+                status_codes=[str(status.HTTP_201_CREATED)],
+            )
+        ],
+    )
     def post(self, request, pk: int):
         log.info("Создание отзыва о товаре пользователя %s", request.user.username)
 
