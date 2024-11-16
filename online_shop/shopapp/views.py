@@ -134,6 +134,7 @@ class ProductApiView(APIView):
 
 class GetUserForReviewApiView(APIView):
     permission_classes = [IsAuthenticated]
+    serializer_class = None
 
     def get(self, request):
         """
@@ -221,6 +222,8 @@ class ProductReviewApiView(APIView):
 
 
 class CategoriesApiView(APIView):
+    serializer_class = None
+
     def get(self, request):
         log.info("Загрузка категорий товара")
         # список всех каталогов товаров (категорий)
@@ -261,6 +264,107 @@ class CategoriesApiView(APIView):
 
 
 class CatalogApiView(APIView):
+    @extend_schema(
+        tags=["catalog"],
+        summary="Вывод списка отфильтрованных товаров из указанного каталога ",
+        responses={
+            status.HTTP_200_OK: ProductShortSerializer(many=True),
+            status.HTTP_400_BAD_REQUEST: OpenApiResponse(
+                response=None,
+                description="В запросе не указан номер категории товаров",
+            ),
+            status.HTTP_404_NOT_FOUND: OpenApiResponse(
+                response=None,
+                description="No Category matches the given query",
+            ),
+            status.HTTP_500_INTERNAL_SERVER_ERROR: OpenApiResponse(
+                response=None,
+                description="Что-то пошло не так",
+            ),
+        },
+        parameters=[
+            OpenApiParameter(
+                name="currentPage",
+                location=OpenApiParameter.QUERY,
+                description="номер страницы",
+                required=False,
+                default=1,
+                type=int,
+            ),
+            OpenApiParameter(
+                name="filter[name]",
+                location=OpenApiParameter.QUERY,
+                description="название фильтра",
+                required=False,
+                default=" ",
+                type=str,
+            ),
+            OpenApiParameter(
+                name="filter[minPrice]",
+                location=OpenApiParameter.QUERY,
+                description="минимальная цена",
+                required=False,
+                default=0,
+                type=int,
+            ),
+            OpenApiParameter(
+                name="filter[maxPrice]",
+                location=OpenApiParameter.QUERY,
+                description="максимальная цена",
+                required=False,
+                default=500000,
+                type=int,
+            ),
+            OpenApiParameter(
+                name="filter[freeDelivery]",
+                location=OpenApiParameter.QUERY,
+                description="фильтр по наличию бесплатной доставки",
+                required=False,
+                default="false",
+                type=str,
+            ),
+            OpenApiParameter(
+                name="filter[available]",
+                location=OpenApiParameter.QUERY,
+                description="фильтр по наличию товара",
+                required=False,
+                default="false",
+                type=str,
+            ),
+            OpenApiParameter(
+                name="category",
+                location=OpenApiParameter.QUERY,
+                description="номер категории товара",
+                required=False,
+                default=4,
+                type=int,
+            ),
+            OpenApiParameter(
+                name="sort",
+                location=OpenApiParameter.QUERY,
+                description="название типа сортировки товаров",
+                required=False,
+                default="price",
+                type=str,
+            ),
+            OpenApiParameter(
+                name="sortType",
+                location=OpenApiParameter.QUERY,
+                description="тип сортировки товаров",
+                required=False,
+                default="inc",
+                type=str,
+            ),
+            OpenApiParameter(
+                name="limit",
+                location=OpenApiParameter.QUERY,
+                description="количество товаров в списке",
+                required=False,
+                default=20,
+                type=int,
+            ),
+        ],
+    )
     def get(self, request):
         current_page = int(request.GET.get("currentPage"))
 
@@ -320,6 +424,8 @@ class LimitListApiView(ListAPIView):
 
 
 class BannersListApiView(APIView):
+    serializer_class = ProductShortSerializer
+
     def get(self, request):
         cache_key = "catalog_banners"
         data_banners = cache.get(cache_key)
@@ -364,6 +470,8 @@ class BannersListApiView(APIView):
 
 
 class SalesListApiView(APIView):
+    serializer_class = SalesSerializer
+
     def get(self, request):
         current_page = int(request.GET.get("currentPage"))
         queryset = (
