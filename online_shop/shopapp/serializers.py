@@ -6,6 +6,8 @@ from rest_framework import serializers
 from django.db.models import Avg, Count, Value, FloatField
 from django.db.models.functions import Coalesce
 from django.contrib.auth.models import User
+from drf_spectacular.utils import extend_schema_field
+from drf_spectacular.types import OpenApiTypes
 
 from .models import (
     Product,
@@ -57,6 +59,7 @@ class ReviewSerializer(serializers.ModelSerializer):
     email = serializers.SerializerMethodField()
     date = serializers.DateTimeField(format="%d/%b/%Y %H:%M")
 
+    @extend_schema_field(OpenApiTypes.STR)
     def get_email(self, obj):
         user: User = User.objects.first()
         return user.email
@@ -75,6 +78,7 @@ class ReviewSerializer(serializers.ModelSerializer):
 class ProductImageSerializer(serializers.ModelSerializer):
     src = serializers.SerializerMethodField()
 
+    @extend_schema_field(OpenApiTypes.STR)
     def get_src(self, obj):
         return "".join(["/media/", str(obj.src)])
 
@@ -99,6 +103,7 @@ class ProductSerializer(serializers.ModelSerializer):
     # создание дополнительного поля с расчетным средним значением
     rating = serializers.SerializerMethodField()
 
+    @extend_schema_field(OpenApiTypes.FLOAT)
     def get_rating(self, obj):
         return Product.objects.filter(pk=obj.pk).aggregate(
             rating=Coalesce(Avg("reviews__rate", output_field=FloatField()), Value(0.0))
@@ -136,11 +141,13 @@ class ProductShortSerializer(serializers.ModelSerializer):
     # создание дополнительного поля с расчетным средним значением
     rating = serializers.SerializerMethodField()
 
+    @extend_schema_field(OpenApiTypes.FLOAT)
     def get_rating(self, obj):
         return Product.objects.filter(pk=obj.pk).aggregate(
             rating=Coalesce(Avg("reviews__rate", output_field=FloatField()), Value(0.0))
         )["rating"]
 
+    @extend_schema_field(OpenApiTypes.INT)
     def get_reviews(self, obj):
         return Product.objects.filter(pk=obj.pk).aggregate(
             reviews=Count("reviews__id")
@@ -174,12 +181,15 @@ class SalesSerializer(serializers.ModelSerializer):
     dateFrom = serializers.DateTimeField(format="%m-%d")
     dateTo = serializers.DateTimeField(format="%m-%d")
 
+    @extend_schema_field(OpenApiTypes.INT)
     def get_id(self, obj):
         return obj.product.id
 
+    @extend_schema_field(OpenApiTypes.DECIMAL)
     def get_price(self, obj):
         return obj.product.price
 
+    @extend_schema_field(OpenApiTypes.STR)
     def get_title(self, obj):
         return obj.product.title
 
