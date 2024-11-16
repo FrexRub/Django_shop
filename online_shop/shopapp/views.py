@@ -510,6 +510,27 @@ class BannersListApiView(APIView):
 class SalesListApiView(APIView):
     serializer_class = SalesSerializer
 
+    @extend_schema(
+        tags=["catalog"],
+        summary="Вывод скидок",
+        responses={
+            status.HTTP_200_OK: SalesSerializer(),
+            status.HTTP_500_INTERNAL_SERVER_ERROR: OpenApiResponse(
+                response=None,
+                description="Что-то пошло не так",
+            ),
+        },
+        parameters=[
+            OpenApiParameter(
+                name="currentPage",
+                location=OpenApiParameter.QUERY,
+                description="текущая страница",
+                required=False,
+                default=1,
+                type=int,
+            ),
+        ],
+    )
     def get(self, request):
         current_page = int(request.GET.get("currentPage"))
         queryset = (
