@@ -14,6 +14,7 @@ from rest_framework.permissions import IsAuthenticated
 from rest_framework.pagination import PageNumberPagination
 from drf_spectacular.utils import (
     extend_schema,
+    extend_schema_view,
     OpenApiResponse,
     OpenApiParameter,
     OpenApiExample,
@@ -386,6 +387,19 @@ class CatalogApiView(APIView):
         )
 
 
+@extend_schema(tags=["catalog"])
+@extend_schema_view(
+    list=extend_schema(
+        summary="Получить список популярных товаров",
+        responses={
+            status.HTTP_200_OK: ProductShortSerializer,
+            status.HTTP_500_INTERNAL_SERVER_ERROR: OpenApiResponse(
+                response=None,
+                description="Что-то пошло не так",
+            ),
+        },
+    ),
+)
 class PopularListApiView(ListAPIView):
     # ToDo фильтрация по количеству покупок
     queryset = (
@@ -405,6 +419,19 @@ class PopularListApiView(ListAPIView):
         return res
 
 
+@extend_schema(tags=["catalog"])
+@extend_schema_view(
+    list=extend_schema(
+        summary="Получить список ограниченных товаров",
+        responses={
+            status.HTTP_200_OK: ProductShortSerializer,
+            status.HTTP_500_INTERNAL_SERVER_ERROR: OpenApiResponse(
+                response=None,
+                description="Что-то пошло не так",
+            ),
+        },
+    ),
+)
 class LimitListApiView(ListAPIView):
     queryset = (
         Product.objects.filter(count__range=(1, 10))
