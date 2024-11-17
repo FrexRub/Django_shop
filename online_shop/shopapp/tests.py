@@ -1,10 +1,10 @@
 import json
 from django.test import TestCase
 from django.urls import reverse
-
+from django.db.models import Count
 from django.contrib.auth.models import User
 
-from .models import Product, Tag
+from .models import Product
 
 
 class ProductTestCase(TestCase):
@@ -352,3 +352,64 @@ class ProductSortedTestCase(TestCase):
         self.assertEqual(response.status_code, 200)
         self.assertEqual(len(received_data["items"]), 1)
         self.assertIn("HUAWEI", received_data["items"][0]["title"])
+
+
+class ProductReviewCase(TestCase):
+    fixtures = ["data.json"]
+
+    @classmethod
+    def setUpClass(cls):
+        super().setUpClass()
+        cls.user: User = User.objects.create_user(
+            username="TestUser",
+            password="1qaz!QAZ",
+            first_name="Алексей Иванов",
+            email="alex@shop.com",
+        )
+        cls.user.save()
+
+    @classmethod
+    def tearDownClass(cls):
+        cls.user.delete()
+        super().tearDownClass()
+
+    def test_reviews_unauthorized_user(self):
+        """
+        Тестирование создания отзыва о товаре (пользователь не авторизован)
+        """
+        data = {
+            "text": "Отличный телефон с прекрасными характеристиками",
+            "rate": 5,
+        }
+
+        response = self.client.post(reverse("api:product_reviews", args=("4",)), data)
+        received_data = json.loads(response.content)
+
+        self.assertEqual(response.status_code, 403)
+
+    def test_reviews_authorized_user(self):
+        """
+        Тестирование создания отзыва о товаре (пользователь авторизован)
+        """
+        self.client.force_login(self.user)
+        data = {
+            "text": "Отличный телефон с прекрасными характеристиками",
+            "rate": 5,
+        }
+
+        count_product_before = Product.objects.filter(pk=4).aggregate(
+            Count("reviews__id")
+        )
+
+        response = self.client.post(reverse("api:product_reviews", args=("4",)), data)
+        received_data = json.loads(response.content)
+
+        count_product_after = Product.objects.filter(pk=4).aggregate(
+            Count("reviews__id")
+        )
+        self.assertEqual(response.status_code, 201)
+        self.assertEqual(received_data["message"], "The review has been created")
+        self.assertTrue(
+            count_product_after["reviews__id__count"]
+            > count_product_before["reviews__id__count"]
+        )
