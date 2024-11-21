@@ -10,11 +10,19 @@ var mix = {
             this.count = this.count + value
             if (this.count < 1) this.count = 1
         },
+        getReview() {
+            this.getData(`/api/product/reviews/`).then(data => {
+                this.review.author = data.author
+                this.review.email = data.email
+            }).catch(() => {
+                console.warn('Ошибка при получении профиля')
+            })
+        },
         getProduct() {
             const productId = location.pathname.startsWith('/product/')
             ? Number(location.pathname.replace('/product/', '').replace('/', ''))
             : null
-            this.getData(`/api/product/${productId}`).then(data => {
+            this.getData(`/api/product/${productId}/`).then(data => {
                 this.product = {
                     ...this.product,
                     ...data
@@ -27,7 +35,7 @@ var mix = {
             })
         },
         submitReview () {
-            this.postData(`/api/product/${this.product.id}/reviews`, {
+            this.postData(`/api/product/${this.product.id}/reviews/`, {
                 author: this.review.author,
                 email: this.review.email,
                 text: this.review.text,
@@ -49,6 +57,9 @@ var mix = {
     },
     mounted () {
         this.getProduct();
+    },
+    created() {
+        this.getReview();
     },
     data() {
         return {

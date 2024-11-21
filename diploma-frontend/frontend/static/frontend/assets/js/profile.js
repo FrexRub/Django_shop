@@ -1,7 +1,7 @@
 var mix = {
     methods: {
         getProfile() {
-            this.getData(`/api/profile`).then(data => {
+            this.getData(`/api/profile/`).then(data => {
                 this.fullName = data.fullName
                 this.avatar = data.avatar
                 this.phone = data.phone
@@ -16,7 +16,7 @@ var mix = {
                 return
             }
 
-            this.postData('/api/profile', {
+            this.postData('/api/profile/', {
                 fullName: this.fullName,
                 avatar: this.avatar,
                 phone: this.phone,
@@ -41,9 +41,11 @@ var mix = {
                 alert('В форме присутствуют незаполненные поля или пароли не совпадают')
                 return
             }
-            console.log({ currentPassword: this.passwordCurrent, newPassword: this.password })
-            this.postData('/api/profile/password', { currentPassword: this.passwordCurrent, newPassword: this.password })
-              .then(({data}) => {
+            this.postData('/api/profile/password/', {
+                    passwordCurrent: this.passwordCurrent,
+                    password: this.password,
+                    passwordReply: this.passwordReply
+            }).then(({data}) => {
                    alert('Успешно сохранено')
                     this.passwordCurrent = ''
                     this.password = ''
@@ -54,15 +56,14 @@ var mix = {
         },
         setAvatar (event) {
             const target = event.target
-            const file = target.files[0]
+            const file = target.files?.[0] ?? null
             if (!file) return
 
             const formData = new FormData()
             formData.append('avatar', file)
 
-            this.postData('/api/profile/avatar', formData, {'Content-Type': 'multipart/form-data'})
-            .then(() => {
-                this.getProfile()
+            this.postData('/api/profile/avatar/', formData, {'Content-Type': 'multipart/form-data'}).then((data) => {
+                this.avatar = data.url
             }).catch(() => {
                  console.warn('Ошибка при обновлении изображения')
             })

@@ -41,7 +41,7 @@
                 <h2 class="ProductCard-title">${ product.title }$</h2>
                 <div class="ProductCard-info">
                   <div class="ProductCard-cost">
-                    <div class="ProductCard-price">$${ product.price }$
+                    <div class="ProductCard-price">${ product.price }$ руб.
                     </div>
                   </div>
                 </div>
@@ -75,8 +75,8 @@
                   <strong class="ProductCard-tagsTitle">Tags:</strong>
 
                   <!-- Как добавить пробел между ссылками? -->
-                  <div v-for="(tag, index) in tags" >${ tag.name }$
-<!--                    <span v-if="(index !== tags.length -1) && (tags.length !== 1)">|</span>-->
+                  <div v-for="(tag, index) in tags" >${ tag }$
+                   <span v-if="(index !== tags.length -1) && (tags.length !== 1)">|</span>
                   </div>
 
                 </div>

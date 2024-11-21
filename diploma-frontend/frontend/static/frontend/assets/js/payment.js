@@ -1,38 +1,34 @@
 var mix = {
 	methods: {
 		submitPayment() {
+			console.log('qweqwewqeqweqw')
 			const orderId = location.pathname.startsWith('/payment/')
 				? Number(location.pathname.replace('/payment/', '').replace('/', ''))
 				: null
-			console.log({
+			this.postData(`/api/payment/${orderId}/`, {
 				name: this.name,
-				number: this.number1,
-				year: this.year,
-				month: this.month,
-				code: this.code,
-			})
-			this.postData(`/api/payment/${orderId}`, {
-				name: this.name,
-				number: this.number1,
+				number: this.number,
 				year: this.year,
 				month: this.month,
 				code: this.code
-			}).then(() => {
-				alert('Успешная оплата')
-				this.number1 = ''
-				this.name = ''
-				this.year = ''
-				this.month = ''
-				this.code = ''
-				location.assign('/')
-			}).catch(() => {
-			 	console.warn('Ошибка при оплате')
 			})
+				.then(() => {
+					alert('Успешная оплата')
+					this.number = ''
+					this.name = ''
+					this.year = ''
+					this.month = ''
+					this.code = ''
+					location.assign('/')
+				})
+				.catch(() => {
+					console.warn('Ошибка при оплате')
+				})
 		}
 	},
 	data() {
 		return {
-			number1: '',
+			number: '',
 			month: '',
 			year: '',
 			name: '',
