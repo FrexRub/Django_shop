@@ -341,6 +341,7 @@ class ProfileView(APIView):
             },
         )
 
+        print("Profile:", asdict(res_profile))
         serializer = ProfileSerializerGet(data=asdict(res_profile))
         if serializer.is_valid():
             log.info("Успешная валидация данных пользователя %s", self.request.user)
