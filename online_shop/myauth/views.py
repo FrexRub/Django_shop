@@ -267,9 +267,9 @@ class ProfileView(APIView):
             user.first_name = request.data.get("fullName")
 
             if (
-                User.objects.filter(email=request.data.get("email"))
-                .exclude(username=user.username)
-                .exists()
+                    User.objects.filter(email=request.data.get("email"))
+                            .exclude(username=user.username)
+                            .exists()
             ):
                 log.info("Пользователь с данным email уже зарегистрирован")
                 return Response(
@@ -280,10 +280,10 @@ class ProfileView(APIView):
 
             # Запись данных в модель профиля пользователя
             if (
-                Profile.objects.select_related("user")
-                .filter(phone_number=request.data.get("phone"))
-                .exclude(user__username=user.username)
-                .exists()
+                    Profile.objects.select_related("user")
+                            .filter(phone_number=request.data.get("phone"))
+                            .exclude(user__username=user.username)
+                            .exists()
             ):
                 log.info("Пользователь с данным телефонов уже зарегистрирован")
                 return Response(
@@ -376,7 +376,6 @@ class UserAvatarUpload(APIView):
         serializer = UserAvatarSerializer(data=request.data, instance=profile)
         if serializer.is_valid():
             serializer.save()
-            # return redirect(request.META["HTTP_REFERER"])
             return Response(serializer.data, status=status.HTTP_200_OK)
         else:
             return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
@@ -414,7 +413,7 @@ class ChangePasswordView(APIView):
         user: User = self.request.user
         log.info("Изменения текущего пароля пользователя %s", user.username)
 
-        if user.check_password(request.data.get("passwordCurrent")):
+        if user.check_password(request.data.get("currentPassword")):
             log.info("Текущий пароль пользователя %s указан верно", user.username)
         else:
             log.info("Неверный пароль пользователя %s", user.username)
@@ -423,16 +422,9 @@ class ChangePasswordView(APIView):
                 status=status.HTTP_403_FORBIDDEN,
             )
 
-        if request.data.get("password") != request.data.get("passwordReply"):
-            log.info("Пароли не совпадают %s", user.username)
-            return Response(
-                {"message": "Passwords don't match"},
-                status=status.HTTP_400_BAD_REQUEST,
-            )
-
-        serializer = PasswordSerializer(data={"password": request.data.get("password")})
+        serializer = PasswordSerializer(data={"password": request.data.get("newPassword")})
         if serializer.is_valid():
-            user.set_password(request.data.get("password"))
+            user.set_password(request.data.get("newPassword"))
             user.save()
             log.info("Успешная смена пароля пользователя %s", user.username)
             return Response(
