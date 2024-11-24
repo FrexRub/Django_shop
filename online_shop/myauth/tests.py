@@ -11,6 +11,7 @@ class UserRegistrationViewTestCase(TestCase):
     @classmethod
     def setUpClass(cls):
         cls.user: User = User.objects.create_user(
+            first_name="User Test",
             username="TestUser",
             password="1qaz!QAZ"
         )
@@ -25,6 +26,7 @@ class UserRegistrationViewTestCase(TestCase):
         Тестирование на надежность пароля
         """
         user = {
+            "name": "User Test 1",
             "username": "TestUser1",
             "password": "123456"
         }
@@ -38,6 +40,7 @@ class UserRegistrationViewTestCase(TestCase):
         Тестирование на регистрацию пользователя
         """
         user = {
+            "name": "User Test 1",
             "username": "TestUser1",
             "password": "1qaz!QAZ"
         }
@@ -56,6 +59,7 @@ class UserRegistrationViewTestCase(TestCase):
         Тестирование на регистрацию пользователя повторно
         """
         user = {
+            "name": "User Test 1",
             "username": "TestUser",
             "password": "1qaz!QAZ"
         }
@@ -69,6 +73,7 @@ class UserLoginViewTestCase(TestCase):
     @classmethod
     def setUpClass(cls):
         cls.user: User = User.objects.create_user(
+            first_name="User Test",
             username="TestUser",
             password="1qaz!QAZ"
         )
@@ -83,6 +88,7 @@ class UserLoginViewTestCase(TestCase):
         Тестирование входа пользователя в личный кабинет
         """
         user = {
+            "name": "User Test 1",
             "username": "TestUser",
             "password": "1qaz!QAZ"
         }
@@ -96,6 +102,7 @@ class UserLoginViewTestCase(TestCase):
         Тестирование входа пользователя в личный кабинет (полльзователь не зарегистрирован)
         """
         user = {
+            "name": "User Test 1",
             "username": "TestUser10",
             "password": "1qaz!QAZ"
         }
@@ -109,6 +116,7 @@ class UserLoginViewTestCase(TestCase):
         Тестирование входа пользователя в личный кабинет (не верный пароль)
         """
         user = {
+            "name": "User Test 1",
             "username": "TestUser",
             "password": "123456"
         }
@@ -123,6 +131,7 @@ class UserEditProfileViewTestCase(TestCase):
     def setUpClass(cls):
         # Create TestUser1
         cls.user_1: User = User.objects.create_user(
+            first_name="User Test 1",
             username="TestUser1",
             password="1qaz!QAZ"
         )
@@ -133,6 +142,7 @@ class UserEditProfileViewTestCase(TestCase):
 
         # Create TestUser2
         cls.user_2: User = User.objects.create_user(
+            first_name="User Test 2",
             username="TestUser2",
             password="1qaz!QAZ"
         )
@@ -242,6 +252,7 @@ class UserEditPasswordViewTestCase(TestCase):
     def setUpClass(cls):
         # Create TestUser1
         cls.user: User = User.objects.create_user(
+            first_name="User Test",
             username="TestUser",
             password="1qaz!QAZ"
         )
@@ -257,9 +268,8 @@ class UserEditPasswordViewTestCase(TestCase):
         """
         self.client.force_login(self.user)
         data_pass = {
-            "passwordCurrent": "1qaz!QAZ!",
-            "password": "2wsx@WSX",
-            "passwordReply": "2wsx@WSX",
+            "currentPassword": "1qaz!QAZ!",
+            "newPassword": "2wsx@WSX",
         }
 
         response = self.client.post(reverse("api:edit_password"), data_pass)
@@ -273,9 +283,8 @@ class UserEditPasswordViewTestCase(TestCase):
         """
         self.client.force_login(self.user)
         data_pass = {
-            "passwordCurrent": "1qaz!QAZ",
-            "password": "123456",
-            "passwordReply": "123456",
+            "currentPassword": "1qaz!QAZ",
+            "newPassword": "123456",
         }
 
         response = self.client.post(reverse("api:edit_password"), data_pass)
@@ -283,31 +292,14 @@ class UserEditPasswordViewTestCase(TestCase):
         self.assertEqual(response.status_code, 400)
         self.assertEqual(received_data["password"][0], "Invalid password")
 
-    def test_password_dont_match(self):
-        """
-        Тестирование редактирования профиля (задаваемые пароли не совпадают)
-        """
-        self.client.force_login(self.user)
-        data_pass = {
-            "passwordCurrent": "1qaz!QAZ",
-            "password": "2wsx@WSX!",
-            "passwordReply": "2wsx@WSX",
-        }
-
-        response = self.client.post(reverse("api:edit_password"), data_pass)
-        received_data = json.loads(response.content)
-        self.assertEqual(response.status_code, 400)
-        self.assertEqual(received_data["message"], "Passwords don't match")
-
     def test_password_ok(self):
         """
         Тестирование редактирования профиля (изменение пароля)
         """
         self.client.force_login(self.user)
         data_pass = {
-            "passwordCurrent": "1qaz!QAZ",
-            "password": "2wsx@WSX",
-            "passwordReply": "2wsx@WSX",
+            "currentPassword": "1qaz!QAZ",
+            "newPassword": "2wsx@WSX",
         }
 
         response = self.client.post(reverse("api:edit_password"), data_pass)
