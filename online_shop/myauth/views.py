@@ -402,9 +402,8 @@ class ChangePasswordView(APIView):
                 "Password edit example",
                 description="Пример изменения пароля",
                 value={
-                    "passwordCurrent": "old password",
-                    "password": "new password",
-                    "passwordReply": "reply new password",
+                    "currentPassword": "old password",
+                    "newPassword": "new password",
                 },
                 status_codes=[str(status.HTTP_200_OK)],
             )
