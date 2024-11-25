@@ -22,6 +22,8 @@ from shopapp.views import (
     SalesListApiView,
 )
 
+from basket.views import BasketApiView
+
 app_name = "api"
 
 urlpatterns = [
@@ -40,5 +42,10 @@ urlpatterns = [
     path("products/limited", LimitListApiView.as_view(), name="limited"),
     path("product/reviews", GetUserForReviewApiView.as_view(), name="get_review"),
     path("product/<int:pk>", ProductApiView.as_view(), name="product_details"),
-    path("product/<int:pk>/reviews", ProductReviewApiView.as_view(), name="product_reviews"),
+    path(
+        "product/<int:pk>/reviews",
+        ProductReviewApiView.as_view(),
+        name="product_reviews",
+    ),
+    path("basket", BasketApiView.as_view(), name="basket"),
 ]

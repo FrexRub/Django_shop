@@ -63,6 +63,7 @@ INSTALLED_APPS = [
     "api.apps.ApiConfig",
     "myauth.apps.MyauthConfig",
     "shopapp.apps.ShopappConfig",
+    "basket.apps.BasketConfig",
 ]
 
 MIDDLEWARE = [
@@ -114,6 +115,8 @@ DATABASES = {
         "PORT": env("POSTGRES_PORT"),
     }
 }
+
+CART_SESSION_ID = "cart"
 
 CACHES = {
     "default": {
