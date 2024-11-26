@@ -1,6 +1,10 @@
-from decimal import Decimal
+from typing import Any
+import logging
+
 from django.conf import settings
 from shopapp.models import Product
+
+log = logging.getLogger(__name__)
 
 
 class Cart(object):
@@ -10,9 +14,12 @@ class Cart(object):
         Инициализация корзины
         """
         self.session = request.session
+
         cart = self.session.get(settings.CART_SESSION_ID)
         if not cart:
+            log.info("Инициализация корзины товаров")
             cart = self.session[settings.CART_SESSION_ID] = {}
+
         self.cart = cart
 
     def add(self, product: Product, quantity: int = 1):
@@ -61,9 +68,26 @@ class Cart(object):
 
             self.save()
 
-    def list_id_products(self):
+        if len(self.list_id_products()) == 0:
+            self.delete_cart()
+
+    def list_id_products(self) -> list[str]:
+        """
+        Возвращает список id товаров в корзине
+        :return: list[str]
+        """
         return list(self.cart.keys())
 
-    def get(self, id: int):
+    def get(self, id: int) -> dict[str, Any]:
+        """
+        Возвращает данные о продукте в корзине по его id
+        :param id:int
+            id продукта
+        :return: dict[str, Any]
+        """
         product_id = str(id)
         return self.cart[product_id]
+
+    def delete_cart(self):
+        log.info("Удаление корзины товаров")
+        del self.session[settings.CART_SESSION_ID]
