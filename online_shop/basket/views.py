@@ -72,9 +72,19 @@ class BasketApiView(APIView):
             % (id_product, count_product)
         )
         cart = Cart(request)
-        print("!!!!!", cart.list_id_products())
         cart.remove(id_product, count_product)
-        print("!!!!!", cart.list_id_products())
+
+        list_id = cart.list_id_products()
+        products = (
+            Product.objects.filter(id__in=list_id)
+            .select_related("category")
+            .prefetch_related(
+                "tags", "images", "specifications", "reviews", "reviews__author"
+            )
+            .order_by("id")
+        )
+        serializer = BasketSerializer(products, many=True, context={"request": request})
         return Response(
+            serializer.data,
             status=status.HTTP_200_OK,
         )

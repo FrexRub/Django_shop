@@ -47,21 +47,22 @@ class Cart(object):
         # Отметить сеанс как "измененный", чтобы убедиться, что он сохранен
         self.session.modified = True
 
-    def remove(self, product_id: int, quantity: int):
+    def remove(self, id: int, quantity: int):
         """
         Удаление товара из корзины.
-        :param product_id: int
-            id продукта удаляемого из карзыны
+        :param id: int
+            id продукта удаляемого из корзины
         :param quantity: int
-            количество удаляемых из карзыны продуктов
+            количество удаляемых из корзины продуктов
         :return:
         """
+        product_id = str(id)
         if product_id in self.cart:
-            del self.cart[product_id]
-            # if self.cart[product_id]["quantity"] > quantity:
-            #     self.cart[product_id]["quantity"] -= quantity
-            # else:
-            #     del self.cart[product_id]
+            # del self.cart[product_id]
+            if self.cart[product_id]["quantity"] > quantity:
+                self.cart[product_id]["quantity"] -= quantity
+            else:
+                del self.cart[product_id]
 
             self.save()
 
