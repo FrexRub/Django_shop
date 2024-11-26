@@ -25,12 +25,24 @@ class BasketApiView(APIView):
         )
         cart = Cart(request)
         product: Product = get_object_or_404(Product, pk=id_product)
+
         if product.count == 0:
             log.info("Товар с id %s отсутствует на складе" % id_product)
             return Response(
                 {"message": "The product is out of stock"},
                 status=status.HTTP_400_BAD_REQUEST,
             )
+
+        print("Начальное кол-во товара", product.count)
+
+        if product.count > count_product:
+            product.count -= count_product
+        else:
+            count_product = product.count
+            product.count = 0
+
+        product.save()
+
         cart.add(product=product, quantity=count_product)
 
         list_id = cart.list_id_products()
