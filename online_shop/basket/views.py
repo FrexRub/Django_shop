@@ -40,7 +40,7 @@ class BasketApiView(APIView):
             )
             .order_by("id")
         )
-        serializer = BasketSerializer(products, many=True)
+        serializer = BasketSerializer(products, many=True, context={"request": request})
 
         return Response(
             serializer.data,
@@ -58,7 +58,7 @@ class BasketApiView(APIView):
             )
             .order_by("id")
         )
-        serializer = BasketSerializer(products, many=True)
+        serializer = BasketSerializer(products, many=True, context={"request": request})
         return Response(
             serializer.data,
             status=status.HTTP_200_OK,

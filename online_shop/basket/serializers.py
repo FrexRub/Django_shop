@@ -19,6 +19,8 @@ from shopapp.serializers import (
     ReviewSerializer,
 )
 
+from .cart import Cart
+
 log = logging.getLogger(__name__)
 
 # для отображения названий месяцев на русском
@@ -41,11 +43,20 @@ class BasketSerializer(serializers.ModelSerializer):
     # создание дополнительного поля с расчетным средним значением
     rating = serializers.SerializerMethodField()
 
+    # создание дополнительного поля с расчетным средним значением
+    count = serializers.SerializerMethodField()
+
     @extend_schema_field(OpenApiTypes.FLOAT)
     def get_rating(self, obj):
         return Product.objects.filter(pk=obj.pk).aggregate(
             rating=Coalesce(Avg("reviews__rate", output_field=FloatField()), Value(0.0))
         )["rating"]
+
+    @extend_schema_field(OpenApiTypes.INT)
+    def get_count(self, obj):
+        cart = Cart(self.context["request"])
+        prod = cart.get(obj.pk)
+        return prod["quantity"]
 
     class Meta:
         model = Product

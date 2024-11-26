@@ -67,3 +67,7 @@ class Cart(object):
 
     def list_id_products(self):
         return list(self.cart.keys())
+
+    def get(self, id: int):
+        product_id = str(id)
+        return self.cart[product_id]
