@@ -14,7 +14,9 @@ log = logging.getLogger(__name__)
 
 
 class BasketApiView(APIView):
+    # ToDo учет количества товара при добавлении в корзину и удалении
     def post(self, request):
+        print("Добавление товара ", request.data)
         id_product = int(request.data.get("id"))
         count_product = int(request.data.get("count"))
         log.info(
@@ -29,7 +31,7 @@ class BasketApiView(APIView):
                 {"message": "The product is out of stock"},
                 status=status.HTTP_400_BAD_REQUEST,
             )
-        cart.add(product=product, quantity=count_product, update_quantity=True)
+        cart.add(product=product, quantity=count_product)
 
         list_id = cart.list_id_products()
         products = (
