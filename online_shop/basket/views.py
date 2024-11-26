@@ -8,7 +8,7 @@ from rest_framework.response import Response
 
 from .cart import Cart
 from shopapp.views import Product
-from shopapp.serializers import ProductSerializer
+from .serializers import BasketSerializer
 
 log = logging.getLogger(__name__)
 
@@ -23,6 +23,12 @@ class BasketApiView(APIView):
         )
         cart = Cart(request)
         product: Product = get_object_or_404(Product, pk=id_product)
+        if product.count == 0:
+            log.info("Товар с id %s отсутствует на складе" % id_product)
+            return Response(
+                {"message": "The product is out of stock"},
+                status=status.HTTP_400_BAD_REQUEST,
+            )
         cart.add(product=product, quantity=count_product, update_quantity=True)
 
         list_id = cart.list_id_products()
@@ -34,7 +40,7 @@ class BasketApiView(APIView):
             )
             .order_by("id")
         )
-        serializer = ProductSerializer(products, many=True)
+        serializer = BasketSerializer(products, many=True)
 
         return Response(
             serializer.data,
@@ -52,7 +58,7 @@ class BasketApiView(APIView):
             )
             .order_by("id")
         )
-        serializer = ProductSerializer(products, many=True)
+        serializer = BasketSerializer(products, many=True)
         return Response(
             serializer.data,
             status=status.HTTP_200_OK,
