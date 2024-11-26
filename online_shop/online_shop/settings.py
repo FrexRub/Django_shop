@@ -118,6 +118,8 @@ DATABASES = {
 
 CART_SESSION_ID = "cart"
 
+SESSION_ENGINE = "django.contrib.sessions.backends.cached_db"
+
 CACHES = {
     "default": {
         "BACKEND": "django_redis.cache.RedisCache",
