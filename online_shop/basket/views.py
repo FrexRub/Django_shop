@@ -5,16 +5,54 @@ from django.shortcuts import get_object_or_404
 from rest_framework.views import APIView
 from rest_framework import status
 from rest_framework.response import Response
+from drf_spectacular.utils import (
+    extend_schema,
+    extend_schema_view,
+    OpenApiResponse,
+    OpenApiParameter,
+    OpenApiExample,
+)
 
 from .cart import Cart
 from shopapp.views import Product
-from .serializers import BasketSerializer
+from .serializers import BasketSerializer, BasketDataSerializer
 
 log = logging.getLogger(__name__)
 
 
 class BasketApiView(APIView):
     # ToDo учет количества товара при добавлении в корзину и удалении
+
+    @extend_schema(
+        tags=["basket"],
+        summary="Добавление товара в корзину",
+        request=BasketDataSerializer,
+        responses={
+            status.HTTP_201_CREATED: OpenApiResponse(
+                response=BasketSerializer,
+                description="The review has been created",
+            ),
+            status.HTTP_404_NOT_FOUND: OpenApiResponse(
+                response=None,
+                description="No Product matches the given query",
+            ),
+            status.HTTP_500_INTERNAL_SERVER_ERROR: OpenApiResponse(
+                response=None,
+                description="Что-то пошло не так",
+            ),
+        },
+        examples=[
+            OpenApiExample(
+                "Example",
+                description="Пример заполнения полей для добавления товара",
+                value={
+                    "id": 1,
+                    "count": 2,
+                },
+                status_codes=[str(status.HTTP_201_CREATED)],
+            )
+        ],
+    )
     def post(self, request):
         id_product = int(request.data.get("id"))
         count_product = int(request.data.get("count"))
@@ -58,6 +96,19 @@ class BasketApiView(APIView):
             status=status.HTTP_201_CREATED,
         )
 
+
+    @extend_schema(
+        tags=["basket"],
+        summary="Вывод содержания корзины",
+        responses={
+            status.HTTP_200_OK: BasketSerializer,
+            status.HTTP_500_INTERNAL_SERVER_ERROR: OpenApiResponse(
+                response=None,
+                description="Что-то пошло не так",
+            ),
+        },
+    )
+
     def get(self, request):
         cart = Cart(request)
         list_id = cart.list_id_products()
@@ -75,6 +126,34 @@ class BasketApiView(APIView):
             status=status.HTTP_200_OK,
         )
 
+
+    @extend_schema(
+        tags=["basket"],
+        summary="Удаление товара из корзины",
+        request=BasketDataSerializer,
+        responses={
+            status.HTTP_200_OK: BasketSerializer,
+            status.HTTP_404_NOT_FOUND: OpenApiResponse(
+                response=None,
+                description="No Product matches the given query",
+            ),
+            status.HTTP_500_INTERNAL_SERVER_ERROR: OpenApiResponse(
+                response=None,
+                description="Что-то пошло не так",
+            ),
+        },
+        examples=[
+            OpenApiExample(
+                "Example",
+                description="Пример заполнения полей для удаления товара",
+                value={
+                    "id": 1,
+                    "count": 2,
+                },
+                status_codes=[str(status.HTTP_200_OK)],
+            )
+        ],
+    )
     def delete(self, request):
         id_product = int(request.data.get("id"))
         count_product = int(request.data.get("count"))

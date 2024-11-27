@@ -30,6 +30,11 @@ locale.setlocale(
 )
 
 
+class BasketDataSerializer(serializers.Serializer):
+    id = serializers.IntegerField()
+    count = serializers.IntegerField()
+
+
 class BasketSerializer(serializers.ModelSerializer):
     images = ProductImageSerializer(many=True, read_only=True)
     specifications = SpecificationSerializer(many=True, read_only=True)
