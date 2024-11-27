@@ -44,7 +44,7 @@ ALLOWED_HOSTS = [
     "DJANGO_ALLOWED_HOSTS"
 ).split(",")
 
-APPEND_SLASH=False
+APPEND_SLASH = False
 
 # Application definition
 
@@ -64,6 +64,7 @@ INSTALLED_APPS = [
     "myauth.apps.MyauthConfig",
     "shopapp.apps.ShopappConfig",
     "basket.apps.BasketConfig",
+    "orders.apps.OrdersConfig",
 ]
 
 MIDDLEWARE = [
@@ -74,7 +75,7 @@ MIDDLEWARE = [
     "django.contrib.auth.middleware.AuthenticationMiddleware",
     "django.contrib.messages.middleware.MessageMiddleware",
     "django.middleware.clickjacking.XFrameOptionsMiddleware",
-    "debug_toolbar.middleware.DebugToolbarMiddleware"
+    "debug_toolbar.middleware.DebugToolbarMiddleware",
 ]
 
 ROOT_URLCONF = "online_shop.urls"
