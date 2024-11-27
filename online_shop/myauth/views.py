@@ -341,7 +341,6 @@ class ProfileView(APIView):
             },
         )
 
-        print("Profile:", asdict(res_profile))
         serializer = ProfileSerializerGet(data=asdict(res_profile))
         if serializer.is_valid():
             log.info("Успешная валидация данных пользователя %s", self.request.user)
@@ -373,12 +372,15 @@ class UserAvatarUpload(APIView):
         },
     )
     def post(self, request, format=None):
+        log.info("Запрос пользователя %s на замену аватара" % self.request.user)
         profile = get_profile_user(self.request.user)
         serializer = UserAvatarSerializer(data=request.data, instance=profile)
         if serializer.is_valid():
             serializer.save()
+            log.info("Аватар пользователя %s успешно заменен" % self.request.user)
             return Response(serializer.data, status=status.HTTP_200_OK)
         else:
+            log.error("Ошибка замены пользователем %s аватара" % self.request.user)
             return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
 

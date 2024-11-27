@@ -1,3 +1,8 @@
+import os
+from pathlib import Path
+import logging
+
+from django.conf import settings
 from django.contrib.auth.models import User
 from django.db import models
 from django.contrib.postgres.indexes import HashIndex
@@ -5,13 +10,20 @@ from django.core.validators import FileExtensionValidator
 from django.core.exceptions import ValidationError
 from django.urls import reverse
 from django.core.validators import RegexValidator
+from django.db.models.signals import pre_save
+from django.dispatch import receiver
+
 
 from services.utils import unique_slugify, validate_file_size
+
+# BASE_DIR = Path(__file__).resolve().parent.parent
+# MEDIA_ROOT = BASE_DIR / "upload"
 
 phone_number_validator = RegexValidator(
     r"^((8|\+7)[\- ]?)?(\(?\d{3}\)?[\- ]?)?[\d\- ]{7,10}$"
 )
 
+log = logging.getLogger(__name__)
 
 def user_directory_path(instance, filename):
     return "profile/user_{pk}/{filename}".format(pk=instance.user.id, filename=filename)
@@ -65,3 +77,19 @@ class Profile(models.Model):
         Ссылка на профиль
         """
         return reverse("profile_detail", kwargs={"slug": self.slug})
+
+@receiver(pre_save, sender=Profile)
+def delete_old_avatar(sender, instance, **kwargs):
+    log.info("Пользователь заменил аватар")
+    if instance.pk:
+        try:
+            old_avatar = Profile.objects.get(pk=instance.pk).avatar
+        except Profile.DoesNotExist:
+            return
+        # Если изображение изменено, удаляем старый файл
+        if old_avatar and old_avatar != instance.avatar:
+            path_file_old_avatar = settings.MEDIA_URL + old_avatar.name
+
+            if os.path.isfile(path_file_old_avatar):
+                log.info("Старый аватар пользователя удален")
+                os.remove(path_file_old_avatar)
