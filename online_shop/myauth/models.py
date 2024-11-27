@@ -88,8 +88,8 @@ def delete_old_avatar(sender, instance, **kwargs):
             return
         # Если изображение изменено, удаляем старый файл
         if old_avatar and old_avatar != instance.avatar:
-            path_file_old_avatar = settings.MEDIA_URL + old_avatar.name
+            print(old_avatar.path)
 
-            if os.path.isfile(path_file_old_avatar):
+            if os.path.isfile(old_avatar.path):
                 log.info("Старый аватар пользователя удален")
-                os.remove(path_file_old_avatar)
+                os.remove(old_avatar.path)
