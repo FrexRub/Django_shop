@@ -29,7 +29,7 @@ class BasketApiView(APIView):
         request=BasketDataSerializer,
         responses={
             status.HTTP_201_CREATED: OpenApiResponse(
-                response=BasketSerializer,
+                response=BasketSerializer(many=True),
                 description="The review has been created",
             ),
             status.HTTP_404_NOT_FOUND: OpenApiResponse(
@@ -96,19 +96,17 @@ class BasketApiView(APIView):
             status=status.HTTP_201_CREATED,
         )
 
-
     @extend_schema(
         tags=["basket"],
         summary="Вывод содержания корзины",
         responses={
-            status.HTTP_200_OK: BasketSerializer,
+            status.HTTP_200_OK: BasketSerializer(many=True),
             status.HTTP_500_INTERNAL_SERVER_ERROR: OpenApiResponse(
                 response=None,
                 description="Что-то пошло не так",
             ),
         },
     )
-
     def get(self, request):
         cart = Cart(request)
         list_id = cart.list_id_products()
@@ -126,13 +124,12 @@ class BasketApiView(APIView):
             status=status.HTTP_200_OK,
         )
 
-
     @extend_schema(
         tags=["basket"],
         summary="Удаление товара из корзины",
         request=BasketDataSerializer,
         responses={
-            status.HTTP_200_OK: BasketSerializer,
+            status.HTTP_200_OK: BasketSerializer(many=True),
             status.HTTP_404_NOT_FOUND: OpenApiResponse(
                 response=None,
                 description="No Product matches the given query",
