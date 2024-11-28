@@ -23,6 +23,7 @@ from shopapp.views import (
 )
 
 from basket.views import BasketApiView
+from orders.views import OrderApiView
 
 app_name = "api"
 
@@ -48,4 +49,5 @@ urlpatterns = [
         name="product_reviews",
     ),
     path("basket", BasketApiView.as_view(), name="basket"),
+    path("orders", OrderApiView.as_view(), name="orders"),
 ]

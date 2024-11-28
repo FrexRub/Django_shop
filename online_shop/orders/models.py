@@ -8,12 +8,11 @@ from shopapp.models import Product
 
 
 class DeliveryType(models.TextChoices):
-    FREE = "free"
     ORDINARY = "ordinary"
     EXPRESS = "express"
 
 
-class PaymenType(models.TextChoices):
+class PaymentType(models.TextChoices):
     ONLINE = "online"
     SOMEONE = "someone"
 
@@ -22,22 +21,22 @@ class Order(models.Model):
     created_at = models.DateTimeField(auto_now_add=True, db_index=True)
     user = models.ForeignKey(
         User,
-        on_delete=models.PROTECT,
-        verbose_name="Заказчик",
+        on_delete=models.CASCADE,
+        verbose_name="Покупатель",
         related_name="orders",
     )
     delivery_type = models.CharField(
         max_length=8,
         null=False,
         choices=DeliveryType.choices,
-        default=DeliveryType.FREE,
+        default=DeliveryType.ORDINARY,
         verbose_name="Тип доставки",
     )
-    paymen_type = models.CharField(
+    payment_type = models.CharField(
         max_length=7,
         null=False,
-        choices=PaymenType.choices,
-        default=PaymenType.ONLINE,
+        choices=PaymentType.choices,
+        default=PaymentType.ONLINE,
         verbose_name="Способ оплаты",
     )
     total_cost = models.DecimalField(
@@ -48,11 +47,11 @@ class Order(models.Model):
         verbose_name="Общая цена заказа",
     )
     status = models.CharField(
-        max_length=15, null=False, default="accepted", verbose_name="Статус заказа"
+        max_length=15, verbose_name="Статус заказа"
     )
     city = models.CharField(max_length=40, null=False, blank=True, verbose_name="Город")
     address = models.CharField(
-        max_length=150, null=False, blank=True, verbose_name="Адрес доставки"
+        max_length=80, null=False, blank=True, verbose_name="Адрес доставки"
     )
     products = models.ManyToManyField(
         Product, related_name="orders", verbose_name="Товары"
