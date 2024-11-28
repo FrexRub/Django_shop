@@ -20,7 +20,7 @@ from drf_spectacular.utils import (
 
 from basket.cart import Cart
 from shopapp.models import Product
-from orders.models import Order
+from orders.models import Order, OrderInfoBasket
 from orders.serializers import OrderSerializer
 
 log = logging.getLogger(__name__)
@@ -40,14 +40,7 @@ class OrderApiView(APIView):
                 status=status.HTTP_400_BAD_REQUEST,
             )
 
-        products = (
-            Product.objects.filter(id__in=list_id)
-            .select_related("category")
-            .prefetch_related(
-                "tags", "images", "specifications", "reviews",
-            )
-            .order_by("id")
-        )
+        products = Product.objects.filter(id__in=list_id)
 
         total_cost = 0
         for i_id in list_id:
@@ -60,9 +53,15 @@ class OrderApiView(APIView):
         )
 
         for product in products:
-            order.products.add(product)
+            product_from_basket = cart.get(product.pk)
+            m2m_order = OrderInfoBasket(
+                order=order,
+                product=product,
+                count_in_order=product_from_basket["quantity"],
+                price_in_order=product_from_basket["price"]
+            )
 
-        order.save()
+        m2m_order.save()
 
         return Response(
             {"orderId": order.pk},
@@ -75,12 +74,12 @@ class OrderDetailApiView(APIView):
         order = (
             Order.objects.filter(pk=pk)
             .select_related("user")
-            .prefetch_related("products", "user__profile")
+            .prefetch_related("basket", "user__profile")
             .order_by("id")
         )
 
-        serializer = OrderSerializer(order, many=True, context={"request": request})
+        # serializer = OrderSerializer(order, many=True, context={"request": request})
         return Response(
-            serializer.data,
+            # serializer.data,
             status=status.HTTP_200_OK,
         )

@@ -56,9 +56,6 @@ class Order(models.Model):
     basket = models.ManyToManyField(
         Product, through="OrderInfoBasket", verbose_name="Товары из корзины"
     )
-    commit = models.CharField(
-        max_length=15,
-    )
 
 
 class OrderInfoBasket(models.Model):
@@ -82,4 +79,3 @@ class OrderInfoBasket(models.Model):
         validators=[MinValueValidator(Decimal("0.01"))],
         verbose_name="Цена",
     )
-
