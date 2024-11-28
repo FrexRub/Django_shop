@@ -23,7 +23,7 @@ from shopapp.views import (
 )
 
 from basket.views import BasketApiView
-from orders.views import OrderApiView, OrderDetailApiView
+from orders.views import OrderApiView, OrderDetailApiView, PaymentApiView
 
 app_name = "api"
 
@@ -51,4 +51,5 @@ urlpatterns = [
     path("basket", BasketApiView.as_view(), name="basket"),
     path("orders", OrderApiView.as_view(), name="orders"),
     path("order/<int:pk>", OrderDetailApiView.as_view(), name="orders_details"),
+    path("payment/<int:pk>", PaymentApiView.as_view(), name="payment"),
 ]

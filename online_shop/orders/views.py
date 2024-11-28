@@ -88,15 +88,12 @@ class OrderDetailApiView(APIView):
         )
 
     def post(self, request, pk: int):
-        print("POST DATA: ", request.data)
-
         order = (
             Order.objects.filter(pk=pk)
             .select_related("user")
             .prefetch_related("basket", "user__profile")
             .first()
         )
-
         order.delivery_type = request.data.get("deliveryType")
         order.payment_type = request.data.get("paymentType")
         order.status = request.data.get("status")
@@ -109,4 +106,18 @@ class OrderDetailApiView(APIView):
         return Response(
             serializer.data,
             status=status.HTTP_201_CREATED,
+        )
+
+
+class PaymentApiView(APIView):
+    def post(self, request, pk: int):
+        print("POST DATA: ", request.data)
+        return Response(
+            status=status.HTTP_200_OK,
+        )
+
+    def get(self, request, pk: int):
+        print("GET DATA: ", request.data)
+        return Response(
+            status=status.HTTP_200_OK,
         )
