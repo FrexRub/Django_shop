@@ -76,24 +76,25 @@ class ProductOrderSerializer(serializers.ModelSerializer):
 
 
 class OrderSerializer(serializers.ModelSerializer):
-    products = ProductOrderSerializer(many=True, read_only=True)
+    products = ProductOrderSerializer(source="basket", many=True, read_only=True)
     createdAt = serializers.DateTimeField(source="created_at")
     fullName = serializers.CharField(source="user.first_name")
     email = serializers.CharField(source="user.email")
-    phone = serializers.CharField(source="user.profile__phone_number")
-    deliveryType = serializers.CharField(source="delivery_type")
+    # phone = serializers.CharField(source="user.profile__phone_number")
+    # deliveryType = serializers.CharField(source="delivery_type")
     paymentType = serializers.CharField(source="payment_type")
     totalCost = serializers.CharField(source="total_cost")
 
     class Meta:
         model = Order
-        depth = 1
+        # depth = 1
         fields = (
             "id",
             "createdAt",
             "fullName",
-            "phone"
-            "deliveryType",
+            "email",
+            # "phone",
+            # "deliveryType",
             "paymentType",
             "totalCost",
             "status",

@@ -78,8 +78,10 @@ class OrderDetailApiView(APIView):
             .order_by("id")
         )
 
-        # serializer = OrderSerializer(order, many=True, context={"request": request})
+        serializer = OrderSerializer(order, many=True, context={"request": request})
+
+        print(serializer.data)
         return Response(
-            # serializer.data,
+            serializer.data,
             status=status.HTTP_200_OK,
         )

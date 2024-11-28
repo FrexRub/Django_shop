@@ -50,5 +50,5 @@ urlpatterns = [
     ),
     path("basket", BasketApiView.as_view(), name="basket"),
     path("orders", OrderApiView.as_view(), name="orders"),
-    path("orders/<int:pk>", OrderDetailApiView.as_view(), name="orders_details"),
+    path("order/<int:pk>", OrderDetailApiView.as_view(), name="orders_details"),
 ]
