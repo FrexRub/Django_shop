@@ -7,8 +7,7 @@ from django.contrib.auth.models import User
 from drf_spectacular.utils import extend_schema_field
 from drf_spectacular.types import OpenApiTypes
 
-from basket.cart import Cart
-from orders.models import Order
+from orders.models import Order, OrderInfoBasket
 from shopapp.serializers import ProductImageSerializer
 from shopapp.models import (
     Product,
@@ -33,15 +32,17 @@ class ProductOrderSerializer(serializers.ModelSerializer):
 
     @extend_schema_field(OpenApiTypes.INT)
     def get_count(self, obj):
-        cart = Cart(self.context["request"])
-        prod = cart.get(obj.pk)
-        return prod["quantity"]
+        order_info = OrderInfoBasket.objects.get(
+            order=self.context["order"], product=obj
+        )
+        return order_info.count_in_order
 
     @extend_schema_field(OpenApiTypes.DECIMAL)
     def get_price(self, obj):
-        cart = Cart(self.context["request"])
-        prod = cart.get(obj.pk)
-        return prod["price"]
+        order_info = OrderInfoBasket.objects.get(
+            order=self.context["order"], product=obj
+        )
+        return order_info.price_in_order
 
     @extend_schema_field(OpenApiTypes.FLOAT)
     def get_rating(self, obj):
@@ -80,21 +81,20 @@ class OrderSerializer(serializers.ModelSerializer):
     createdAt = serializers.DateTimeField(source="created_at")
     fullName = serializers.CharField(source="user.first_name")
     email = serializers.CharField(source="user.email")
-    # phone = serializers.CharField(source="user.profile__phone_number")
-    # deliveryType = serializers.CharField(source="delivery_type")
+    phone = serializers.CharField(source="user.profile.phone_number")
+    deliveryType = serializers.CharField(source="delivery_type")
     paymentType = serializers.CharField(source="payment_type")
     totalCost = serializers.CharField(source="total_cost")
 
     class Meta:
         model = Order
-        # depth = 1
         fields = (
             "id",
             "createdAt",
             "fullName",
             "email",
-            # "phone",
-            # "deliveryType",
+            "phone",
+            "deliveryType",
             "paymentType",
             "totalCost",
             "status",

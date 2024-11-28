@@ -45,7 +45,9 @@ class OrderApiView(APIView):
         total_cost = 0
         for i_id in list_id:
             product_from_basket = cart.get(i_id)
-            total_cost += Decimal(product_from_basket["quantity"]) * Decimal(product_from_basket["price"])
+            total_cost += Decimal(product_from_basket["quantity"]) * Decimal(
+                product_from_basket["price"]
+            )
 
         order = Order.objects.create(
             user=user,
@@ -58,7 +60,7 @@ class OrderApiView(APIView):
                 order=order,
                 product=product,
                 count_in_order=product_from_basket["quantity"],
-                price_in_order=product_from_basket["price"]
+                price_in_order=product_from_basket["price"],
             )
 
         m2m_order.save()
@@ -75,12 +77,15 @@ class OrderDetailApiView(APIView):
             Order.objects.filter(pk=pk)
             .select_related("user")
             .prefetch_related("basket", "user__profile")
-            .order_by("id")
+            .first()
         )
 
-        serializer = OrderSerializer(order, many=True, context={"request": request})
+        serializer = OrderSerializer(order, context={"order": order})
 
-        print(serializer.data)
+        # for product in order.basket.all():
+        #     order_info = OrderInfoBasket.objects.get(order=order, product=product)
+        #     print(order_info.count_in_order)
+
         return Response(
             serializer.data,
             status=status.HTTP_200_OK,
