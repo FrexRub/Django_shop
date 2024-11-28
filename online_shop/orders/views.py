@@ -27,6 +27,19 @@ log = logging.getLogger(__name__)
 
 
 class OrderApiView(APIView):
+    def get(self, request):
+        orders = (
+            Order.objects.filter(user=self.request.user)
+            .select_related("user")
+            .prefetch_related("basket", "user__profile")
+        )
+        serializer = OrderSerializer(orders, many=True, context={"order": order})
+
+        return Response(
+            serializer.data,
+            status=status.HTTP_200_OK,
+        )
+
     def post(self, request):
         log.info("Начало выполнения запроса по созданию ордера")
         cart = Cart(request)
@@ -104,7 +117,7 @@ class OrderDetailApiView(APIView):
         serializer = OrderSerializer(order, context={"order": order})
 
         return Response(
-            serializer.data,
+            {"orderId": order.pk},
             status=status.HTTP_201_CREATED,
         )
 
@@ -112,11 +125,26 @@ class OrderDetailApiView(APIView):
 class PaymentApiView(APIView):
     def post(self, request, pk: int):
         print("POST DATA: ", request.data)
+        # POST DATA:  {'name': 'ewfefefefef', 'number': '351343t3t1t1t34t', 'year': '23', 'month': '12', 'code': '234'}
         return Response(
             status=status.HTTP_200_OK,
         )
 
     def get(self, request, pk: int):
+        print("GET DATA: ", request.data)
+        return Response(
+            status=status.HTTP_200_OK,
+        )
+
+
+class PaymentSemeoneApiView(APIView):
+    def post(self, request):
+        print("POST DATA: ", request.data)
+        return Response(
+            status=status.HTTP_200_OK,
+        )
+
+    def get(self, request):
         print("GET DATA: ", request.data)
         return Response(
             status=status.HTTP_200_OK,
