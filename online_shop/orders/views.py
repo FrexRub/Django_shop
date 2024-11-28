@@ -1,4 +1,5 @@
 import logging
+from decimal import Decimal
 
 from django.shortcuts import get_object_or_404
 from django.core.cache import cache
@@ -20,6 +21,7 @@ from drf_spectacular.utils import (
 from basket.cart import Cart
 from shopapp.models import Product
 from orders.models import Order
+from orders.serializers import OrderSerializer
 
 log = logging.getLogger(__name__)
 
@@ -50,7 +52,7 @@ class OrderApiView(APIView):
         total_cost = 0
         for i_id in list_id:
             product_from_basket = cart.get(i_id)
-            total_cost += product_from_basket["quantity"] * product_from_basket["price"]
+            total_cost += Decimal(product_from_basket["quantity"]) * Decimal(product_from_basket["price"])
 
         order = Order.objects.create(
             user=user,
@@ -60,4 +62,20 @@ class OrderApiView(APIView):
         return Response(
             {"orderId": order.pk},
             status=status.HTTP_201_CREATED,
+        )
+
+
+class OrderDetailApiView(APIView):
+    def get(self, request, pk: int):
+        order = (
+            Order.objects.filter(pk=pk)
+            .select_related("user")
+            .prefetch_related("products", "user__profile")
+            .order_by("id")
+        )
+
+        serializer = OrderSerializer(order, many=True, context={"request": request})
+        return Response(
+            serializer.data,
+            status=status.HTTP_200_OK,
         )

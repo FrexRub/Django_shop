@@ -48,7 +48,7 @@ class BasketSerializer(serializers.ModelSerializer):
     # создание дополнительного поля с расчетным средним значением
     rating = serializers.SerializerMethodField()
 
-    # создание дополнительного поля с расчетным средним значением
+    # создание поля со значением количества товара в корзине
     count = serializers.SerializerMethodField()
 
     @extend_schema_field(OpenApiTypes.FLOAT)
