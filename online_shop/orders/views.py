@@ -82,11 +82,31 @@ class OrderDetailApiView(APIView):
 
         serializer = OrderSerializer(order, context={"order": order})
 
-        # for product in order.basket.all():
-        #     order_info = OrderInfoBasket.objects.get(order=order, product=product)
-        #     print(order_info.count_in_order)
-
         return Response(
             serializer.data,
             status=status.HTTP_200_OK,
+        )
+
+    def post(self, request, pk: int):
+        print("POST DATA: ", request.data)
+
+        order = (
+            Order.objects.filter(pk=pk)
+            .select_related("user")
+            .prefetch_related("basket", "user__profile")
+            .first()
+        )
+
+        order.delivery_type = request.data.get("deliveryType")
+        order.payment_type = request.data.get("paymentType")
+        order.status = request.data.get("status")
+        order.city = request.data.get("city")
+        order.address = request.data.get("address")
+
+        order.save()
+        serializer = OrderSerializer(order, context={"order": order})
+
+        return Response(
+            serializer.data,
+            status=status.HTTP_201_CREATED,
         )
