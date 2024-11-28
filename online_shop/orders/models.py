@@ -53,6 +53,33 @@ class Order(models.Model):
     address = models.CharField(
         max_length=80, null=False, blank=True, verbose_name="Адрес доставки"
     )
-    products = models.ManyToManyField(
-        Product, related_name="orders", verbose_name="Товары"
+    basket = models.ManyToManyField(
+        Product, through="OrderInfoBasket", verbose_name="Товары из корзины"
     )
+    commit = models.CharField(
+        max_length=15,
+    )
+
+
+class OrderInfoBasket(models.Model):
+    order = models.ForeignKey(
+        Order,
+        on_delete=models.CASCADE,
+        verbose_name="Заказ",
+    )
+    product = models.ForeignKey(
+        Product,
+        on_delete=models.CASCADE,
+        verbose_name="Товар",
+    )
+    count_in_order = models.PositiveSmallIntegerField(
+        default=0, verbose_name="Количество товара",
+    )
+    price_in_order = models.DecimalField(
+        default=0,
+        max_digits=8,
+        decimal_places=2,
+        validators=[MinValueValidator(Decimal("0.01"))],
+        verbose_name="Цена",
+    )
+

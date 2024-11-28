@@ -57,8 +57,13 @@ class OrderApiView(APIView):
         order = Order.objects.create(
             user=user,
             total_cost=total_cost,
-            products=products
         )
+
+        for product in products:
+            order.products.add(product)
+
+        order.save()
+
         return Response(
             {"orderId": order.pk},
             status=status.HTTP_201_CREATED,
