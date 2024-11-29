@@ -7,6 +7,7 @@ from django.utils.decorators import method_decorator
 from django.contrib.auth.models import User
 from rest_framework import status
 from rest_framework.views import APIView
+from rest_framework.request import Request
 from rest_framework.response import Response
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.pagination import PageNumberPagination
@@ -22,6 +23,7 @@ from basket.cart import Cart
 from shopapp.models import Product
 from orders.models import Order, OrderInfoBasket
 from orders.serializers import OrderSerializer
+from services.payment import checking_payments, checking_payments
 
 log = logging.getLogger(__name__)
 
@@ -43,7 +45,11 @@ class OrderApiView(APIView):
     def post(self, request):
         log.info("Начало выполнения запроса по созданию ордера")
         cart = Cart(request)
-        user: User = self.request.user
+
+        if request.user.is_authenticated:
+            user: User = self.request.user
+        else:
+            user = get_object_or_404(User, pk=1)
 
         list_id = cart.list_id_products()
 
@@ -93,6 +99,10 @@ class OrderDetailApiView(APIView):
             .first()
         )
 
+        if request.user.is_authenticated and (order.user.id == 1):
+            order.user = self.request.user
+            order.save()
+
         serializer = OrderSerializer(order, context={"order": order})
 
         return Response(
@@ -107,6 +117,8 @@ class OrderDetailApiView(APIView):
             .prefetch_related("basket", "user__profile")
             .first()
         )
+        if order.user.id == 1:
+            order.user = self.request.user
         order.delivery_type = request.data.get("deliveryType")
         order.payment_type = request.data.get("paymentType")
         order.status = request.data.get("status")
@@ -114,7 +126,7 @@ class OrderDetailApiView(APIView):
         order.address = request.data.get("address")
 
         order.save()
-        serializer = OrderSerializer(order, context={"order": order})
+        # serializer = OrderSerializer(order, context={"order": order})
 
         return Response(
             {"orderId": order.pk},
@@ -124,28 +136,10 @@ class OrderDetailApiView(APIView):
 
 class PaymentApiView(APIView):
     def post(self, request, pk: int):
-        print("POST DATA: ", request.data)
-        # POST DATA:  {'name': 'ewfefefefef', 'number': '351343t3t1t1t34t', 'year': '23', 'month': '12', 'code': '234'}
-        return Response(
-            status=status.HTTP_200_OK,
-        )
+        log.info("Заполнение данных платежной карты")
+        result_check = checking_payments(request)
 
-    def get(self, request, pk: int):
-        print("GET DATA: ", request.data)
         return Response(
-            status=status.HTTP_200_OK,
-        )
-
-
-class PaymentSemeoneApiView(APIView):
-    def post(self, request):
-        print("POST DATA: ", request.data)
-        return Response(
-            status=status.HTTP_200_OK,
-        )
-
-    def get(self, request):
-        print("GET DATA: ", request.data)
-        return Response(
-            status=status.HTTP_200_OK,
+            {"message": result_check["massage"]},
+            status=result_check["status"],
         )
