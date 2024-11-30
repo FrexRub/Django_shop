@@ -19,7 +19,7 @@ def checking_payments(request: Request):
         response["status"] = status.HTTP_400_BAD_REQUEST
         return response
 
-    if not re.search(r"^\d{8}$", request.data["number"]):
+    if not re.search(r"^\d{16}$", request.data["number"]):
         log.info("Счёт указано не верно")
         response["massage"] = "Счёт указано не верно"
         response["status"] = status.HTTP_400_BAD_REQUEST
@@ -31,8 +31,10 @@ def checking_payments(request: Request):
         response["status"] = status.HTTP_400_BAD_REQUEST
         return response
 
-    if not (re.search(r"^\d{2}$", request.data["month"])
-            and (int(request.data["month"]) > 0 and int(request.data["month"]) < 13)):
+    if not (
+        re.search(r"^\d{2}$", request.data["month"])
+        and (int(request.data["month"]) > 0 and int(request.data["month"]) < 13)
+    ):
         log.info("Месяц указан не верно")
         response["massage"] = "Месяц указан не верно"
         response["status"] = status.HTTP_400_BAD_REQUEST
@@ -49,5 +51,3 @@ def checking_payments(request: Request):
     log.info("Данные указаны верно")
 
     return response
-
-

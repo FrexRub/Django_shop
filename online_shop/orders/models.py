@@ -17,6 +17,12 @@ class PaymentType(models.TextChoices):
     SOMEONE = "someone"
 
 
+class StatusType(models.TextChoices):
+    CREATED = "created"
+    ACCEPTED = "accepted"
+    PAID = "paid"
+
+
 class Order(models.Model):
     created_at = models.DateTimeField(auto_now_add=True, db_index=True)
     user = models.ForeignKey(
@@ -47,7 +53,11 @@ class Order(models.Model):
         verbose_name="Общая цена заказа",
     )
     status = models.CharField(
-        max_length=15, verbose_name="Статус заказа"
+        max_length=9,
+        null=False,
+        choices=StatusType.choices,
+        default=StatusType.CREATED,
+        verbose_name="Статус заказа",
     )
     city = models.CharField(max_length=40, null=False, blank=True, verbose_name="Город")
     address = models.CharField(
@@ -70,7 +80,8 @@ class OrderInfoBasket(models.Model):
         verbose_name="Товар",
     )
     count_in_order = models.PositiveSmallIntegerField(
-        default=0, verbose_name="Количество товара",
+        default=0,
+        verbose_name="Количество товара",
     )
     price_in_order = models.DecimalField(
         default=0,

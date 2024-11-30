@@ -254,7 +254,9 @@ class CategoriesApiView(APIView):
         # список всех каталогов товаров (категорий)
         all_сategories = []
         # выборка родительский каталогов
-        сategories = Category.objects.filter(subcategories__isnull=True)
+        сategories = Category.objects.filter(subcategories__isnull=True).exclude(
+            title="Доставка"
+        )
         for сategory in сategories:
             data_сategory = CategoriesSchema(
                 id=сategory.id,

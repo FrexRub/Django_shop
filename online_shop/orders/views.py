@@ -20,8 +20,8 @@ from drf_spectacular.utils import (
 )
 
 from basket.cart import Cart
-from shopapp.models import Product
-from orders.models import Order, OrderInfoBasket
+from shopapp.models import Product, Specification
+from orders.models import Order, OrderInfoBasket, StatusType, DeliveryType
 from orders.serializers import OrderSerializer
 from services.payment import checking_payments, checking_payments
 
@@ -73,16 +73,34 @@ class OrderApiView(APIView):
             total_cost=total_cost,
         )
 
+        free_delivery = True
         for product in products:
+            free_delivery &= product.freeDelivery
             product_from_basket = cart.get(product.pk)
-            m2m_order = OrderInfoBasket(
+            m2m_order = OrderInfoBasket.objects.create(
                 order=order,
                 product=product,
                 count_in_order=product_from_basket["quantity"],
                 price_in_order=product_from_basket["price"],
             )
 
-        m2m_order.save()
+        delivery: Product = Product.objects.filter(title="Доставка").first()
+        specifications: Specification = Specification.objects.filter(
+            product=delivery, name="Сумма заказа"
+        ).first()
+
+        if not free_delivery and Decimal(total_cost) < Decimal(specifications.value):
+            log.info("Добавление в ордер id%s стоимость доставки" % order.pk)
+            m2m_order = OrderInfoBasket.objects.create(
+                order=order,
+                product=delivery,
+                count_in_order=1,
+                price_in_order=specifications.value,
+            )
+
+        log.info("Новый ордер с %s создан, статус ордера %s" % (order.pk, order.status))
+        cart.delete_cart()
+        log.info("Карзина с товарами для ордера %s удалена" % order.pk)
 
         return Response(
             {"orderId": order.pk},
@@ -103,6 +121,16 @@ class OrderDetailApiView(APIView):
             order.user = self.request.user
             order.save()
 
+        if order.delivery_type == DeliveryType.EXPRESS:
+            delivery: Product = get_object_or_404(Product, title="Экспресс-доставка")
+            m2m_order = OrderInfoBasket(
+                order=order,
+                product=delivery,
+                count_in_order=1,
+                price_in_order=delivery.price,
+            )
+            m2m_order.save()
+
         serializer = OrderSerializer(order, context={"order": order})
 
         return Response(
@@ -121,12 +149,13 @@ class OrderDetailApiView(APIView):
             order.user = self.request.user
         order.delivery_type = request.data.get("deliveryType")
         order.payment_type = request.data.get("paymentType")
-        order.status = request.data.get("status")
         order.city = request.data.get("city")
         order.address = request.data.get("address")
 
+        order.status = StatusType.ACCEPTED
         order.save()
-        # serializer = OrderSerializer(order, context={"order": order})
+
+        log.info("Ордер с %s подтвержден, статус ордера %s" % (order.pk, order.status))
 
         return Response(
             {"orderId": order.pk},
@@ -138,6 +167,12 @@ class PaymentApiView(APIView):
     def post(self, request, pk: int):
         log.info("Заполнение данных платежной карты")
         result_check = checking_payments(request)
+
+        if result_check["status"] == status.HTTP_200_OK:
+            order = get_object_or_404(Order, pk=pk)
+            order.status = StatusType.PAID
+            order.save()
+            log.info("Ордер с %s оплачен, статус ордера %s" % (order.pk, order.status))
 
         return Response(
             {"message": result_check["massage"]},
