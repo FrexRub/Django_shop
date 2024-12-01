@@ -1,8 +1,11 @@
 from typing import Any
 import logging
+from datetime import datetime
+from zoneinfo import ZoneInfo
 
 from django.conf import settings
-from shopapp.models import Product
+
+from shopapp.models import Product, Sales
 
 log = logging.getLogger(__name__)
 
@@ -31,10 +34,22 @@ class Cart(object):
             количество добавляемого продукта
         :return: None
         """
-        # ToDo add sales
         product_id = str(product.id)
         if product_id not in self.cart:
             self.cart[product_id] = {"quantity": 0, "price": str(product.price)}
+
+            # search discount for product
+            date_now = datetime.now(tz=ZoneInfo(settings.TIME_ZONE))
+            product_discount = Sales.objects.filter(product=product).first()
+
+            if product_discount and (
+                product_discount.dateFrom <= date_now <= product_discount.dateTo
+            ):
+                log.info(
+                    "У товара с id%s цена со скидкой %s"
+                    % (product_id, product_discount.salePrice)
+                )
+                self.cart[product_id]["price"] = str(product_discount.salePrice)
 
         self.cart[product_id]["quantity"] += quantity
         self.save()
