@@ -117,7 +117,7 @@ class Product(models.Model):
         default=0,
         max_digits=8,
         decimal_places=2,
-        validators=[MinValueValidator(Decimal("0.01"))],
+        validators=[MinValueValidator(Decimal("0.0"))],
         verbose_name="Цена",
         db_index=True,
     )

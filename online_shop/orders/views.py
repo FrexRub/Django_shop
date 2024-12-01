@@ -95,7 +95,17 @@ class OrderApiView(APIView):
                 order=order,
                 product=delivery,
                 count_in_order=1,
-                price_in_order=specifications.value,
+                price_in_order=delivery.price,
+            )
+        else:
+            delivery_free: Product = Product.objects.filter(
+                title="Бесплатная доставка"
+            ).first()
+            m2m_order = OrderInfoBasket.objects.create(
+                order=order,
+                product=delivery_free,
+                count_in_order=1,
+                price_in_order=delivery_free.price,
             )
 
         log.info("Новый ордер с %s создан, статус ордера %s" % (order.pk, order.status))
@@ -121,15 +131,16 @@ class OrderDetailApiView(APIView):
             order.user = self.request.user
             order.save()
 
-        if order.delivery_type == DeliveryType.EXPRESS:
-            delivery: Product = get_object_or_404(Product, title="Экспресс-доставка")
-            m2m_order = OrderInfoBasket(
-                order=order,
-                product=delivery,
-                count_in_order=1,
-                price_in_order=delivery.price,
-            )
-            m2m_order.save()
+        # if order.delivery_type == DeliveryType.EXPRESS:
+        #     print("Change EXPRESS in Get/id")
+        #     delivery: Product = get_object_or_404(Product, title="Экспресс-доставка")
+        #     m2m_order = OrderInfoBasket.objects.create(
+        #         order=order,
+        #         product=delivery,
+        #         count_in_order=1,
+        #         price_in_order=delivery.price,
+        #     )
+        #     m2m_order.save()
 
         serializer = OrderSerializer(order, context={"order": order})
 
@@ -145,8 +156,7 @@ class OrderDetailApiView(APIView):
             .prefetch_related("basket", "user__profile")
             .first()
         )
-        if order.user.id == 1:
-            order.user = self.request.user
+
         order.delivery_type = request.data.get("deliveryType")
         order.payment_type = request.data.get("paymentType")
         order.city = request.data.get("city")
@@ -154,6 +164,16 @@ class OrderDetailApiView(APIView):
 
         order.status = StatusType.ACCEPTED
         order.save()
+
+        if order.delivery_type == DeliveryType.EXPRESS:
+            delivery: Product = get_object_or_404(Product, title="Экспресс-доставка")
+            m2m_order = OrderInfoBasket.objects.create(
+                order=order,
+                product=delivery,
+                count_in_order=1,
+                price_in_order=delivery.price,
+            )
+            m2m_order.save()
 
         log.info("Ордер с %s подтвержден, статус ордера %s" % (order.pk, order.status))
 
