@@ -1,7 +1,9 @@
 import logging
-
 import locale
+from datetime import datetime
+from zoneinfo import ZoneInfo
 
+from django.conf import settings
 from rest_framework import serializers
 from django.db.models import Avg, Count, Value, FloatField
 from django.db.models.functions import Coalesce
@@ -11,6 +13,7 @@ from drf_spectacular.types import OpenApiTypes
 from shopapp.models import (
     Product,
     Category,
+    Sales,
 )
 
 from shopapp.serializers import (
@@ -51,6 +54,9 @@ class BasketSerializer(serializers.ModelSerializer):
     # создание поля со значением количества товара в корзине
     count = serializers.SerializerMethodField()
 
+    # создание поля цены товара с учетом скидки
+    price = serializers.SerializerMethodField()
+
     @extend_schema_field(OpenApiTypes.FLOAT)
     def get_rating(self, obj):
         return Product.objects.filter(pk=obj.pk).aggregate(
@@ -62,6 +68,22 @@ class BasketSerializer(serializers.ModelSerializer):
         cart = Cart(self.context["request"])
         prod = cart.get(obj.pk)
         return prod["quantity"]
+
+    @extend_schema_field(OpenApiTypes.DECIMAL)
+    def get_price(self, obj):
+        date_now = datetime.now(tz=ZoneInfo(settings.TIME_ZONE))
+        product_discount = Sales.objects.filter(product__id=obj.pk).first()
+
+        if product_discount and (
+            product_discount.dateFrom <= date_now <= product_discount.dateTo
+        ):
+            log.info(
+                "У товара с id%s цена со скидкой %s"
+                % (obj.pk, product_discount.salePrice)
+            )
+            return product_discount.salePrice
+        else:
+            return obj.price
 
     class Meta:
         model = Product
