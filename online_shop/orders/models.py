@@ -67,6 +67,14 @@ class Order(models.Model):
         Product, through="OrderInfoBasket", verbose_name="Товары из корзины"
     )
 
+    def __str__(self):
+        return f"Заказ с номером {self.pk}"
+
+    class Meta:
+        ordering = ("created_at",)
+        verbose_name = "Заказ"
+        verbose_name_plural = "Заказы"
+
 
 class OrderInfoBasket(models.Model):
     order = models.ForeignKey(
@@ -90,3 +98,10 @@ class OrderInfoBasket(models.Model):
         validators=[MinValueValidator(Decimal("0.01"))],
         verbose_name="Цена",
     )
+
+    def __str__(self):
+        return "Наименование товара"
+
+    class Meta:
+        verbose_name = "Содержание заказа"
+        verbose_name_plural = "Содержание заказа"

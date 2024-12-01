@@ -18,7 +18,7 @@ class TagAdmin(admin.ModelAdmin):
 
 @admin.register(Category)
 class CategoryAdmin(admin.ModelAdmin):
-    pass
+    search_fields = ("title",)
 
 
 @admin.register(Product)
@@ -34,7 +34,7 @@ class ProductAdmin(admin.ModelAdmin):
 
 @admin.register(ProductImage)
 class ProductImageAdmin(admin.ModelAdmin):
-    pass
+    search_fields = ("src",)
 
 
 @admin.register(Review)
