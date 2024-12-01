@@ -109,8 +109,6 @@ class OrderApiView(APIView):
             )
 
         log.info("Новый ордер с %s создан, статус ордера %s" % (order.pk, order.status))
-        cart.delete_cart()
-        log.info("Карзина с товарами для ордера %s удалена" % order.pk)
 
         return Response(
             {"orderId": order.pk},
@@ -130,17 +128,6 @@ class OrderDetailApiView(APIView):
         if request.user.is_authenticated and (order.user.id == 1):
             order.user = self.request.user
             order.save()
-
-        # if order.delivery_type == DeliveryType.EXPRESS:
-        #     print("Change EXPRESS in Get/id")
-        #     delivery: Product = get_object_or_404(Product, title="Экспресс-доставка")
-        #     m2m_order = OrderInfoBasket.objects.create(
-        #         order=order,
-        #         product=delivery,
-        #         count_in_order=1,
-        #         price_in_order=delivery.price,
-        #     )
-        #     m2m_order.save()
 
         serializer = OrderSerializer(order, context={"order": order})
 
@@ -193,6 +180,10 @@ class PaymentApiView(APIView):
             order.status = StatusType.PAID
             order.save()
             log.info("Ордер с %s оплачен, статус ордера %s" % (order.pk, order.status))
+
+            cart = Cart(request)
+            cart.delete_cart()
+            log.info("Карзина с товарами для ордера %s удалена" % order.pk)
 
         return Response(
             {"message": result_check["massage"]},
