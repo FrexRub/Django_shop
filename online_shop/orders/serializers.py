@@ -15,6 +15,10 @@ from shopapp.models import (
 )
 
 
+class OrderIdSerializer(serializers.Serializer):
+    orderId = serializers.IntegerField()
+
+
 class ProductOrderSerializer(serializers.ModelSerializer):
     images = ProductImageSerializer(many=True, read_only=True)
     # вывод только id из связанной модели Category
@@ -102,3 +106,23 @@ class OrderSerializer(serializers.ModelSerializer):
             "address",
             "products",
         )
+
+
+class OrderUpdateSerializer(serializers.Serializer):
+    deliveryType = serializers.CharField()
+    paymentType = serializers.CharField()
+    city = serializers.CharField()
+    address = serializers.CharField()
+
+
+class PaymentSerializer(serializers.Serializer):
+    name = serializers.CharField()
+    number = serializers.CharField()
+    year = serializers.CharField()
+    month = serializers.CharField()
+    code = serializers.CharField()
+
+
+class PaymentResultSerializer(serializers.Serializer):
+    message = serializers.CharField()
+    status = serializers.CharField()

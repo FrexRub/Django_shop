@@ -22,26 +22,60 @@ from drf_spectacular.utils import (
 from basket.cart import Cart
 from shopapp.models import Product, Specification
 from orders.models import Order, OrderInfoBasket, StatusType, DeliveryType
-from orders.serializers import OrderSerializer
-from services.payment import checking_payments, checking_payments
+from orders.serializers import (
+    OrderSerializer,
+    OrderIdSerializer,
+    OrderUpdateSerializer,
+    PaymentSerializer,
+    PaymentResultSerializer,
+)
+from shopapp.serializers import ProductShortSerializer
+from services.payment import checking_payments
 
 log = logging.getLogger(__name__)
 
 
 class OrderApiView(APIView):
+    @extend_schema(
+        tags=["order"],
+        summary="Вывод списка ордеров пользователя",
+        responses={
+            status.HTTP_200_OK: OrderSerializer(many=True),
+            status.HTTP_500_INTERNAL_SERVER_ERROR: OpenApiResponse(
+                response=None,
+                description="Что-то пошло не так",
+            ),
+        },
+    )
     def get(self, request):
         orders = (
             Order.objects.filter(user=self.request.user)
             .select_related("user")
             .prefetch_related("basket", "user__profile")
         )
-        serializer = OrderSerializer(orders, many=True, context={"order": order})
+
+        orders_list = list()
+        for order in orders:
+            serializer = OrderSerializer(order, context={"order": order})
+            orders_list.append(serializer.data)
 
         return Response(
-            serializer.data,
+            orders_list,
             status=status.HTTP_200_OK,
         )
 
+    @extend_schema(
+        tags=["order"],
+        summary="Создание заказа",
+        request=ProductShortSerializer(many=True),
+        responses={
+            status.HTTP_200_OK: OrderIdSerializer,
+            status.HTTP_500_INTERNAL_SERVER_ERROR: OpenApiResponse(
+                response=None,
+                description="Что-то пошло не так",
+            ),
+        },
+    )
     def post(self, request):
         log.info("Начало выполнения запроса по созданию ордера")
         cart = Cart(request)
@@ -117,6 +151,17 @@ class OrderApiView(APIView):
 
 
 class OrderDetailApiView(APIView):
+    @extend_schema(
+        tags=["order"],
+        summary="Информация о заказе по id",
+        responses={
+            status.HTTP_200_OK: OrderSerializer,
+            status.HTTP_500_INTERNAL_SERVER_ERROR: OpenApiResponse(
+                response=None,
+                description="Что-то пошло не так",
+            ),
+        },
+    )
     def get(self, request, pk: int):
         order = (
             Order.objects.filter(pk=pk)
@@ -136,6 +181,30 @@ class OrderDetailApiView(APIView):
             status=status.HTTP_200_OK,
         )
 
+    @extend_schema(
+        tags=["order"],
+        summary="Редактирование заказа по id",
+        responses={
+            status.HTTP_200_OK: OrderUpdateSerializer,
+            status.HTTP_500_INTERNAL_SERVER_ERROR: OpenApiResponse(
+                response=None,
+                description="Что-то пошло не так",
+            ),
+        },
+        examples=[
+            OpenApiExample(
+                "Order edit example",
+                description="Пример заполнения полей для редактирования oрдера",
+                value={
+                    "deliveryType": "ordinary",
+                    "paymentType": "online",
+                    "city": "Moscow",
+                    "address": "ul. Mira, dom 10",
+                },
+                status_codes=[str(status.HTTP_200_OK)],
+            )
+        ],
+    )
     def post(self, request, pk: int):
         order = (
             Order.objects.filter(pk=pk)
@@ -171,6 +240,32 @@ class OrderDetailApiView(APIView):
 
 
 class PaymentApiView(APIView):
+    @extend_schema(
+        tags=["payment"],
+        summary="Оплата заказа по id",
+        request=PaymentSerializer,
+        responses={
+            status.HTTP_200_OK: PaymentResultSerializer,
+            status.HTTP_500_INTERNAL_SERVER_ERROR: OpenApiResponse(
+                response=None,
+                description="Что-то пошло не так",
+            ),
+        },
+        examples=[
+            OpenApiExample(
+                "Pyment example",
+                description="Пример заполнения полей оплаты",
+                value={
+                    "name": "Lena Lee",
+                    "number": "9999999999999999",
+                    "year": "23",
+                    "month": "11",
+                    "code": "123",
+                },
+                status_codes=[str(status.HTTP_200_OK)],
+            )
+        ],
+    )
     def post(self, request, pk: int):
         log.info("Заполнение данных платежной карты")
         result_check = checking_payments(request)
