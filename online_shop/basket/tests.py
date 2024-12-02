@@ -26,6 +26,7 @@ class BasketTestCase(TestCase):
         count_product_after = product.count
 
         received_data = json.loads(response.content)
+
         self.assertEqual(response.status_code, 201)
         self.assertEqual(received_data[0]["price"], "67399.00")
         self.assertEqual(count_product_before - count_product_after, count_product)
@@ -43,8 +44,10 @@ class BasketTestCase(TestCase):
         count_add = received_data[0]["count"]
 
         data = {"id": id_product, "count": count_product - 1}
-        headers = {'Content-Type': 'application/json'}
-        response = self.client.delete(reverse("api:basket"), headers=headers, data=json.dumps(data))
+        headers = {"Content-Type": "application/json"}
+        response = self.client.delete(
+            reverse("api:basket"), headers=headers, data=json.dumps(data)
+        )
         received_data = json.loads(response.content)
         count_after_delete = received_data[0]["count"]
 
@@ -55,7 +58,7 @@ class BasketTestCase(TestCase):
         """
         Тест добавления продукта в корзину при его отсутствии на складе
         """
-        id_product = 2
+        id_product = 4
         count_product = 1
         data = {"id": id_product, "count": count_product}
 
@@ -74,8 +77,8 @@ class BasketTestCase(TestCase):
         """
         Тест добавления продукта в корзину при превышении наличия
         """
-        id_product = 3
-        count_product = 2
+        id_product = 5
+        count_product = 3
         data = {"id": id_product, "count": count_product}
 
         product: Product = get_object_or_404(Product, pk=id_product)

@@ -21,8 +21,6 @@ log = logging.getLogger(__name__)
 
 
 class BasketApiView(APIView):
-    # ToDo учет количества товара при добавлении в корзину и удалении
-
     @extend_schema(
         tags=["basket"],
         summary="Добавление товара в корзину",
@@ -56,10 +54,7 @@ class BasketApiView(APIView):
     def post(self, request):
         id_product = int(request.data.get("id"))
         count_product = int(request.data.get("count"))
-        log.info(
-            "Добавление в корзину продукта с id %s в количестве %s"
-            % (id_product, count_product)
-        )
+
         cart = Cart(request)
         product: Product = get_object_or_404(Product, pk=id_product)
 
@@ -79,6 +74,10 @@ class BasketApiView(APIView):
         product.save()
 
         cart.add(product=product, quantity=count_product)
+        log.info(
+            "Добавление в корзину продукта с id %s в количестве %s"
+            % (id_product, count_product)
+        )
 
         list_id = cart.list_id_products()
         products = (

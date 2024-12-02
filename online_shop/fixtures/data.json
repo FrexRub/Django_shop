@@ -3,7 +3,7 @@
     "model": "auth.user",
     "fields": {
         "password": "pbkdf2_sha256$870000$g8rYETGDASAgZIjhGYWFRE$gQDD+sQfRr+ehVzd/ahVCuYgiqqliGd2Uf3UUqOkZqQ=",
-        "last_login": "2024-11-13T19:00:35.065Z",
+        "last_login": "2024-12-01T13:55:53.947Z",
         "is_superuser": true,
         "username": "admin",
         "first_name": "",
@@ -20,7 +20,7 @@
     "model": "auth.user",
     "fields": {
         "password": "pbkdf2_sha256$870000$znG5isk9pAU9S7x1jxOrMB$GCR2symviqXibeASlHmhhrPMbmHIh/ccGSlqfMxe4ns=",
-        "last_login": "2024-11-12T13:26:15.393Z",
+        "last_login": "2024-12-01T10:38:37.934Z",
         "is_superuser": false,
         "username": "Sem",
         "first_name": "Sem Lee",
@@ -37,7 +37,7 @@
     "model": "auth.user",
     "fields": {
         "password": "pbkdf2_sha256$870000$0XSU0N0Kyf1azR1nzSuxrI$4gkRkoClSg1RYGegTYAAAAjnfSSSWov3DlEnYyba37w=",
-        "last_login": "2024-11-12T15:09:52.779Z",
+        "last_login": "2024-12-01T07:24:34.288Z",
         "is_superuser": false,
         "username": "Tom",
         "first_name": "Tom Cruze",
@@ -46,6 +46,23 @@
         "is_staff": false,
         "is_active": true,
         "date_joined": "2024-11-12T15:09:51.676Z",
+        "groups": [],
+        "user_permissions": []
+    }
+},
+{
+    "model": "auth.user",
+    "fields": {
+        "password": "pbkdf2_sha256$870000$rTlI8s3R7v39Vb9dY5SByc$eai3hmrPX8Lxu5HIrBs3XoTk0lGmgMiEAX0wIHsGDh4=",
+        "last_login": "2024-12-01T07:12:26.879Z",
+        "is_superuser": false,
+        "username": "jhon",
+        "first_name": "Jhon Abrams",
+        "last_name": "",
+        "email": "jhon@mail.ru",
+        "is_staff": false,
+        "is_active": true,
+        "date_joined": "2024-11-30T18:58:51.215Z",
         "groups": [],
         "user_permissions": []
     }
@@ -99,6 +116,14 @@
     }
 },
 {
+    "model": "sessions.session",
+    "pk": "tk3nizwyqn5ywdusuc45q9iu75g0tuk3",
+    "fields": {
+        "session_data": ".eJxVjDkOwyAUBe9CHSEgn81lep_B4rMEJxFIYFeW7x5bcpG0b-bNRia3Lnlae2zTHMhAOLn9buj8O5YThJcrz0p9LUubkZ4KvWinYw3x87jcv0B2PR9v4FyoBGAwGmCJSwYQ7tZrkUKSUqTIRTTKeBsMV2g1gLaoAJgHIxGPqHdtIcO271_yMDpG:1tHkgZ:mfKsqaC7pd7z6brLYO2R9rx25f7U7mte5OSnGmD46dk",
+        "expire_date": "2024-12-15T14:12:31.696Z"
+    }
+},
+{
     "model": "myauth.profile",
     "pk": 1,
     "fields": {
@@ -120,6 +145,18 @@
         "phone_number": "+7425178536",
         "avatar": "profile/user_34/1798.jpeg",
         "slug": "tom"
+    }
+},
+{
+    "model": "myauth.profile",
+    "pk": 35,
+    "fields": {
+        "user": [
+            "jhon"
+        ],
+        "phone_number": "89005101010",
+        "avatar": "",
+        "slug": "jhon"
     }
 },
 {
@@ -239,6 +276,13 @@
     "pk": 17,
     "fields": {
         "name": "Комплектующие"
+    }
+},
+{
+    "model": "shopapp.tag",
+    "pk": 18,
+    "fields": {
+        "name": "доставка"
     }
 },
 {
@@ -373,6 +417,17 @@
     }
 },
 {
+    "model": "shopapp.category",
+    "pk": 11,
+    "fields": {
+        "title": "Доставка",
+        "image": "",
+        "subcategories": null,
+        "slug": "dostavka",
+        "tags": []
+    }
+},
+{
     "model": "shopapp.product",
     "pk": 1,
     "fields": {
@@ -398,7 +453,7 @@
     "fields": {
         "category": 9,
         "price": "124990.00",
-        "count": 0,
+        "count": 6,
         "date": "2024-11-10T09:53:32.118Z",
         "title": "Apple iPhone 16 256GB White sim+esim",
         "description": "Смартфон Apple iPhone 16 nanoSim/eSim White получил 6,1-дюймовый дисплей разрешением 1179x2556 пикселей, выполненный по технологии Super Retina XDR, которая отличается высочайшей точностью цветопередачи.",
@@ -417,12 +472,12 @@
     "fields": {
         "category": 4,
         "price": "139990.00",
-        "count": 1,
+        "count": 6,
         "date": "2024-11-10T10:10:46.807Z",
         "title": "Samsung Galaxy S24 Ultra EU 12/1 ТБ, фиолетовый",
         "description": "Смартфон, стилус S Pen, инструмент для извлечения лотка SIM, кабель USB-C.",
         "fullDescription": "Смартфон оснащен процессором Qualcomm Snapdragon 8 Gen 3 с тактовой частотой 3.39 ГГц. При этом общее количество CPU – 8 шт. Графика на устройстве работает на базе видеопроцессора Adreno 750.\r\n\r\nимеет 1024 ГБ встроенной памяти и 12 ГБ оперативной.\r\n\r\nСмартфон работает на базе операционной системы Android 14.\r\n\r\nОсновных камер на устройстве 4 шт., разрешением 200 Мп, 12 Мп, 10 Мп, Максимальное разрешение видео - 8K. Фронтальных камер – 1 шт., разрешением 12 Мп\r\n\r\nАккумулятор объемом 5000 мАч, несъемный. Для зарядки используется разъем USB Type-C. Функция быстрой зарядки – есть, беспроводная зарядка – есть.\r\n\r\nDynamic LTPO AMOLED 2X экран имеет диагональ 6.8 дюйм, с разрешением 3088х1440 пикселей и частотой 120 Гц.\r\nПри этом плотность пикселей данного экрана составляет 501 PPI. Соотношение сторон экрана – 19.3:9.\r\n\r\nУстройство может работать с 2 шт SIM-картами (Dual nanoSim).\r\nСмартфон поддерживает все современные стандарты мобильной связи, а именно 5G.\r\nА также все современные стандарты спутниковой навигации — ГЛОНАСС.\r\nЕсть поддержка Wi-Fi.\r\n\r\nТелефон представляет из себя моноблок, размером 70.5x147.7x7.6 мм., весом 232 г\r\nПод наушники используется разъем USB Type-C.",
-        "freeDelivery": false,
+        "freeDelivery": true,
         "slug": "samsung-galaxy-s24-ultra-eu-121-tb-fioletovyij",
         "tags": [
             8,
@@ -437,7 +492,7 @@
     "fields": {
         "category": 4,
         "price": "19990.00",
-        "count": 5,
+        "count": 0,
         "date": "2024-11-13T18:21:59.562Z",
         "title": "HUAWEI nova 12i Ростест (EAC) 8/256 ГБ, зеленый",
         "description": "Смартфон (со встроенной батареей) × 1, адаптер питания × 1, кабель Type-C × 1, гибкий защитный прозрачный чехол × 1, краткое руководство пользователя × 1, инструмент для извлечения карт × 1, защитная пленка для экрана (наклеена на смартфон) × 1",
@@ -456,7 +511,7 @@
     "fields": {
         "category": 10,
         "price": "44999.00",
-        "count": 10,
+        "count": 2,
         "date": "2024-11-13T18:37:20.379Z",
         "title": "HUAWEI MatePad 11,5”S PaperMatte, 11.5\" 8 ГБ/256 ГБ, сиреневый",
         "description": "Планшет x1, адаптер питания x1, кабель USB Type-C x1, краткое руководство пользователя x1, гарантийный талон x1, клавиатура x1",
@@ -475,7 +530,7 @@
     "fields": {
         "category": 3,
         "price": "62205.00",
-        "count": 3,
+        "count": 6,
         "date": "2024-11-13T18:54:06.682Z",
         "title": "HUAWEI 53013WXF Ноутбук 16\", Intel Core i5-12450H, RAM 16 ГБ, SSD 512 ГБ, Intel UHD Graphics",
         "description": "Ноутбук Huawei создан для тех, кто хочет получить надежное компьютерное устройство с наиболее востребованным функционалом. Аппаратная платформа данной модели построена на базе процессора Intel и интегрированного видеоадаптера . Предоставляет возможно",
@@ -496,7 +551,7 @@
     "fields": {
         "category": 6,
         "price": "91990.00",
-        "count": 7,
+        "count": 4,
         "date": "2024-11-13T19:15:59.887Z",
         "title": "Apple MacBook Air Ноутбук 13.3\", Apple M1 (8C CPU, 7C GPU), RAM 8 ГБ, SSD 256 ГБ, Apple M1, MacOS, (MGN93RU/A)",
         "description": "Ноутбук, адаптер питания, кабель USB-C для зарядки, документация",
@@ -516,7 +571,7 @@
     "fields": {
         "category": 7,
         "price": "737.00",
-        "count": 11,
+        "count": 14,
         "date": "2024-11-13T19:26:14.808Z",
         "title": "PATRIOT Оперативная память PSD34G13332 1x4 ГБ (PSD34G13332)",
         "description": "Оперативная память",
@@ -525,6 +580,60 @@
         "slug": "patriot-operativnaya-pamyat-psd34g13332-1x4-gb-psd34g13332",
         "tags": [
             17
+        ]
+    }
+},
+{
+    "model": "shopapp.product",
+    "pk": 9,
+    "fields": {
+        "category": 11,
+        "price": "500.00",
+        "count": 0,
+        "date": "2024-11-30T15:24:52.491Z",
+        "title": "Экспресс-доставка",
+        "description": "Экспресс-доставка за дополнительную плату",
+        "fullDescription": "",
+        "freeDelivery": false,
+        "slug": "ekspress-dostavka",
+        "tags": [
+            18
+        ]
+    }
+},
+{
+    "model": "shopapp.product",
+    "pk": 10,
+    "fields": {
+        "category": 11,
+        "price": "200.00",
+        "count": 0,
+        "date": "2024-11-30T17:24:43.683Z",
+        "title": "Доставка",
+        "description": "Доставка",
+        "fullDescription": "",
+        "freeDelivery": false,
+        "slug": "dostavka",
+        "tags": [
+            18
+        ]
+    }
+},
+{
+    "model": "shopapp.product",
+    "pk": 11,
+    "fields": {
+        "category": 11,
+        "price": "0.00",
+        "count": 0,
+        "date": "2024-12-01T06:53:33.676Z",
+        "title": "Бесплатная доставка",
+        "description": "Бесплатная доставка",
+        "fullDescription": "",
+        "freeDelivery": false,
+        "slug": "besplatnaya-dostavka",
+        "tags": [
+            18
         ]
     }
 },
@@ -796,6 +905,33 @@
         "product": 8,
         "src": "products/product_8/3.jpeg",
         "alt": "PATRIOT Оперативная память PSD34G13332 1x4 ГБ (PSD34G13332)_3"
+    }
+},
+{
+    "model": "shopapp.productimage",
+    "pk": 31,
+    "fields": {
+        "product": 9,
+        "src": "products/product_9/express_delivery.png",
+        "alt": "Экспресс-доставка"
+    }
+},
+{
+    "model": "shopapp.productimage",
+    "pk": 32,
+    "fields": {
+        "product": 10,
+        "src": "products/product_10/delivery.png",
+        "alt": "Доставка"
+    }
+},
+{
+    "model": "shopapp.productimage",
+    "pk": 33,
+    "fields": {
+        "product": 11,
+        "src": "products/product_11/free_delivery.jpg",
+        "alt": "Бесплатная доставка"
     }
 },
 {
@@ -1193,13 +1329,22 @@
     }
 },
 {
+    "model": "shopapp.specification",
+    "pk": 68,
+    "fields": {
+        "name": "Сумма заказа",
+        "value": "2000",
+        "product": 10
+    }
+},
+{
     "model": "shopapp.sales",
     "pk": 1,
     "fields": {
         "product": 2,
         "salePrice": "106240.99",
-        "dateFrom": "2024-11-11T21:00:00Z",
-        "dateTo": "2024-11-14T21:00:00Z"
+        "dateFrom": "2024-11-30T21:00:00Z",
+        "dateTo": "2024-12-15T21:00:00Z"
     }
 },
 {
@@ -1208,8 +1353,60 @@
     "fields": {
         "product": 5,
         "salePrice": "41999.00",
-        "dateFrom": "2024-11-13T21:00:00Z",
-        "dateTo": "2024-11-19T21:00:00Z"
+        "dateFrom": "2024-11-30T21:00:00Z",
+        "dateTo": "2024-12-15T21:00:00Z"
+    }
+},
+{
+    "model": "orders.order",
+    "pk": 1,
+    "fields": {
+        "created_at": "2024-11-30T14:09:52.718Z",
+        "user": [
+            "Sem"
+        ],
+        "delivery_type": "ordinary",
+        "payment_type": "online",
+        "total_cost": "139990.00",
+        "status": "created",
+        "city": "",
+        "address": ""
+    }
+},
+{
+    "model": "orders.order",
+    "pk": 2,
+    "fields": {
+        "created_at": "2024-11-30T14:11:33.799Z",
+        "user": [
+            "Sem"
+        ],
+        "delivery_type": "ordinary",
+        "payment_type": "online",
+        "total_cost": "62205.00",
+        "status": "paid",
+        "city": "Tambov",
+        "address": "Sovetskay 10"
+    }
+},
+{
+    "model": "orders.orderinfobasket",
+    "pk": 1,
+    "fields": {
+        "order": 1,
+        "product": 3,
+        "count_in_order": 1,
+        "price_in_order": "139990.00"
+    }
+},
+{
+    "model": "orders.orderinfobasket",
+    "pk": 2,
+    "fields": {
+        "order": 2,
+        "product": 6,
+        "count_in_order": 1,
+        "price_in_order": "62205.00"
     }
 },
 {
@@ -3838,6 +4035,348 @@
         "object_repr": "Комплектующие для ПК",
         "action_flag": 2,
         "change_message": "[{\"changed\": {\"fields\": [\"\\u0422\\u044d\\u0433\"]}}]"
+    }
+},
+{
+    "model": "admin.logentry",
+    "pk": 176,
+    "fields": {
+        "action_time": "2024-11-30T15:23:05.795Z",
+        "user": [
+            "admin"
+        ],
+        "content_type": [
+            "shopapp",
+            "category"
+        ],
+        "object_id": "11",
+        "object_repr": "Доставка",
+        "action_flag": 1,
+        "change_message": "[{\"added\": {}}]"
+    }
+},
+{
+    "model": "admin.logentry",
+    "pk": 177,
+    "fields": {
+        "action_time": "2024-11-30T15:24:11.449Z",
+        "user": [
+            "admin"
+        ],
+        "content_type": [
+            "shopapp",
+            "tag"
+        ],
+        "object_id": "18",
+        "object_repr": "доставка",
+        "action_flag": 1,
+        "change_message": "[{\"added\": {}}]"
+    }
+},
+{
+    "model": "admin.logentry",
+    "pk": 178,
+    "fields": {
+        "action_time": "2024-11-30T15:24:52.501Z",
+        "user": [
+            "admin"
+        ],
+        "content_type": [
+            "shopapp",
+            "product"
+        ],
+        "object_id": "9",
+        "object_repr": "Экспресс-доставка",
+        "action_flag": 1,
+        "change_message": "[{\"added\": {}}]"
+    }
+},
+{
+    "model": "admin.logentry",
+    "pk": 179,
+    "fields": {
+        "action_time": "2024-11-30T15:25:33.954Z",
+        "user": [
+            "admin"
+        ],
+        "content_type": [
+            "shopapp",
+            "productimage"
+        ],
+        "object_id": "31",
+        "object_repr": "",
+        "action_flag": 1,
+        "change_message": "[{\"added\": {}}]"
+    }
+},
+{
+    "model": "admin.logentry",
+    "pk": 180,
+    "fields": {
+        "action_time": "2024-11-30T17:24:43.698Z",
+        "user": [
+            "admin"
+        ],
+        "content_type": [
+            "shopapp",
+            "product"
+        ],
+        "object_id": "10",
+        "object_repr": "Доставка",
+        "action_flag": 1,
+        "change_message": "[{\"added\": {}}]"
+    }
+},
+{
+    "model": "admin.logentry",
+    "pk": 181,
+    "fields": {
+        "action_time": "2024-11-30T17:25:06.954Z",
+        "user": [
+            "admin"
+        ],
+        "content_type": [
+            "shopapp",
+            "productimage"
+        ],
+        "object_id": "32",
+        "object_repr": "",
+        "action_flag": 1,
+        "change_message": "[{\"added\": {}}]"
+    }
+},
+{
+    "model": "admin.logentry",
+    "pk": 182,
+    "fields": {
+        "action_time": "2024-11-30T17:26:21.913Z",
+        "user": [
+            "admin"
+        ],
+        "content_type": [
+            "shopapp",
+            "specification"
+        ],
+        "object_id": "68",
+        "object_repr": "Доставка_Сумма заказа",
+        "action_flag": 1,
+        "change_message": "[{\"added\": {}}]"
+    }
+},
+{
+    "model": "admin.logentry",
+    "pk": 183,
+    "fields": {
+        "action_time": "2024-11-30T18:17:06.171Z",
+        "user": [
+            "admin"
+        ],
+        "content_type": [
+            "shopapp",
+            "product"
+        ],
+        "object_id": "2",
+        "object_repr": "Apple iPhone 16 256GB White sim+esim",
+        "action_flag": 2,
+        "change_message": "[{\"changed\": {\"fields\": [\"\\u041a\\u043e\\u043b\\u0438\\u0447\\u0435\\u0441\\u0442\\u0432\\u043e \\u0442\\u043e\\u0432\\u0430\\u0440\\u0430\"]}}]"
+    }
+},
+{
+    "model": "admin.logentry",
+    "pk": 184,
+    "fields": {
+        "action_time": "2024-12-01T06:51:55.003Z",
+        "user": [
+            "admin"
+        ],
+        "content_type": [
+            "shopapp",
+            "product"
+        ],
+        "object_id": "10",
+        "object_repr": "Доставка",
+        "action_flag": 2,
+        "change_message": "[{\"changed\": {\"fields\": [\"\\u041a\\u043e\\u043b\\u0438\\u0447\\u0435\\u0441\\u0442\\u0432\\u043e \\u0442\\u043e\\u0432\\u0430\\u0440\\u0430\"]}}]"
+    }
+},
+{
+    "model": "admin.logentry",
+    "pk": 185,
+    "fields": {
+        "action_time": "2024-12-01T06:53:33.685Z",
+        "user": [
+            "admin"
+        ],
+        "content_type": [
+            "shopapp",
+            "product"
+        ],
+        "object_id": "11",
+        "object_repr": "Бесплатная доставка",
+        "action_flag": 1,
+        "change_message": "[{\"added\": {}}]"
+    }
+},
+{
+    "model": "admin.logentry",
+    "pk": 186,
+    "fields": {
+        "action_time": "2024-12-01T06:56:31.545Z",
+        "user": [
+            "admin"
+        ],
+        "content_type": [
+            "shopapp",
+            "product"
+        ],
+        "object_id": "11",
+        "object_repr": "Бесплатная доставка",
+        "action_flag": 2,
+        "change_message": "[{\"changed\": {\"fields\": [\"\\u0426\\u0435\\u043d\\u0430\"]}}]"
+    }
+},
+{
+    "model": "admin.logentry",
+    "pk": 187,
+    "fields": {
+        "action_time": "2024-12-01T06:56:46.974Z",
+        "user": [
+            "admin"
+        ],
+        "content_type": [
+            "shopapp",
+            "product"
+        ],
+        "object_id": "11",
+        "object_repr": "Бесплатная доставка",
+        "action_flag": 2,
+        "change_message": "[]"
+    }
+},
+{
+    "model": "admin.logentry",
+    "pk": 188,
+    "fields": {
+        "action_time": "2024-12-01T06:59:57.097Z",
+        "user": [
+            "admin"
+        ],
+        "content_type": [
+            "shopapp",
+            "productimage"
+        ],
+        "object_id": "33",
+        "object_repr": "",
+        "action_flag": 1,
+        "change_message": "[{\"added\": {}}]"
+    }
+},
+{
+    "model": "admin.logentry",
+    "pk": 189,
+    "fields": {
+        "action_time": "2024-12-01T07:00:31.083Z",
+        "user": [
+            "admin"
+        ],
+        "content_type": [
+            "shopapp",
+            "productimage"
+        ],
+        "object_id": "31",
+        "object_repr": "Экспресс-доставка",
+        "action_flag": 2,
+        "change_message": "[{\"changed\": {\"fields\": [\"Alt\"]}}]"
+    }
+},
+{
+    "model": "admin.logentry",
+    "pk": 190,
+    "fields": {
+        "action_time": "2024-12-01T07:00:47.617Z",
+        "user": [
+            "admin"
+        ],
+        "content_type": [
+            "shopapp",
+            "productimage"
+        ],
+        "object_id": "32",
+        "object_repr": "Доставка",
+        "action_flag": 2,
+        "change_message": "[{\"changed\": {\"fields\": [\"Src\", \"Alt\"]}}]"
+    }
+},
+{
+    "model": "admin.logentry",
+    "pk": 191,
+    "fields": {
+        "action_time": "2024-12-01T07:01:12.320Z",
+        "user": [
+            "admin"
+        ],
+        "content_type": [
+            "shopapp",
+            "productimage"
+        ],
+        "object_id": "33",
+        "object_repr": "Бесплатная доставка",
+        "action_flag": 2,
+        "change_message": "[{\"changed\": {\"fields\": [\"Alt\"]}}]"
+    }
+},
+{
+    "model": "admin.logentry",
+    "pk": 192,
+    "fields": {
+        "action_time": "2024-12-01T07:24:15.236Z",
+        "user": [
+            "admin"
+        ],
+        "content_type": [
+            "shopapp",
+            "product"
+        ],
+        "object_id": "8",
+        "object_repr": "PATRIOT Оперативная память PSD34G13332 1x4 ГБ (PSD34G13332)",
+        "action_flag": 2,
+        "change_message": "[{\"changed\": {\"fields\": [\"\\u041a\\u043e\\u043b\\u0438\\u0447\\u0435\\u0441\\u0442\\u0432\\u043e \\u0442\\u043e\\u0432\\u0430\\u0440\\u0430\"]}}]"
+    }
+},
+{
+    "model": "admin.logentry",
+    "pk": 193,
+    "fields": {
+        "action_time": "2024-12-01T08:51:08.383Z",
+        "user": [
+            "admin"
+        ],
+        "content_type": [
+            "shopapp",
+            "sales"
+        ],
+        "object_id": "1",
+        "object_repr": "Sale_Apple iPhone 16 256GB White sim+esim",
+        "action_flag": 2,
+        "change_message": "[{\"changed\": {\"fields\": [\"\\u0414\\u0430\\u0442\\u0430 \\u043d\\u0430\\u0447\\u0430\\u043b\\u0430 \\u0441\\u043a\\u0438\\u0434\\u043a\\u0438\", \"\\u0414\\u0430\\u0442\\u0430 \\u043e\\u043a\\u043e\\u043d\\u0447\\u0430\\u043d\\u0438\\u044f \\u0441\\u043a\\u0438\\u0434\\u043a\\u0438\"]}}]"
+    }
+},
+{
+    "model": "admin.logentry",
+    "pk": 194,
+    "fields": {
+        "action_time": "2024-12-01T08:51:28.647Z",
+        "user": [
+            "admin"
+        ],
+        "content_type": [
+            "shopapp",
+            "sales"
+        ],
+        "object_id": "2",
+        "object_repr": "Sale_HUAWEI MatePad 11,5”S PaperMatte, 11.5\" 8 ГБ/256 ГБ, сиреневый",
+        "action_flag": 2,
+        "change_message": "[{\"changed\": {\"fields\": [\"\\u0414\\u0430\\u0442\\u0430 \\u043d\\u0430\\u0447\\u0430\\u043b\\u0430 \\u0441\\u043a\\u0438\\u0434\\u043a\\u0438\", \"\\u0414\\u0430\\u0442\\u0430 \\u043e\\u043a\\u043e\\u043d\\u0447\\u0430\\u043d\\u0438\\u044f \\u0441\\u043a\\u0438\\u0434\\u043a\\u0438\"]}}]"
     }
 }
 ]

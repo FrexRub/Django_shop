@@ -1,5 +1,6 @@
 import logging
 import locale
+from decimal import Decimal
 from datetime import datetime
 from zoneinfo import ZoneInfo
 
@@ -71,6 +72,7 @@ class BasketSerializer(serializers.ModelSerializer):
 
     @extend_schema_field(OpenApiTypes.DECIMAL)
     def get_price(self, obj):
+
         date_now = datetime.now(tz=ZoneInfo(settings.TIME_ZONE))
         product_discount = Sales.objects.filter(product__id=obj.pk).first()
 
@@ -81,9 +83,9 @@ class BasketSerializer(serializers.ModelSerializer):
                 "У товара с id%s цена со скидкой %s"
                 % (obj.pk, product_discount.salePrice)
             )
-            return product_discount.salePrice
+            return str(product_discount.salePrice)
         else:
-            return obj.price
+            return str(obj.price)
 
     class Meta:
         model = Product

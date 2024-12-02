@@ -291,7 +291,7 @@ class ProductSortedTestCase(TestCase):
             "filter[maxPrice]": 500000,
             "filter[freeDelivery]": "false",
             "filter[available]": "true",
-            "category": 9,
+            "category": 4,
             "sort": "price",
             "sortType": "inc",
             "limit": 20,
@@ -302,7 +302,7 @@ class ProductSortedTestCase(TestCase):
 
         self.assertEqual(response.status_code, 200)
         self.assertEqual(len(received_data["items"]), 1)
-        self.assertEqual(received_data["items"][0]["price"], "67399.00")
+        self.assertEqual(received_data["items"][0]["price"], "139990.00")
 
     def test_get_catalog_free_delivery(self):
         """
@@ -315,7 +315,7 @@ class ProductSortedTestCase(TestCase):
             "filter[maxPrice]": 500000,
             "filter[freeDelivery]": "true",
             "filter[available]": "false",
-            "category": 9,
+            "category": 4,
             "sort": "price",
             "sortType": "inc",
             "limit": 20,
@@ -326,23 +326,22 @@ class ProductSortedTestCase(TestCase):
 
         self.assertEqual(response.status_code, 200)
         self.assertEqual(len(received_data["items"]), 1)
-        self.assertEqual(received_data["items"][0]["price"], "124990.00")
+        self.assertEqual(received_data["items"][0]["price"], "139990.00")
 
     def test_get_catalog_tags(self):
         """
-        Тестирование выгрузка товаров по наличию бесплатной доставки
+        Тестирование выгрузка тегов каталога
         """
         data = {
             "currentPage": 1,
             "filter[name]": 0,
             "filter[minPrice]": 0,
             "filter[maxPrice]": 500000,
-            "filter[freeDelivery]": "false",
-            "filter[available]": "true",
+            "filter[freeDelivery]": "true",
+            "filter[available]": "false",
             "category": 4,
             "sort": "price",
             "sortType": "inc",
-            "tags[]": 12,
             "limit": 20,
         }
 
@@ -351,7 +350,7 @@ class ProductSortedTestCase(TestCase):
 
         self.assertEqual(response.status_code, 200)
         self.assertEqual(len(received_data["items"]), 1)
-        self.assertIn("HUAWEI", received_data["items"][0]["title"])
+        self.assertIn("AMOLED", received_data["items"][0]["tags"][0]["name"])
 
 
 class ProductReviewCase(TestCase):

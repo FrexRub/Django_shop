@@ -63,7 +63,7 @@ class ProductOrderSerializer(serializers.ModelSerializer):
     class Meta:
         model = Product
         # для вывода данных из связанных таблиц, а не только перечень id
-        depth = 1
+        # depth = 1
         fields = (
             "id",
             "category",
