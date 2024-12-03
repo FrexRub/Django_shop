@@ -184,26 +184,14 @@ class OrderDetailApiView(APIView):
     @extend_schema(
         tags=["order"],
         summary="Редактирование заказа по id",
+        request=OrderUpdateSerializer,
         responses={
-            status.HTTP_200_OK: OrderUpdateSerializer,
+            status.HTTP_201_CREATED: OrderIdSerializer,
             status.HTTP_500_INTERNAL_SERVER_ERROR: OpenApiResponse(
                 response=None,
                 description="Что-то пошло не так",
             ),
         },
-        examples=[
-            OpenApiExample(
-                "Order edit example",
-                description="Пример заполнения полей для редактирования oрдера",
-                value={
-                    "deliveryType": "ordinary",
-                    "paymentType": "online",
-                    "city": "Moscow",
-                    "address": "ul. Mira, dom 10",
-                },
-                status_codes=[str(status.HTTP_200_OK)],
-            )
-        ],
     )
     def post(self, request, pk: int):
         order = (
