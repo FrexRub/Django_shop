@@ -5,6 +5,7 @@ from django.shortcuts import get_object_or_404
 from django.conf import settings
 
 from shopapp.models import Product
+from orders.models import Order
 
 
 class OrderTestCase(TestCase):
@@ -13,13 +14,6 @@ class OrderTestCase(TestCase):
     def setUp(self):
         self.client = Client()
 
-    def tearDown(self):
-        self.client.session.flush()
-
-    def test_create_order(self):
-        """
-        Тест создание ордера
-        """
         id_product = 1
         count_product = 2
         product_id = str(id_product)
@@ -30,8 +24,37 @@ class OrderTestCase(TestCase):
         session[settings.CART_SESSION_ID][product_id] = {"quantity": count_product, "price": str(product.price)}
         session.save()
 
+    def tearDown(self):
+        self.client.session.flush()
+
+    def test_create_order(self):
+        """
+        Тест создание ордера
+        """
+
         response = self.client.post(reverse("api:orders"))
         received_data = json.loads(response.content)
 
+        order: Order = get_object_or_404(Order, pk=received_data["orderId"])
+
         self.assertEqual(response.status_code, 201)
         self.assertEqual(received_data["orderId"], 3)
+        self.assertEqual(order.status, "created")
+
+
+    def test_get_order_id(self):
+        """
+        Тест получения ордера по id
+        """
+
+        response = self.client.post(reverse("api:orders"))
+        received_data = json.loads(response.content)
+
+        response = self.client.get(reverse("api:orders_details", args=(3, )))
+        received_data = json.loads(response.content)
+
+        print(received_data)
+
+        self.assertEqual(response.status_code, 200)
+        # self.assertEqual(received_data["orderId"], 3)
+
