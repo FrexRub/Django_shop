@@ -21,7 +21,10 @@ class OrderTestCase(TestCase):
 
         session = self.client.session
         session[settings.CART_SESSION_ID] = {}
-        session[settings.CART_SESSION_ID][product_id] = {"quantity": count_product, "price": str(product.price)}
+        session[settings.CART_SESSION_ID][product_id] = {
+            "quantity": count_product,
+            "price": str(product.price),
+        }
         session.save()
 
     def tearDown(self):
@@ -41,7 +44,6 @@ class OrderTestCase(TestCase):
         self.assertEqual(received_data["orderId"], 3)
         self.assertEqual(order.status, "created")
 
-
     def test_get_order_id(self):
         """
         Тест получения ордера по id
@@ -50,11 +52,8 @@ class OrderTestCase(TestCase):
         response = self.client.post(reverse("api:orders"))
         received_data = json.loads(response.content)
 
-        response = self.client.get(reverse("api:orders_details", args=(3, )))
+        response = self.client.get(reverse("api:orders_details", args=(4,)))
         received_data = json.loads(response.content)
 
-        print(received_data)
-
         self.assertEqual(response.status_code, 200)
-        # self.assertEqual(received_data["orderId"], 3)
-
+        self.assertIn("Apple IPhone 13", received_data["products"][1]["title"])
