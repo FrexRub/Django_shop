@@ -78,3 +78,47 @@ class OrderTestCase(TestCase):
         self.assertEqual(response.status_code, 201)
         self.assertEqual(received_data["orderId"], 5)
         self.assertEqual(order.address, "ul. Mira, dom 10")
+
+    def test_pyment_order_id(self):
+        """
+        Тест оплаты ордера по id (без ошибок)
+        """
+        data = {
+            "name": "Lena Lee",
+            "number": "9999999999999999",
+            "year": "23",
+            "month": "11",
+            "code": "123",
+        }
+
+        response = self.client.post(reverse("api:orders"))
+
+        response = self.client.post(reverse("api:payment", args=(6,)), data)
+        received_data = json.loads(response.content)
+
+        order: Order = get_object_or_404(Order, pk=6)
+
+        self.assertEqual(response.status_code, 200)
+        self.assertEqual(received_data["message"], "Данные указаны верно")
+        self.assertEqual(order.status, "paid")
+
+    #
+    # def test_pyment_err_number(self):
+    #     """
+    #     Тест оплаты ордера по id (ошибка в номере карты)
+    #     """
+    #     data = {
+    #         "name": "Lena Lee",
+    #         "number": "9999-9999-9999-9999",
+    #         "year": "23",
+    #         "month": "11",
+    #         "code": "123",
+    #     }
+    #
+    #     response = self.client.post(reverse("api:orders"))
+    #
+    #     response = self.client.post(reverse("api:payment", args=(7,)), data)
+    #     received_data = json.loads(response.content)
+    #
+    #     self.assertEqual(response.status_code, 400)
+    #     self.assertEqual(received_data["message"], "Счёт указано не верно")
