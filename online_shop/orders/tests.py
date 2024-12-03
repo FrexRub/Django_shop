@@ -50,10 +50,31 @@ class OrderTestCase(TestCase):
         """
 
         response = self.client.post(reverse("api:orders"))
-        received_data = json.loads(response.content)
 
         response = self.client.get(reverse("api:orders_details", args=(4,)))
         received_data = json.loads(response.content)
 
         self.assertEqual(response.status_code, 200)
         self.assertIn("Apple IPhone 13", received_data["products"][1]["title"])
+
+    def test_post_order_id(self):
+        """
+        Тест редактирования ордера по id
+        """
+        data = {
+            "deliveryType": "ordinary",
+            "paymentType": "online",
+            "city": "Moscow",
+            "address": "ul. Mira, dom 10",
+        }
+
+        response = self.client.post(reverse("api:orders"))
+
+        response = self.client.post(reverse("api:orders_details", args=(5,)), data)
+        received_data = json.loads(response.content)
+
+        order: Order = get_object_or_404(Order, pk=received_data["orderId"])
+
+        self.assertEqual(response.status_code, 201)
+        self.assertEqual(received_data["orderId"], 5)
+        self.assertEqual(order.address, "ul. Mira, dom 10")
