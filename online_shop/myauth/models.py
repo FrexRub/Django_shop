@@ -80,7 +80,6 @@ class Profile(models.Model):
 
 @receiver(pre_save, sender=Profile)
 def delete_old_avatar(sender, instance, **kwargs):
-    log.info("Пользователь заменил аватар")
     if instance.pk:
         try:
             old_avatar = Profile.objects.get(pk=instance.pk).avatar
