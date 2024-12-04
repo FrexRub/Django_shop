@@ -22,14 +22,14 @@ from drf_spectacular.utils import (
     OpenApiExample,
 )
 
-from .models import (
+from shopapp.models import (
     Product,
     Tag,
     Sales,
     Category,
 )
 
-from .serializers import (
+from shopapp.serializers import (
     TagSerializer,
     ProductSerializer,
     ProductShortSerializer,
@@ -38,7 +38,7 @@ from .serializers import (
 )
 
 from services.schemas import CategoriesSchema
-from .utils import sorted_products
+from shopapp.utils import sorted_products
 
 log = logging.getLogger(__name__)
 
@@ -429,7 +429,10 @@ class CatalogApiView(APIView):
     ),
 )
 class PopularListApiView(ListAPIView):
-    # ToDo фильтрация по количеству покупок
+    """
+    Генерирует список из 8 товаров с максимальным рейтингом
+    """
+
     queryset = (
         Product.objects.all()
         .annotate(
@@ -444,11 +447,10 @@ class PopularListApiView(ListAPIView):
     )
     serializer_class = ProductShortSerializer
 
-    # @method_decorator(cache_page(5 * 60 * 60, key_prefix="popular"))
+    @method_decorator(cache_page(5 * 60 * 60, key_prefix="popular"))
     def get(self, *args, **kwargs):
         res = super().get(*args, **kwargs)
         res.data = res.data["results"]
-        print("!!!!! res", res)
         return res
 
 
@@ -466,6 +468,10 @@ class PopularListApiView(ListAPIView):
     ),
 )
 class LimitListApiView(ListAPIView):
+    """
+    Генерирует список из 16 товаров с ограниченным количеством в наличии
+    """
+
     queryset = (
         Product.objects.filter(count__range=(1, 10))
         .select_related("category")
@@ -484,6 +490,10 @@ class LimitListApiView(ListAPIView):
 
 
 class BannersListApiView(APIView):
+    """
+    Генерирует список с товарами по одному из каждой категории
+    """
+
     serializer_class = ProductShortSerializer
 
     @extend_schema(
@@ -541,6 +551,10 @@ class BannersListApiView(APIView):
 
 
 class SalesListApiView(APIView):
+    """
+    Генерирует список товаров со скидкой
+    """
+
     serializer_class = SalesSerializer
 
     @extend_schema(

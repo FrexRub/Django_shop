@@ -1,21 +1,18 @@
 import logging
 
-from django.shortcuts import render
 from django.shortcuts import get_object_or_404
 from rest_framework.views import APIView
 from rest_framework import status
 from rest_framework.response import Response
 from drf_spectacular.utils import (
     extend_schema,
-    extend_schema_view,
     OpenApiResponse,
-    OpenApiParameter,
     OpenApiExample,
 )
 
-from .cart import Cart
+from basket.cart import Cart
 from shopapp.views import Product
-from .serializers import BasketSerializer, BasketDataSerializer
+from basket.serializers import BasketSerializer, BasketDataSerializer
 
 log = logging.getLogger(__name__)
 
@@ -52,6 +49,11 @@ class BasketApiView(APIView):
         ],
     )
     def post(self, request):
+        """
+        Добавление товара в корзину
+        :param request:
+        :return:
+        """
         id_product = int(request.data.get("id"))
         count_product = int(request.data.get("count"))
 
@@ -107,6 +109,11 @@ class BasketApiView(APIView):
         },
     )
     def get(self, request):
+        """
+        Вывод содержания корзины
+        :param request:
+        :return:
+        """
         cart = Cart(request)
         list_id = cart.list_id_products()
         products = (
@@ -151,6 +158,11 @@ class BasketApiView(APIView):
         ],
     )
     def delete(self, request):
+        """
+        Удаление товара из корзины
+        :param request:
+        :return:
+        """
         id_product = int(request.data.get("id"))
         count_product = int(request.data.get("count"))
         log.info(

@@ -7,11 +7,12 @@ from rest_framework import status
 log = logging.getLogger(__name__)
 
 
-def validate_score(score: int) -> bool:
-    return bool((score % 2 == 0) and (len(str(score)) == 8))
-
-
 def checking_payments(request: Request):
+    """
+    Валидация данных платежной карты
+    :param request:
+    :return:
+    """
     response = dict()
     if not re.search(r"^[а-яА-ЯёЁa-zA-Z]+ ?[а-яА-ЯёЁa-zA-Z]+$", request.data["name"]):
         log.info("Имя указано не верно")

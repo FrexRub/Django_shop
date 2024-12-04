@@ -18,7 +18,7 @@ from drf_spectacular.utils import (
     OpenApiExample,
 )
 
-from .serializers import (
+from myauth.serializers import (
     UserRegistrationSerializer,
     UserLoginSerializer,
     ProfileSerializerGet,
@@ -27,7 +27,7 @@ from .serializers import (
     PasswordSerializer,
     ResultSerializer,
 )
-from .models import Profile
+from myauth.models import Profile
 from online_shop import settings
 from services.schemas import ProfileSchema
 
@@ -267,9 +267,9 @@ class ProfileView(APIView):
             user.first_name = request.data.get("fullName")
 
             if (
-                    User.objects.filter(email=request.data.get("email"))
-                            .exclude(username=user.username)
-                            .exists()
+                User.objects.filter(email=request.data.get("email"))
+                .exclude(username=user.username)
+                .exists()
             ):
                 log.info("Пользователь с данным email уже зарегистрирован")
                 return Response(
@@ -280,10 +280,10 @@ class ProfileView(APIView):
 
             # Запись данных в модель профиля пользователя
             if (
-                    Profile.objects.select_related("user")
-                            .filter(phone_number=request.data.get("phone"))
-                            .exclude(user__username=user.username)
-                            .exists()
+                Profile.objects.select_related("user")
+                .filter(phone_number=request.data.get("phone"))
+                .exclude(user__username=user.username)
+                .exists()
             ):
                 log.info("Пользователь с данным телефонов уже зарегистрирован")
                 return Response(
@@ -424,7 +424,9 @@ class ChangePasswordView(APIView):
                 status=status.HTTP_403_FORBIDDEN,
             )
 
-        serializer = PasswordSerializer(data={"password": request.data.get("newPassword")})
+        serializer = PasswordSerializer(
+            data={"password": request.data.get("newPassword")}
+        )
         if serializer.is_valid():
             user.set_password(request.data.get("newPassword"))
             user.save()

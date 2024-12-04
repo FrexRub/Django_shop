@@ -1,21 +1,15 @@
 import logging
 from decimal import Decimal
+import time
 
 from django.shortcuts import get_object_or_404
-from django.core.cache import cache
-from django.utils.decorators import method_decorator
 from django.contrib.auth.models import User
 from rest_framework import status
 from rest_framework.views import APIView
-from rest_framework.request import Request
 from rest_framework.response import Response
-from rest_framework.permissions import IsAuthenticated
-from rest_framework.pagination import PageNumberPagination
 from drf_spectacular.utils import (
     extend_schema,
-    extend_schema_view,
     OpenApiResponse,
-    OpenApiParameter,
     OpenApiExample,
 )
 
@@ -48,10 +42,14 @@ class OrderApiView(APIView):
         },
     )
     def get(self, request):
+        """
+        Генерирует список заказов пользователя
+        """
         orders = (
             Order.objects.filter(user=self.request.user)
             .select_related("user")
             .prefetch_related("basket", "user__profile")
+            .order_by("-created_at")
         )
 
         orders_list = list()
@@ -77,6 +75,9 @@ class OrderApiView(APIView):
         },
     )
     def post(self, request):
+        """
+        Создается ордер из товаров в корзине
+        """
         log.info("Начало выполнения запроса по созданию ордера")
         cart = Cart(request)
 
@@ -131,6 +132,9 @@ class OrderApiView(APIView):
                 count_in_order=1,
                 price_in_order=delivery.price,
             )
+            order.total_cost += Decimal(delivery.price)
+            order.save()
+
         else:
             delivery_free: Product = Product.objects.filter(
                 title="Бесплатная доставка"
@@ -163,6 +167,13 @@ class OrderDetailApiView(APIView):
         },
     )
     def get(self, request, pk: int):
+        """
+        Вывод данных о заказе по id
+        :param request:
+        :param pk: int
+        Номер ордера
+        :return:
+        """
         order = (
             Order.objects.filter(pk=pk)
             .select_related("user")
@@ -194,6 +205,13 @@ class OrderDetailApiView(APIView):
         },
     )
     def post(self, request, pk: int):
+        """
+        Редактирование заказа с заданным id
+        :param request:
+        :param pk: int
+        Номер ордера
+        :return:
+        """
         order = (
             Order.objects.filter(pk=pk)
             .select_related("user")
@@ -210,6 +228,7 @@ class OrderDetailApiView(APIView):
         order.save()
 
         if order.delivery_type == DeliveryType.EXPRESS:
+            log.info("Добавление в ордер id%s стоимость экспресс-доставки" % order.pk)
             delivery: Product = get_object_or_404(Product, title="Экспресс-доставка")
             m2m_order = OrderInfoBasket.objects.create(
                 order=order,
@@ -218,6 +237,8 @@ class OrderDetailApiView(APIView):
                 price_in_order=delivery.price,
             )
             m2m_order.save()
+            order.total_cost += Decimal(delivery.price)
+            order.save()
 
         log.info("Ордер с %s подтвержден, статус ордера %s" % (order.pk, order.status))
 
@@ -255,10 +276,17 @@ class PaymentApiView(APIView):
         ],
     )
     def post(self, request, pk: int):
+        """
+        Оплата заказа по id
+        :param request:
+        :param pk: int
+        :return:
+        """
         log.info("Заполнение данных платежной карты")
         result_check = checking_payments(request)
 
         if result_check["status"] == status.HTTP_200_OK:
+            time.sleep(5)
             order = get_object_or_404(Order, pk=pk)
             order.status = StatusType.PAID
             order.save()
