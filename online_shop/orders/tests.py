@@ -61,6 +61,8 @@ class OrderTestCase(TestCase):
         response = OrderTestCase.client.post(reverse("api:orders"))
         received_data = json.loads(response.content)
 
+        print("received_data", received_data)
+
         order: Order = get_object_or_404(Order, pk=received_data["orderId"])
 
         self.assertEqual(response.status_code, 201)
@@ -76,7 +78,6 @@ class OrderTestCase(TestCase):
 
         response = OrderTestCase.client.get(reverse("api:orders_details", args=(received_data["orderId"],)))
         received_data = json.loads(response.content)
-        print(received_data)
 
         self.assertEqual(response.status_code, 200)
         self.assertIn("Apple IPhone 13", received_data["products"][1]["title"])
@@ -150,3 +151,91 @@ class OrderTestCase(TestCase):
 
         self.assertEqual(response.status_code, 400)
         self.assertEqual(received_data["message"], "Счёт указано не верно")
+
+    def test_pyment_err_year(self):
+        """
+        Тест оплаты ордера по id (ошибка в году)
+        """
+        data = {
+            "name": "Lena Lee",
+            "number": "9999999999999999",
+            "year": "234",
+            "month": "11",
+            "code": "123",
+        }
+
+        response = OrderTestCase.client.post(reverse("api:orders"))
+        received_data = json.loads(response.content)
+        order_id = received_data["orderId"]
+
+        response = OrderTestCase.client.post(reverse("api:payment", args=(order_id,)), data)
+        received_data = json.loads(response.content)
+
+        self.assertEqual(response.status_code, 400)
+        self.assertEqual(received_data["message"], "Год указан не верно")
+
+    def test_pyment_err_month(self):
+        """
+        Тест оплаты ордера по id (ошибка в месяце)
+        """
+        data = {
+            "name": "Lena Lee",
+            "number": "9999999999999999",
+            "year": "23",
+            "month": "14",
+            "code": "123",
+        }
+
+        response = OrderTestCase.client.post(reverse("api:orders"))
+        received_data = json.loads(response.content)
+        order_id = received_data["orderId"]
+
+        response = OrderTestCase.client.post(reverse("api:payment", args=(order_id,)), data)
+        received_data = json.loads(response.content)
+
+        self.assertEqual(response.status_code, 400)
+        self.assertEqual(received_data["message"], "Месяц указан не верно")
+
+    def test_pyment_err_code(self):
+        """
+        Тест оплаты ордера по id (ошибка в коде)
+        """
+        data = {
+            "name": "Lena Lee",
+            "number": "9999999999999999",
+            "year": "23",
+            "month": "11",
+            "code": "1234",
+        }
+
+        response = OrderTestCase.client.post(reverse("api:orders"))
+        received_data = json.loads(response.content)
+        order_id = received_data["orderId"]
+
+        response = OrderTestCase.client.post(reverse("api:payment", args=(order_id,)), data)
+        received_data = json.loads(response.content)
+
+        self.assertEqual(response.status_code, 400)
+        self.assertEqual(received_data["message"], "Код указан не верно")
+
+    def test_pyment_err_name(self):
+        """
+        Тест оплаты ордера по id (ошибка в имени)
+        """
+        data = {
+            "name": "Lena Lee12",
+            "number": "9999999999999999",
+            "year": "23",
+            "month": "11",
+            "code": "123",
+        }
+
+        response = OrderTestCase.client.post(reverse("api:orders"))
+        received_data = json.loads(response.content)
+        order_id = received_data["orderId"]
+
+        response = OrderTestCase.client.post(reverse("api:payment", args=(order_id,)), data)
+        received_data = json.loads(response.content)
+
+        self.assertEqual(response.status_code, 400)
+        self.assertEqual(received_data["message"], "Имя указано не верно")
