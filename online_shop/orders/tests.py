@@ -11,15 +11,18 @@ from orders.models import Order
 class OrderTestCase(TestCase):
     fixtures = ["data.json"]
 
-    def setUp(self):
-        self.client = Client()
+    @classmethod
+    def setUpClass(cls):
+        super().setUpClass()
+
+        cls.client = Client()
 
         id_product = 1
         count_product = 2
         product_id = str(id_product)
         product: Product = get_object_or_404(Product, pk=id_product)
 
-        session = self.client.session
+        session = cls.client.session
         session[settings.CART_SESSION_ID] = {}
         session[settings.CART_SESSION_ID][product_id] = {
             "quantity": count_product,
@@ -27,15 +30,35 @@ class OrderTestCase(TestCase):
         }
         session.save()
 
-    def tearDown(self):
-        self.client.session.flush()
+    @classmethod
+    def tearDownClass(cls):
+        cls.client.session.flush()
+
+
+    # def setUp(self):
+    #     self.client = Client()
+    #
+    #     id_product = 1
+    #     count_product = 2
+    #     product_id = str(id_product)
+    #     product: Product = get_object_or_404(Product, pk=id_product)
+    #
+    #     session = self.client.session
+    #     session[settings.CART_SESSION_ID] = {}
+    #     session[settings.CART_SESSION_ID][product_id] = {
+    #         "quantity": count_product,
+    #         "price": str(product.price),
+    #     }
+    #     session.save()
+
+    # def tearDown(self):
+    #     self.client.session.flush()
 
     def test_create_order(self):
         """
         Тест создание ордера
         """
-
-        response = self.client.post(reverse("api:orders"))
+        response = OrderTestCase.client.post(reverse("api:orders"))
         received_data = json.loads(response.content)
 
         order: Order = get_object_or_404(Order, pk=received_data["orderId"])
@@ -48,11 +71,12 @@ class OrderTestCase(TestCase):
         """
         Тест получения ордера по id
         """
-
-        response = self.client.post(reverse("api:orders"))
-
-        response = self.client.get(reverse("api:orders_details", args=(4,)))
+        response = OrderTestCase.client.post(reverse("api:orders"))
         received_data = json.loads(response.content)
+
+        response = OrderTestCase.client.get(reverse("api:orders_details", args=(received_data["orderId"],)))
+        received_data = json.loads(response.content)
+        print(received_data)
 
         self.assertEqual(response.status_code, 200)
         self.assertIn("Apple IPhone 13", received_data["products"][1]["title"])
@@ -68,15 +92,15 @@ class OrderTestCase(TestCase):
             "address": "ul. Mira, dom 10",
         }
 
-        response = self.client.post(reverse("api:orders"))
+        response = OrderTestCase.client.post(reverse("api:orders"))
+        received_data = json.loads(response.content)
 
-        response = self.client.post(reverse("api:orders_details", args=(5,)), data)
+        response = OrderTestCase.client.post(reverse("api:orders_details", args=(received_data["orderId"],)), data)
         received_data = json.loads(response.content)
 
         order: Order = get_object_or_404(Order, pk=received_data["orderId"])
 
         self.assertEqual(response.status_code, 201)
-        self.assertEqual(received_data["orderId"], 5)
         self.assertEqual(order.address, "ul. Mira, dom 10")
 
     def test_pyment_order_id(self):
@@ -91,34 +115,38 @@ class OrderTestCase(TestCase):
             "code": "123",
         }
 
-        response = self.client.post(reverse("api:orders"))
+        response = OrderTestCase.client.post(reverse("api:orders"))
+        received_data = json.loads(response.content)
+        order_id = received_data["orderId"]
 
-        response = self.client.post(reverse("api:payment", args=(6,)), data)
+        response = OrderTestCase.client.post(reverse("api:payment", args=(order_id,)), data)
         received_data = json.loads(response.content)
 
-        order: Order = get_object_or_404(Order, pk=6)
+        order: Order = get_object_or_404(Order, pk=order_id)
 
         self.assertEqual(response.status_code, 200)
         self.assertEqual(received_data["message"], "Данные указаны верно")
         self.assertEqual(order.status, "paid")
 
-    #
-    # def test_pyment_err_number(self):
-    #     """
-    #     Тест оплаты ордера по id (ошибка в номере карты)
-    #     """
-    #     data = {
-    #         "name": "Lena Lee",
-    #         "number": "9999-9999-9999-9999",
-    #         "year": "23",
-    #         "month": "11",
-    #         "code": "123",
-    #     }
-    #
-    #     response = self.client.post(reverse("api:orders"))
-    #
-    #     response = self.client.post(reverse("api:payment", args=(7,)), data)
-    #     received_data = json.loads(response.content)
-    #
-    #     self.assertEqual(response.status_code, 400)
-    #     self.assertEqual(received_data["message"], "Счёт указано не верно")
+
+    def test_pyment_err_number(self):
+        """
+        Тест оплаты ордера по id (ошибка в номере карты)
+        """
+        data = {
+            "name": "Lena Lee",
+            "number": "9999-9999-9999-9999",
+            "year": "23",
+            "month": "11",
+            "code": "123",
+        }
+
+        response = OrderTestCase.client.post(reverse("api:orders"))
+        received_data = json.loads(response.content)
+        order_id = received_data["orderId"]
+
+        response = OrderTestCase.client.post(reverse("api:payment", args=(order_id,)), data)
+        received_data = json.loads(response.content)
+
+        self.assertEqual(response.status_code, 400)
+        self.assertEqual(received_data["message"], "Счёт указано не верно")
