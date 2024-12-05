@@ -44,10 +44,18 @@ log = logging.getLogger(__name__)
 
 
 class CustomPagination(PageNumberPagination):
-    page_size = 10
-    page_size_query_param = "page_size"
-    max_page_size = 100
+    page_size = 1
+    max_page_size = 1000
+    page_query_param = 'currentPage'
 
+    def get_paginated_response(self, data):
+        return Response(
+            {
+                "items": data,
+                "currentPage": self.page.number,
+                "lastPage": self.page.paginator.num_pages,
+            }
+        )
 
 class TagApiView(APIView):
     @extend_schema(
@@ -454,19 +462,7 @@ class PopularListApiView(ListAPIView):
         return res
 
 
-@extend_schema(tags=["catalog"])
-@extend_schema_view(
-    list=extend_schema(
-        summary="Получить список ограниченных товаров",
-        responses={
-            status.HTTP_200_OK: ProductShortSerializer,
-            status.HTTP_500_INTERNAL_SERVER_ERROR: OpenApiResponse(
-                response=None,
-                description="Что-то пошло не так",
-            ),
-        },
-    ),
-)
+
 class LimitListApiView(ListAPIView):
     """
     Генерирует список из 16 товаров с ограниченным количеством в наличии
@@ -549,19 +545,12 @@ class BannersListApiView(APIView):
             status=status.HTTP_200_OK,
         )
 
-
-class SalesListApiView(APIView):
-    """
-    Генерирует список товаров со скидкой
-    """
-
-    serializer_class = SalesSerializer
-
-    @extend_schema(
-        tags=["catalog"],
+@extend_schema(tags=["catalog"])
+@extend_schema_view(
+    list=extend_schema(
         summary="Вывод скидок",
         responses={
-            status.HTTP_200_OK: SalesSerializer(),
+            status.HTTP_200_OK: SalesSerializer,
             status.HTTP_500_INTERNAL_SERVER_ERROR: OpenApiResponse(
                 response=None,
                 description="Что-то пошло не так",
@@ -577,27 +566,16 @@ class SalesListApiView(APIView):
                 type=int,
             ),
         ],
+    ),
+)
+class SalesListApiView(ListAPIView):
+    """
+    Генерирует список товаров со скидкой
+    """
+    queryset = (
+        Sales.objects.select_related("product")
+        .prefetch_related("product__images")
+        .all()
     )
-    def get(self, request):
-        current_page = int(request.GET.get("currentPage"))
-        queryset = (
-            Sales.objects.select_related("product")
-            .prefetch_related("product__images")
-            .all()
-        )
-
-        paginator = CustomPagination()
-        result_page = paginator.paginate_queryset(queryset, request)
-
-        serializer = SalesSerializer(result_page, many=True)
-
-        data = {
-            "items": serializer.data,
-            "currentPage": current_page,
-            "lastPage": paginator.page.paginator.count,
-        }
-
-        return Response(
-            data,
-            status=status.HTTP_200_OK,
-        )
+    serializer_class = SalesSerializer
+    pagination_class = CustomPagination
