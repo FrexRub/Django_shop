@@ -25,6 +25,7 @@ from orders.serializers import (
 )
 from shopapp.serializers import ProductShortSerializer
 from services.payment import checking_payments
+from orders.tasks import send_email_about_order_created
 
 log = logging.getLogger(__name__)
 
@@ -291,6 +292,14 @@ class PaymentApiView(APIView):
             order.status = StatusType.PAID
             order.save()
             log.info("Ордер с %s оплачен, статус ордера %s" % (order.pk, order.status))
+
+            log.info(
+                "Отправка письма клиенту %s с информацией об ордере с id %s"
+                % (order.user.first_name, pk)
+            )
+            send_email_about_order_created.delay(
+                user_name=order.user.first_name, order_id=pk
+            )
 
             cart = Cart(request)
             cart.delete_cart()
