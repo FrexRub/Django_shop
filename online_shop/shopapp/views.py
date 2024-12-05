@@ -44,9 +44,9 @@ log = logging.getLogger(__name__)
 
 
 class CustomPagination(PageNumberPagination):
-    page_size = 1
+    page_size = 10
     max_page_size = 1000
-    page_query_param = 'currentPage'
+    page_query_param = "currentPage"
 
     def get_paginated_response(self, data):
         return Response(
@@ -56,6 +56,7 @@ class CustomPagination(PageNumberPagination):
                 "lastPage": self.page.paginator.num_pages,
             }
         )
+
 
 class TagApiView(APIView):
     @extend_schema(
@@ -414,7 +415,7 @@ class CatalogApiView(APIView):
         data = {
             "items": serializer.data,
             "currentPage": current_page,
-            "lastPage": paginator.page.paginator.count,
+            "lastPage": paginator.page.paginator.num_pages,
         }
 
         return Response(
@@ -460,7 +461,6 @@ class PopularListApiView(ListAPIView):
         res = super().get(*args, **kwargs)
         res.data = res.data["results"]
         return res
-
 
 
 class LimitListApiView(ListAPIView):
@@ -545,6 +545,7 @@ class BannersListApiView(APIView):
             status=status.HTTP_200_OK,
         )
 
+
 @extend_schema(tags=["catalog"])
 @extend_schema_view(
     list=extend_schema(
@@ -572,6 +573,7 @@ class SalesListApiView(ListAPIView):
     """
     Генерирует список товаров со скидкой
     """
+
     queryset = (
         Sales.objects.select_related("product")
         .prefetch_related("product__images")
