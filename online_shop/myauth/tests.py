@@ -4,16 +4,14 @@ from django.urls import reverse
 
 from django.contrib.auth.models import User
 
-from .models import Profile
+from myauth.models import Profile
 
 
 class UserRegistrationViewTestCase(TestCase):
     @classmethod
     def setUpClass(cls):
         cls.user: User = User.objects.create_user(
-            first_name="User Test",
-            username="TestUser",
-            password="1qaz!QAZ"
+            first_name="User Test", username="TestUser", password="1qaz!QAZ"
         )
         cls.user.save()
 
@@ -25,11 +23,7 @@ class UserRegistrationViewTestCase(TestCase):
         """
         Тестирование на надежность пароля
         """
-        user = {
-            "name": "User Test 1",
-            "username": "TestUser1",
-            "password": "123456"
-        }
+        user = {"name": "User Test 1", "username": "TestUser1", "password": "123456"}
         response = self.client.post(reverse("api:sign_up"), user)
         received_data = json.loads(response.content)
         self.assertEqual(response.status_code, 400)
@@ -39,30 +33,22 @@ class UserRegistrationViewTestCase(TestCase):
         """
         Тестирование на регистрацию пользователя
         """
-        user = {
-            "name": "User Test 1",
-            "username": "TestUser1",
-            "password": "1qaz!QAZ"
-        }
+        user = {"name": "User Test 1", "username": "TestUser1", "password": "1qaz!QAZ"}
         response = self.client.post(reverse("api:sign_up"), user)
 
         self.assertEqual(response.status_code, 201)
+        self.assertTrue(User.objects.filter(username="TestUser1").exists())
         self.assertTrue(
-            User.objects.filter(username="TestUser1").exists()
-        )
-        self.assertTrue(
-            Profile.objects.select_related("user").filter(user__username="TestUser1").exists()
+            Profile.objects.select_related("user")
+            .filter(user__username="TestUser1")
+            .exists()
         )
 
     def test_registration_user_again(self):
         """
         Тестирование на регистрацию пользователя повторно
         """
-        user = {
-            "name": "User Test 1",
-            "username": "TestUser",
-            "password": "1qaz!QAZ"
-        }
+        user = {"name": "User Test 1", "username": "TestUser", "password": "1qaz!QAZ"}
         response = self.client.post(reverse("api:sign_up"), user)
         received_data = json.loads(response.content)
         self.assertEqual(response.status_code, 400)
@@ -73,9 +59,7 @@ class UserLoginViewTestCase(TestCase):
     @classmethod
     def setUpClass(cls):
         cls.user: User = User.objects.create_user(
-            first_name="User Test",
-            username="TestUser",
-            password="1qaz!QAZ"
+            first_name="User Test1", username="TestUser", password="1qaz!QAZ"
         )
         cls.user.save()
 
@@ -87,11 +71,7 @@ class UserLoginViewTestCase(TestCase):
         """
         Тестирование входа пользователя в личный кабинет
         """
-        user = {
-            "name": "User Test 1",
-            "username": "TestUser",
-            "password": "1qaz!QAZ"
-        }
+        user = {"name": "User Test 1", "username": "TestUser", "password": "1qaz!QAZ"}
         response = self.client.post(reverse("api:sign_in"), user)
         received_data = json.loads(response.content)
         self.assertEqual(response.status_code, 200)
@@ -101,11 +81,7 @@ class UserLoginViewTestCase(TestCase):
         """
         Тестирование входа пользователя в личный кабинет (полльзователь не зарегистрирован)
         """
-        user = {
-            "name": "User Test 1",
-            "username": "TestUser10",
-            "password": "1qaz!QAZ"
-        }
+        user = {"name": "User Test 1", "username": "TestUser10", "password": "1qaz!QAZ"}
         response = self.client.post(reverse("api:sign_in"), user)
         received_data = json.loads(response.content)
         self.assertEqual(response.status_code, 403)
@@ -115,11 +91,7 @@ class UserLoginViewTestCase(TestCase):
         """
         Тестирование входа пользователя в личный кабинет (не верный пароль)
         """
-        user = {
-            "name": "User Test 1",
-            "username": "TestUser",
-            "password": "123456"
-        }
+        user = {"name": "User Test 1", "username": "TestUser", "password": "123456"}
         response = self.client.post(reverse("api:sign_in"), user)
         received_data = json.loads(response.content)
         self.assertEqual(response.status_code, 403)
@@ -131,9 +103,7 @@ class UserEditProfileViewTestCase(TestCase):
     def setUpClass(cls):
         # Create TestUser1
         cls.user_1: User = User.objects.create_user(
-            first_name="User Test 1",
-            username="TestUser1",
-            password="1qaz!QAZ"
+            first_name="User Test 1", username="TestUser1", password="1qaz!QAZ"
         )
         cls.user_1.save()
 
@@ -142,9 +112,7 @@ class UserEditProfileViewTestCase(TestCase):
 
         # Create TestUser2
         cls.user_2: User = User.objects.create_user(
-            first_name="User Test 2",
-            username="TestUser2",
-            password="1qaz!QAZ"
+            first_name="User Test 2", username="TestUser2", password="1qaz!QAZ"
         )
         cls.user_2.email = "test@shop.com"
         cls.user_2.save()
@@ -188,15 +156,9 @@ class UserEditProfileViewTestCase(TestCase):
         received_data = json.loads(response.content)
         self.assertEqual(response.status_code, 200)
         self.assertEqual(received_data["message"], "User registered successfully")
-        self.assertTrue(
-            User.objects.filter(first_name="Алексей Иванов").exists()
-        )
-        self.assertTrue(
-            User.objects.filter(email="alex@shop.com").exists()
-        )
-        self.assertTrue(
-            Profile.objects.filter(phone_number="+79151232358").exists()
-        )
+        self.assertTrue(User.objects.filter(first_name="Алексей Иванов").exists())
+        self.assertTrue(User.objects.filter(email="alex@shop.com").exists())
+        self.assertTrue(Profile.objects.filter(phone_number="+79151232358").exists())
 
     def test_edit_profile_email(self):
         """
@@ -252,9 +214,7 @@ class UserEditPasswordViewTestCase(TestCase):
     def setUpClass(cls):
         # Create TestUser1
         cls.user: User = User.objects.create_user(
-            first_name="User Test",
-            username="TestUser",
-            password="1qaz!QAZ"
+            first_name="User Test", username="TestUser", password="1qaz!QAZ"
         )
         cls.user.save()
 
