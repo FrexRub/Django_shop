@@ -297,9 +297,7 @@ class PaymentApiView(APIView):
                 "Отправка письма клиенту %s с информацией об ордере с id %s"
                 % (order.user.first_name, pk)
             )
-            send_email_about_order_created.delay(
-                user_name=order.user.first_name, order_id=pk
-            )
+            send_email_about_order_created.delay(order_id=pk)
 
             cart = Cart(request)
             cart.delete_cart()

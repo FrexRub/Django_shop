@@ -3,14 +3,13 @@ import logging
 from celery import shared_task
 from django.core.mail import send_mail
 from django.template.loader import render_to_string
-from orders.models import Order
-
+from orders.models import Order, OrderInfoBasket
 
 log = logging.getLogger(__name__)
 
 
 @shared_task
-def send_email_about_order_created(user_name: str, order_id: int):
+def send_email_about_order_created(order_id: int):
     """
     Задача для отправки уведомления по электронной почте при успешном создании заказа.
     """
@@ -18,21 +17,19 @@ def send_email_about_order_created(user_name: str, order_id: int):
         order = (
             Order.objects.filter(pk=order_id)
             .select_related("user")
-            .prefetch_related("basket")
             .first()
         )
+        basket = OrderInfoBasket.objects.filter(order=order).select_related("product")
 
         subject = "Order nr. {}".format(order_id)
-        # message = "Dear {},\n\nYou have successfully placed an order.\
-        #             Your order id is {}.".format(
-        #     user_name, order_id
-        # )
 
         message = render_to_string(
             "orders/order_email_send.html",
             {
-                "user": order.user,
+                "username": order.user.first_name,
                 "order_id": order_id,
+                "total_cost": order.total_cost,
+                "basket": basket,
             },
         )
 

@@ -1,9 +1,14 @@
 {% autoescape off %}
 
-Здравствуйте, {{ user.user.first_name }}!
+Здравствуйте уважаемый {{ username }}!
 
-Вы создали на сайте нашего магазина ордер № {{ order_id }}:
+Вы создали на сайте нашего магазина заказ № {{ order_id }}:
 
+Товары в заказе:
+{% for product in basket.all %}
+    - {{ product.product.title }} по цене {{ product.price_in_order }} руб. в количестве {{ product.count_in_order }}
+{% endfor %}
 
+Общая цена заказа {{ total_cost }} руб.
 
 {% endautoescape %}
