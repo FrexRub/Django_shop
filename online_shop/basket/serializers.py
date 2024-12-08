@@ -28,10 +28,10 @@ from .cart import Cart
 log = logging.getLogger(__name__)
 
 # для отображения названий месяцев на русском
-locale.setlocale(
-    category=locale.LC_ALL,
-    locale="Russian",
-)
+# locale.setlocale(
+#     category=locale.LC_ALL,
+#     locale="Russian",
+# )
 
 
 class BasketDataSerializer(serializers.Serializer):

@@ -40,12 +40,7 @@ SECRET_KEY = env("DJANGO_SECRET_KEY")
 # False if not in os.environ because of casting above
 DEBUG = env("DJANGO_DEBUG")
 
-ALLOWED_HOSTS = [
-    "0.0.0.0",
-    "127.0.0.1",
-] + env(
-    "DJANGO_ALLOWED_HOSTS"
-).split(",")
+ALLOWED_HOSTS = ["0.0.0.0", "127.0.0.1", "localhost"]
 
 APPEND_SLASH = False
 
@@ -63,7 +58,7 @@ INSTALLED_APPS = [
     "rest_framework",
     "django_dump_load_utf8",
     "frontend",
-    "api.apps.ApiConfig",
+    "api",
     "myauth.apps.MyauthConfig",
     "shopapp.apps.ShopappConfig",
     "basket.apps.BasketConfig",
@@ -100,6 +95,8 @@ TEMPLATES = [
 ]
 
 WSGI_APPLICATION = "online_shop.wsgi.application"
+
+CSRF_TRUSTED_ORIGINS = env("CSRF_TRUSTED_ORIGINS").split()
 
 INTERNAL_IPS = [
     "127.0.0.1",

@@ -22,10 +22,10 @@ from .models import (
 log = logging.getLogger(__name__)
 
 # для отображения названий месяцев на русском
-locale.setlocale(
-    category=locale.LC_ALL,
-    locale="Russian",
-)
+# locale.setlocale(
+#     category=locale.LC_ALL,
+#     locale=("ru_RU", "UTF-8"),
+# )
 
 
 class TagSerializer(serializers.ModelSerializer):
