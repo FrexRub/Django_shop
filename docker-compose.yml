@@ -4,17 +4,16 @@ services:
   app:
     build:
       dockerfile: ./Dockerfile
-#    command: python manage.py runserver 0.0.0.0:8000
-    command: sh -c "python manage.py migrate &&
-                    python manage.py loaddatautf8 fixtures/data.json &&
-                    python manage.py runserver 0.0.0.0:8000"
+#    command: gunicorn online_shop.wsgi:application --bind 0.0.0.0:8000
+    command: python manage.py runserver 0.0.0.0:8000
+
     ports:
-      - "8000:8000"
+      - 8000:8000
     restart: always
     env_file:
       - .env
     volumes:
-      - ./upload:/app/upload
+      - upload:/app/upload
     depends_on:
       - redis_shop
       - db_shop
@@ -25,16 +24,16 @@ services:
     image: redis
     command: --port 6379
     ports:
-      - "6379:6379"
+      - 6379:6379
     networks:
       - net
 
   db_shop:
     image: postgres
     volumes:
-      - postgres:/var/lib/postgresql/data
+      - postgres_volume:/var/lib/postgresql/data/
     ports:
-      - "5432:5432"
+      - 5432:5432
     env_file:
       - .env
     networks:
@@ -79,7 +78,7 @@ services:
 #      - net
 
 volumes:
-  postgres:
+  postgres_volume:
   upload:
 
 networks:
