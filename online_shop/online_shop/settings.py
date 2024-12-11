@@ -19,8 +19,6 @@ env = environ.Env(
     DJANGO_LOGLEVEL=(str, "info"),
     DJANGO_ALLOWED_HOSTS=(str, ""),
     POSTGRES_HOST=(str, "localhost"),
-    REDIS_HOST_CACHES=(str, "redis://127.0.0.1:6379/1"),
-    REDIS_HOST_CELERY=(str, "redis://127.0.0.1:6379/0"),
 )
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
@@ -33,7 +31,6 @@ environ.Env.read_env(DIR_ENV)
 # See https://docs.djangoproject.com/en/5.1/howto/deployment/checklist/
 
 # SECURITY WARNING: keep the secret key used in production secret!
-# SECRET_KEY = "django-insecure-ta$iy=e+)v!yx^&6r%_a0bk(*vpmg9xwwq4s7934u#@9@4l*19"
 SECRET_KEY = env("DJANGO_SECRET_KEY")
 
 # SECURITY WARNING: don't run with debug turned on in production!
@@ -113,7 +110,6 @@ DATABASES = {
         "USER": env("POSTGRES_USER"),
         "PASSWORD": env("POSTGRES_PASSWORD"),
         "HOST": env("POSTGRES_HOST"),
-        # "HOST": "localhost",
         "PORT": env("POSTGRES_PORT"),
     }
 }
@@ -126,17 +122,14 @@ SESSION_CACHE_ALIAS = "default"
 CACHES = {
     "default": {
         "BACKEND": "django_redis.cache.RedisCache",
-        # "LOCATION": "redis://127.0.0.1:6379/1",
         "LOCATION": env("REDIS_HOST_CACHES"),
         "OPTIONS": {"CLIENT_CLASS": "django_redis.client.DefaultClient"},
         "KEY_PREFIX": "cache_shop",
     }
 }
 
-# CELERY_BROKER_URL = "redis://127.0.0.1:6379/0"
-# CELERY_RESULT_BACKEND = "redis://127.0.0.1:6379/0"
-CELERY_BROKER_URL = env("REDIS_HOST_CACHES")
-CELERY_RESULT_BACKEND = env("REDIS_HOST_CACHES")
+CELERY_BROKER_URL = env("REDIS_HOST_CELERY")
+CELERY_RESULT_BACKEND = env("REDIS_HOST_CELERY")
 CELERY_TASK_TRACK_STARTED = True
 CELERY_TASK_TIME_LIMIT = 30 * 60
 CELERY_ACCEPT_CONTENT = ["application/json"]
@@ -197,7 +190,6 @@ FIXTURE_DIRS = [
 DEFAULT_AUTO_FIELD = "django.db.models.BigAutoField"
 
 REST_FRAMEWORK = {
-    # "DEFAULT_PAGINATION_CLASS": "rest_framework.pagination.PageNumberPagination",
     "DEFAULT_PAGINATION_CLASS": "rest_framework.pagination.LimitOffsetPagination",
     "PAGE_SIZE": 100,
     "DEFAULT_FILTER_BACKENDS": [
