@@ -7,14 +7,14 @@ services:
 #    command: gunicorn online_shop.wsgi:application --bind 0.0.0.0:8000
 #    command: python manage.py runserver 0.0.0.0:8000
     command: ["docker/entrypoint.sh"]
-
-    ports:
-      - 8000:8000
+    expose:
+      - 8000
     restart: always
     env_file:
       - .env
     volumes:
-      - upload:/app/upload
+#      - upload:/app/upload
+      - media_volume:/app/upload
     depends_on:
       - redis_shop
       - db_shop
@@ -67,23 +67,25 @@ services:
     networks:
       - net
 
-#  nginx_shop:
-#    container_name: shop-nginx
-#    build: ./nginx
-#    volumes:
-#      - ./var/log/nginx:/var/log/nginx
-#      - ./static:/usr/share/nginx/html/static
-#      - ./templates/frontend:/usr/share/nginx/html
-##      - ./media:/usr/share/nginx/html/static/images
-#    ports:
-#      - 80:80
-#    depends_on:
-#      - app
-#    networks:
-#      - net
+  nginx_shop:
+    container_name: shop-nginx
+    build: ./nginx
+    volumes:
+#      - var/log/nginx:/var/log/nginx
+      - static_volume:/usr/share/nginx/html/static
+#      - templates/frontend:/usr/share/nginx/html
+      - media_volume:/usr/share/nginx/html/static/images
+    ports:
+      - 80:80
+    depends_on:
+      - app
+    networks:
+      - net
 
 volumes:
   postgres_volume:
+  static_volume:
+  media_volume:
   upload:
 
 networks:
