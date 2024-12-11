@@ -5,7 +5,8 @@ services:
     build:
       dockerfile: ./Dockerfile
 #    command: gunicorn online_shop.wsgi:application --bind 0.0.0.0:8000
-    command: python manage.py runserver 0.0.0.0:8000
+#    command: python manage.py runserver 0.0.0.0:8000
+    command: ["docker/entrypoint.sh"]
 
     ports:
       - 8000:8000
@@ -39,28 +40,32 @@ services:
     networks:
       - net
 
-#  celery_shop:
-#    build:
-#      context: .
-#    container_name: celery_app
-#    command: ["/app/docker/celery.sh", "celery"] # запуск скрипта для запуска celery
-#    depends_on:
-#      - redis_shop
-#    networks:
-#      - net
-#
-#  flower_shop:
-#    build:
-#      context: .
-#    container_name: flower_app
-#    command: ["/app/docker/celery.sh", "flower"]  # запуск скрипта для запуска flower
-#    depends_on:
-#      - redis_shop
-#      - celery_shop
-#    ports:
-#      - 5555:5555
-#    networks:
-#      - net
+  celery_shop:
+    build:
+      context: .
+    container_name: celery_app
+    command: ["docker/celery.sh", "celery"] # запуск скрипта для запуска celery
+    env_file:
+      - .env
+    depends_on:
+      - redis_shop
+    networks:
+      - net
+
+  flower_shop:
+    build:
+      context: .
+    container_name: flower_app
+    command: ["docker/celery.sh", "flower"]  # запуск скрипта для запуска flower
+    env_file:
+      - .env
+    depends_on:
+      - redis_shop
+      - celery_shop
+    ports:
+      - 5555:5555
+    networks:
+      - net
 
 #  nginx_shop:
 #    container_name: shop-nginx

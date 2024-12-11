@@ -20,5 +20,3 @@ COPY diploma-frontend/frontend /app/frontend
 COPY docker /app/docker
 
 RUN chmod a+x docker/*.sh     # разрешение на запуск скриптов из каталога docker
-
-ENTRYPOINT ["docker/entrypoint.sh"]

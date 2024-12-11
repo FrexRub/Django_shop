@@ -15,8 +15,8 @@ fi
 python manage.py flush --no-input
 # Выполняем миграции
 python manage.py migrate
-python manage.py loaddatautf8 /app/fixtures/data.json
 # Сбор статистических файлов
 python manage.py collectstatic --no-input --clear
-
+#python manage.py runserver 0.0.0.0:8000
+gunicorn online_shop.wsgi:application --bind 0.0.0.0:8000
 exec "$@"
