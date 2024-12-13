@@ -55,7 +55,7 @@ INSTALLED_APPS = [
     "rest_framework",
     "django_dump_load_utf8",
     "frontend",
-    "api",
+    "api.apps.ApiConfig",
     "myauth.apps.MyauthConfig",
     "shopapp.apps.ShopappConfig",
     "basket.apps.BasketConfig",

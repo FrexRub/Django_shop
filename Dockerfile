@@ -1,6 +1,6 @@
 FROM python:3.11
 
-RUN mkdir /app && mkdir /app/docker && mkdir /app/frontend
+RUN mkdir /app && mkdir /app/docker && mkdir /app/frontend && mkdir /app/static
 
 WORKDIR /app
 
