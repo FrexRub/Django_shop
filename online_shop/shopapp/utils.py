@@ -39,6 +39,7 @@ def sorted_products(request):
     sort = request.GET.get("sort")
     sort_type = request.GET.get("sortType")
     tags = request.GET.getlist("tags[]")
+    name_product = request.GET.get("filter[name]")
 
     # категория в запросе не определена
     if isinstance(request.GET.get("category"), str):
@@ -55,6 +56,10 @@ def sorted_products(request):
     filters = Q()
     filters &= Q(category=category)  # фильтр по категории
     filters &= Q(price__range=(min_price, max_price))  # фильтр по цене
+
+    # фильтр по наименованию
+    if name_product:
+        filters &= Q(title__icontains=name_product)
 
     # фильтр по доставке (бесплатная/платная)
     # если фильтр установлен, то сортируем - иначе выводим все товары
