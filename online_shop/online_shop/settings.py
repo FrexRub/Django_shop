@@ -39,7 +39,7 @@ DEBUG = env("DJANGO_DEBUG")
 
 ALLOWED_HOSTS = ["0.0.0.0", "127.0.0.1", "localhost"]
 
-APPEND_SLASH = False
+# APPEND_SLASH = False
 
 # Application definition
 

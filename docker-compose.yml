@@ -22,6 +22,7 @@ services:
   redis_shop:
     image: redis
     command: --port 6379
+    restart: always
     ports:
       - 6379:6379
     networks:
@@ -33,6 +34,7 @@ services:
       - postgres_volume:/var/lib/postgresql/data/
     ports:
       - 5432:5432
+    restart: always
     env_file:
       - .env
     networks:
@@ -45,6 +47,7 @@ services:
     command: ["docker/celery.sh", "celery"] # запуск скрипта для запуска celery
     env_file:
       - .env
+    restart: always
     depends_on:
       - redis_shop
     networks:
@@ -57,6 +60,7 @@ services:
     command: ["docker/celery.sh", "flower"]  # запуск скрипта для запуска flower
     env_file:
       - .env
+    restart: always
     depends_on:
       - redis_shop
       - celery_shop
@@ -74,6 +78,7 @@ services:
       - static_volume:/app/static
     ports:
       - 80:80
+    restart: always
     depends_on:
       - app
     networks:

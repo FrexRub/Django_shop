@@ -95,7 +95,7 @@ createApp({
 		// },
 		addToBasket(item, count = 1) {
 			const { id } = item
-			this.postData('/api/basket', { id, count })
+			this.postData('/api/basket/', { id, count })
 				.then(({ data }) => {
 					this.basket = data
 				})
@@ -120,7 +120,7 @@ createApp({
 				})
 		},
 		signOut() {
-			this.postData('/api/sign-out').finally(() => {
+			this.postData('/api/sign-out/').finally(() => {
 				location.assign(`/`)
 			})
 		},
