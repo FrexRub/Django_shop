@@ -30,7 +30,7 @@ var mix = {
             this.getCatalogs()
         },
         getTags() {
-            this.getData('/api/tags', { category: this.category })
+            this.getData('/api/tags/', { category: this.category })
                 .then(data => this.topTags = data.map(tag => ({
                     ...tag,
                     selected: false
@@ -49,10 +49,10 @@ var mix = {
             if (min !== 0) {
                 this.filter.minPrice = min
             }
-            if (max !== 50000) {
+            if (max !== 100000) {
                 this.filter.maxPrice = max
             }
-            this.getData("/api/catalog", {
+            this.getData("/api/catalog/", {
                 filter: {
                     ...this.filter,
                     minPrice: min,
@@ -98,7 +98,7 @@ var mix = {
             filter: {
                 name: '',
                 minPrice: 0,
-                maxPrice: 50000,
+                maxPrice: 100000,
                 freeDelivery: false,
                 available: true
             }
