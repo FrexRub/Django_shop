@@ -24,16 +24,16 @@ docker compose exec app python manage.py loaddatautf8 fixtures/data.json
 ```
 Стартовая страница проекта [http://127.0.0.1:80](http://127.0.0.1:80).
 
-![Стартовая страница проекта](img_1-1.jpg)
+![Стартовая страница проекта](readme_img/img_1.jpg)
 
 Стартовая страница отображает товары по категориям
 
 На вкладке `Sale` размещена информация по имеющимся скидкам на товары
-![Sale](img_sale.jpg)
+![Sale](readme_img/img_sale.jpg)
 
 Вход в личный кабинет через меню `LOGIN/REGISTER`
 
-![LOGIN/REGISTER](img_reg.jpg)
+![LOGIN/REGISTER](readme_img/img_reg.jpg)
 
 Здесь же регистрация нового пользователя
 
@@ -43,40 +43,40 @@ docker compose exec app python manage.py loaddatautf8 fixtures/data.json
 
 Попасть в свой личный кабинет пользователь может кликнув по своему логину, например `Sem`
 
-![profile](img_prof.jpg)
+![profile](readme_img/img_prof.jpg)
 
 В личном кабинете пользователь может поменять свои данные, аватарку, пароль, а также посмотреть историю своих покупок
-![user_orders](img_orders_history.jpg) 
+![user_orders](readme_img/img_orders_history.jpg) 
 
 Товары на сайте можно сортировать по разным параметрам: цена, наименование, наличие товара в магазине, бесплатная доставка, по тегам, отзывам, рейтингам и новизне
 
-![sorted](img_sort-1.jpg)
+![sorted](readme_img/img_sort.jpg)
 
 Карточка товара содержит его название, цену, описание, характеристики и отзывы
 
-![product](img_prod_detail.jpg)
+![product](readme_img/img_prod_detail.jpg)
 
 Здесь мы можем добавить товар в корзину, а затем перейти в неё щелкнув по корзине в верхней правой части меню
 
-![basket](img_basket.jpg)
+![basket](readme_img/img_basket.jpg)
 
 Кнопка `Оформить заказ` запускает процедуру оформления покупки выбранных товаров. В итоге формируется заказ
 
-![order](img_order.jpg)
+![order](readme_img/img_order.jpg)
 
 Для завершения покупки заказ необходимо оплатить
 
-![payment](img_payment.jpg)
+![payment](readme_img/img_payment.jpg)
 
 После оплаты пользователю направляется электронное письмо с данными заказа (в проекте используется очередь задач Celery и имитация отправки сообщений)
 
-![celery](img_celery.jpg)
+![celery](readme_img/img_celery.jpg)
 
 Для контроля работы Celery в проекте развернут сервис Flower [http://127.0.0.1:5555](http://127.0.0.1:5555)
 
 Для работы с каталогами товаров используется панель администратора [http://127.0.0.1:80/admin](http://127.0.0.1:80/admin)
 
-![admin](img_adminka.jpg)
+![admin](readme_img/img_adminka.jpg)
 
 
 
