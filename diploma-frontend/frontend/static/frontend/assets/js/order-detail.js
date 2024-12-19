@@ -24,7 +24,7 @@ var mix = {
 		},
 		confirmOrder() {
 			if (this.orderId !== null) {
-				this.postData(`/api/order/${this.orderId}`, { ...this })
+				this.postData(`/api/order/${this.orderId}/`, { ...this })
 					.then(({ data: { orderId } }) => {
 						alert('Заказ подтвержден')
 						location.replace(`/payment/${orderId}/`)
@@ -37,7 +37,7 @@ var mix = {
 		auth() {
 			const username = document.querySelector('#username').value
 			const password = document.querySelector('#password').value
-			this.postData('/api/sign-in', JSON.stringify({ username, password }))
+			this.postData('/api/sign-in/', JSON.stringify({ username, password }))
 				.then(({ data, status }) => {
 					location.assign(`/orders/${this.orderId}`)
 				})
